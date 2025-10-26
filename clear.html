@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Очистка</title></head>
+<body style="font-family:Arial;padding:40px;text-align:center;background:#667eea;color:white">
+<h1>🧹 Очистка кеша</h1>
+<button onclick="clear()" style="padding:20px 40px;font-size:20px;background:#10b981;color:white;border:none;border-radius:10px">ОЧИСТИТЬ</button>
+<div id="s" style="margin-top:20px;font-size:18px"></div>
+<script>
+async function clear(){
+document.getElementById('s').innerHTML='Очистка...';
+if('serviceWorker' in navigator){
+let r=await navigator.serviceWorker.getRegistrations();
+for(let x of r)await x.unregister();
+}
+if('caches' in window){
+let c=await caches.keys();
+for(let x of c)await caches.delete(x);
+}
+localStorage.clear();
+sessionStorage.clear();
+document.getElementById('s').innerHTML='✅ Готово!';
+setTimeout(()=>location.href='https://soft-daffodil-3fb8d6.netlify.app?new='+Date.now(),2000);
+}
+</script>
+</body>
+</html>

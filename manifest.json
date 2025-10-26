@@ -1,11 +1,10 @@
 {
   "name": "УК Зелёная Долина - Личный кабинет жильца",
   "short_name": "Зелёная Долина",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "PWA приложение для управления ЖК и коммунальными услугами",
-  "start_url": "/?v=2.0.1",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "start_url": "/",
+  "display": "standalone",
   "theme_color": "#10b981",
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
@@ -13,7 +12,7 @@
   "lang": "ru",
   "dir": "ltr",
   "categories": ["business", "productivity", "utilities", "finance"],
-  "id": "uk-zelenaya-dolina-pwa-v2",
+  "id": "uk-zelenaya-dolina-pwa-v10",
   "icons": [
     {
       "src": "icons/icon-72x72.png",

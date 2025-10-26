@@ -1,6 +1,6 @@
-// УК Зелёная Долина - Service Worker
+// УК Зелёная Долина - Service Worker (ИСПРАВЛЕННАЯ ВЕРСИЯ)
 
-const CACHE_NAME = 'uk-zelenaya-dolina-v1';
+const CACHE_NAME = 'uk-zelenaya-dolina-v11'; // ← ОБНОВЛЁННАЯ ВЕРСИЯ!
 const urlsToCache = [
     '/',
     '/index.html',
@@ -15,7 +15,7 @@ const urlsToCache = [
 
 // Install event
 self.addEventListener('install', event => {
-    console.log('🔧 Service Worker устанавливается...');
+    console.log('🔧 Service Worker устанавливается (v11)...');
     
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -24,7 +24,7 @@ self.addEventListener('install', event => {
                 return cache.addAll(urlsToCache);
             })
             .then(() => {
-                console.log('✅ Ресурсы приложения закэшированы успешно');
+                console.log('✅ Ресурсы приложения закэшированы успешно (v11)');
                 return self.skipWaiting();
             })
             .catch(error => {
@@ -36,7 +36,7 @@ self.addEventListener('install', event => {
 
 // Activate event
 self.addEventListener('activate', event => {
-    console.log('🚀 Service Worker активируется...');
+    console.log('🚀 Service Worker активируется (v11)...');
     
     event.waitUntil(
         caches.keys().then(cacheNames => {
@@ -49,7 +49,7 @@ self.addEventListener('activate', event => {
                 })
             );
         }).then(() => {
-            console.log('✅ Service Worker активирован');
+            console.log('✅ Service Worker активирован (v11)');
             return self.clients.claim();
         })
     );
@@ -217,4 +217,4 @@ self.addEventListener('periodicsync', event => {
     }
 });
 
-console.log('🔧 Service Worker УК Зелёная Долина загружен');
+console.log('🔧 Service Worker УК Зелёная Долина загружен (v11)');

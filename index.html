@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
+    <meta name="theme-color" content="#10b981">
+    
+    <title>🏠 УК "Зелёная Долина" - Личный кабинет жильца</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="icons/favicon.png" type="image/png">
+    <link rel="shortcut icon" href="icons/favicon.png" type="image/png">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>🏠 УК "Зелёная Долина"</h2>
+            <p>Загрузка приложения...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🏠 УК "Зелёная Долина"</h1>
+                    <p>Личный кабинет жильца</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <span class="user-name">Иванов И.И.</span>
+                        <span class="user-apartment">Кв. 15</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="app-nav">
+            <div class="nav-container">
+                <button class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Главная</span>
+                </button>
+                <button class="nav-item" data-section="apartments">
+                    <span class="nav-icon">🏢</span>
+                    <span class="nav-label">Квартиры</span>
+                </button>
+                <button class="nav-item" data-section="payments">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Платежи</span>
+                </button>
+                <button class="nav-item" data-section="requests">
+                    <span class="nav-icon">🔧</span>
+                    <span class="nav-label">Заявки</span>
+                </button>
+                <button class="nav-item" data-section="notifications">
+                    <span class="nav-icon">📢</span>
+                    <span class="nav-label">Уведомления</span>
+                </button>
+                <button class="nav-item" data-section="counters">
+                    <span class="nav-icon">🔋</span>
+                    <span class="nav-label">Счетчики</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>🏠 Добро пожаловать в личный кабинет!</h2>
+                    <p>Управляющая компания "Зелёная Долина"</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3>2,890 ₽</h3>
+                            <p>К доплате</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔧</div>
+                        <div class="stat-content">
+                            <h3>2</h3>
+                            <p>Активных заявок</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📢</div>
+                        <div class="stat-content">
+                            <h3>3</h3>
+                            <p>Новых уведомлений</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏠</div>
+                        <div class="stat-content">
+                            <h3>1</h3>
+                            <p>Ваших квартир</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Быстрые действия</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="showSection('payments')">
+                            <span class="action-icon">💳</span>
+                            <span class="action-text">Оплатить</span>
+                        </button>
+                        <button class="action-btn" onclick="showSection('requests')">
+                            <span class="action-icon">📝</span>
+                            <span class="action-text">Подать заявку</span>
+                        </button>
+                        <button class="action-btn" onclick="showSection('notifications')">
+                            <span class="action-icon">🔔</span>
+                            <span class="action-text">Уведомления</span>
+                        </button>
+                        <button class="action-btn" onclick="showSection('apartments')">
+                            <span class="action-icon">🏢</span>
+                            <span class="action-text">Мои квартиры</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="contact-info">
+                    <h3>📞 Контакты</h3>
+                    <div class="contact-card">
+                        <p><strong>Диспетчер:</strong> 8 960 072 03 21</p>
+                        <p><strong>Email:</strong> uk-zeldol@yandex.ru</p>
+                        <p><strong>Адрес:</strong> ул. Шустова, д. 4А, пом. 15</p>
+                        <p><strong>Директор:</strong> Галлямов Р. Р.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Apartments Section -->
+            <section id="apartments" class="content-section">
+                <div class="section-header">
+                    <h2>🏢 Мои квартиры</h2>
+                    <p>Управление информацией о квартирах</p>
+                </div>
+                
+                <div class="apartments-list" id="apartmentsList">
+                    <div class="list-item">
+                        <h3>Квартира №15 <span class="status-badge status-active">занята</span></h3>
+                        <p><strong>Адрес:</strong> ул. Рогачёва, д. 25/1</p>
+                        <p><strong>Площадь:</strong> 45.6 м²</p>
+                        <p><strong>Комнаты:</strong> 1</p>
+                        <p><strong>Жильцы:</strong> 2</p>
+                        <p><strong>Этаж:</strong> 1, <strong>Подъезд:</strong> 1</p>
+                        <p><strong>Коммунальные услуги:</strong> Электричество, Газ, Вода, Отопление</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payments Section -->
+            <section id="payments" class="content-section">
+                <div class="section-header">
+                    <h2>💰 Платежи и счета</h2>
+                    <p>Просмотр и управление платежами</p>
+                </div>
+                
+                <div class="payments-list" id="paymentsList">
+                    <div class="list-item">
+                        <h3>Декабрь 2023 <span class="status-badge status-pending">ожидает</span></h3>
+                        <p><strong>Сумма:</strong> 3,040 ₽</p>
+                        <p><strong>Электричество:</strong> 920 ₽</p>
+                        <p><strong>Газ:</strong> 450 ₽</p>
+                        <p><strong>Вода:</strong> 400 ₽</p>
+                        <p><strong>Отопление:</strong> 1,270 ₽</p>
+                        <p><strong>Дата:</strong> 2023-12-01</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn" onclick="downloadReceipt('receipt_dec_2023.pdf')">📄 Скачать квитанцию</button>
+                            <button class="btn btn-primary" onclick="markAsPaid(2)">✅ Отметить оплату</button>
+                        </div>
+                    </div>
+                    
+                    <div class="list-item">
+                        <h3>Ноябрь 2023 <span class="status-badge status-paid">оплачено</span></h3>
+                        <p><strong>Сумма:</strong> 2,890 ₽</p>
+                        <p><strong>Электричество:</strong> 850 ₽</p>
+                        <p><strong>Газ:</strong> 420 ₽</p>
+                        <p><strong>Вода:</strong> 380 ₽</p>
+                        <p><strong>Отопление:</strong> 1,240 ₽</p>
+                        <p><strong>Дата:</strong> 2023-11-25</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn" onclick="downloadReceipt('receipt_nov_2023.pdf')">📄 Скачать квитанцию</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Requests Section -->
+            <section id="requests" class="content-section">
+                <div class="section-header">
+                    <h2>🔧 Заявки на ремонт</h2>
+                    <p>Подача и отслеживание заявок</p>
+                </div>
+                
+                <!-- Request Form -->
+                <div class="request-form-container">
+                    <h3>📝 Подать новую заявку</h3>
+                    <form id="requestForm">
+                        <div class="form-group">
+                            <label for="requestType">Тип заявки:</label>
+                            <select id="requestType" required>
+                                <option value="">Выберите тип</option>
+                                <option value="ремонт">Ремонт</option>
+                                <option value="электрика">Электрика</option>
+                                <option value="сантехника">Сантехника</option>
+                                <option value="уборка">Уборка</option>
+                                <option value="лифт">Лифт</option>
+                                <option value="отопление">Отопление</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="requestTitle">Название:</label>
+                            <input type="text" id="requestTitle" placeholder="Краткое описание проблемы" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="requestDescription">Описание:</label>
+                            <textarea id="requestDescription" rows="4" placeholder="Подробное описание проблемы" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="requestPriority">Приоритет:</label>
+                            <select id="requestPriority" required>
+                                <option value="низкий">Низкий</option>
+                                <option value="средний" selected>Средний</option>
+                                <option value="высокий">Высокий</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">📝 Подать заявку</button>
+                    </form>
+                </div>
+                
+                <!-- Requests List -->
+                <div class="requests-list" id="requestsList">
+                    <div class="list-item">
+                        <h3>Протечка в ванной комнате <span class="status-badge status-active">в работе</span></h3>
+                        <p><strong>Тип:</strong> ремонт</p>
+                        <p><strong>Приоритет:</strong> <span class="status-badge status-high">высокий</span></p>
+                        <p><strong>Квартира:</strong> №15</p>
+                        <p><strong>Описание:</strong> Обнаружена протечка под раковиной в ванной комнате. Вода капает на пол.</p>
+                        <p><strong>Исполнитель:</strong> Сантехник Петров А.В.</p>
+                        <p><strong>Дата:</strong> 2023-11-20</p>
+                        <p><strong>Ожидаемое завершение:</strong> 2023-11-25</p>
+                    </div>
+                    
+                    <div class="list-item">
+                        <h3>Не работает розетка в кухне <span class="status-badge status-pending">ожидает</span></h3>
+                        <p><strong>Тип:</strong> электрика</p>
+                        <p><strong>Приоритет:</strong> <span class="status-badge status-medium">средний</span></p>
+                        <p><strong>Квартира:</strong> №15</p>
+                        <p><strong>Описание:</strong> Розетка в кухне не работает. Проверка показала отсутствие напряжения.</p>
+                        <p><strong>Дата:</strong> 2023-11-28</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications" class="content-section">
+                <div class="section-header">
+                    <h2>📢 Уведомления</h2>
+                    <p>Важные объявления и сообщения</p>
+                </div>
+                
+                <div class="notifications-list" id="notificationsList">
+                    <div class="list-item">
+                        <h3>Начислен платёж за декабрь 2023 <span class="status-badge status-high">высокий</span></h3>
+                        <p><strong>Тип:</strong> платеж</p>
+                        <p><strong>Сообщение:</strong> Начислен платёж в размере 3,040 ₽ за коммунальные услуги за декабрь 2023. Срок оплаты до 25.12.2023</p>
+                        <p><strong>Дата:</strong> 2023-12-01</p>
+                        <p><strong>Статус:</strong> <span class="status-badge status-pending">не прочитано</span></p>
+                        <button class="btn btn-primary" onclick="markAsRead(1)">✅ Отметить как прочитанное</button>
+                    </div>
+                    
+                    <div class="list-item">
+                        <h3>Плановые работы в подъезде <span class="status-badge status-medium">средний</span></h3>
+                        <p><strong>Тип:</strong> ремонт</p>
+                        <p><strong>Сообщение:</strong> С 5 по 7 декабря будут проводиться плановые работы по покраске стен в подъезде №1. Просим извинения за неудобства.</p>
+                        <p><strong>Дата:</strong> 2023-11-30</p>
+                        <p><strong>Статус:</strong> <span class="status-badge status-pending">не прочитано</span></p>
+                        <button class="btn btn-primary" onclick="markAsRead(2)">✅ Отметить как прочитанное</button>
+                    </div>
+                    
+                    <div class="list-item">
+                        <h3>Плановое отключение воды <span class="status-badge status-high">высокий</span></h3>
+                        <p><strong>Тип:</strong> отключение</p>
+                        <p><strong>Сообщение:</strong> 15 декабря с 9:00 до 17:00 будет отключена холодная вода для проведения ремонтных работ.</p>
+                        <p><strong>Дата:</strong> 2023-11-29</p>
+                        <p><strong>Статус:</strong> <span class="status-badge status-completed">прочитано</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Counters Section -->
+            <section id="counters" class="content-section">
+                <div class="section-header">
+                    <h2>🔋 Показания счетчиков</h2>
+                    <p>Передача показаний счетчиков</p>
+                </div>
+                
+                <div class="counters-list" id="countersList">
+                    <div class="list-item">
+                        <h3>Электричество - Квартира №15</h3>
+                        <p><strong>Текущие показания:</strong> 12,567 кВт⋅ч</p>
+                        <p><strong>Предыдущие показания:</strong> 12,345 кВт⋅ч</p>
+                        <p><strong>Потребление:</strong> 222 кВт⋅ч</p>
+                        <p><strong>Тариф:</strong> 4.2 ₽/кВт⋅ч</p>
+                        <p><strong>Последнее обновление:</strong> 2023-11-30</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="submitCounterReading(1)">📊 Передать показания</button>
+                        </div>
+                    </div>
+                    
+                    <div class="list-item">
+                        <h3>Газ - Квартира №15</h3>
+                        <p><strong>Текущие показания:</strong> 3,456 м³</p>
+                        <p><strong>Предыдущие показания:</strong> 3,421 м³</p>
+                        <p><strong>Потребление:</strong> 35 м³</p>
+                        <p><strong>Тариф:</strong> 12.5 ₽/м³</p>
+                        <p><strong>Последнее обновление:</strong> 2023-11-30</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="submitCounterReading(2)">📊 Передать показания</button>
+                        </div>
+                    </div>
+                    
+                    <div class="list-item">
+                        <h3>Вода - Квартира №15</h3>
+                        <p><strong>Текущие показания:</strong> 789 м³</p>
+                        <p><strong>Предыдущие показания:</strong> 765 м³</p>
+                        <p><strong>Потребление:</strong> 24 м³</p>
+                        <p><strong>Тариф:</strong> 15.8 ₽/м³</p>
+                        <p><strong>Последнее обновление:</strong> 2023-11-30</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="submitCounterReading(3)">📊 Передать показания</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>🏠 УК "Зелёная Долина" - Личный кабинет жильца</p>
+                <p>📞 8 960 072 03 21 | 📧 uk-zeldol@yandex.ru</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Network Status Indicator -->
+    <div id="network-status" class="network-status offline">
+        <span class="status-icon">📱</span>
+        <span class="status-text">Офлайн режим</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/mobile.js"></script>
+</body>
+</html>

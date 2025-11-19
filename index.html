@@ -512,5 +512,94 @@
             })();
         }
     </script>
+    
+    <!-- Финальная проверка системы -->
+    <script>
+        // ФИНАЛЬНАЯ ПРОВЕРКА - выполняется после загрузки страницы
+        setTimeout(async function finalCheck() {
+            console.log('\n═══════════════════════════════════');
+            console.log('🔍 ФИНАЛЬНАЯ ПРОВЕРКА СИСТЕМЫ');
+            console.log('═══════════════════════════════════\n');
+            
+            // 1. Service Workers
+            const regs = await navigator.serviceWorker.getRegistrations();
+            console.log(`📋 Service Workers: ${regs.length}`);
+            
+            if (regs.length > 0) {
+                regs.forEach((reg, i) => {
+                    console.log(`\n  SW #${i + 1}:`);
+                    console.log(`    Scope: ${reg.scope}`);
+                    console.log(`    Active: ${reg.active ? '✅ ДА' : '❌ НЕТ'}`);
+                    console.log(`    Waiting: ${reg.waiting ? '⏳ ДА' : '✅ НЕТ'}`);
+                    console.log(`    Installing: ${reg.installing ? '🔄 ДА' : '✅ НЕТ'}`);
+                });
+            } else {
+                console.log('  ✅ НЕ НАЙДЕНО (отлично!)');
+            }
+            
+            // 2. Кеши
+            const keys = await caches.keys();
+            console.log(`\n🗄️  Кеши: ${keys.length}`);
+            
+            if (keys.length > 0) {
+                keys.forEach((key, i) => {
+                    console.log(`  ${i + 1}. ${key}`);
+                });
+            } else {
+                console.log('  ✅ НЕ НАЙДЕНО (отлично!)');
+            }
+            
+            // 3. Storage
+            console.log(`\n💾 localStorage: ${localStorage.length} записей`);
+            console.log(`💾 sessionStorage: ${sessionStorage.length} записей`);
+            
+            // 4. Активный Service Worker
+            if (navigator.serviceWorker.controller) {
+                console.log(`\n⚠️  Активный SW контроллер:`);
+                console.log(`    URL: ${navigator.serviceWorker.controller.scriptURL}`);
+                console.log(`    State: ${navigator.serviceWorker.controller.state}`);
+            } else {
+                console.log(`\n✅ Активный SW контроллер: НЕТ (отлично!)`);
+            }
+            
+            // 5. Итог
+            console.log('\n═══════════════════════════════════');
+            console.log('📊 ИТОГОВЫЙ СТАТУС:');
+            console.log('═══════════════════════════════════');
+            
+            const swClean = regs.length === 0;
+            const cacheClean = keys.length === 0;
+            const noController = !navigator.serviceWorker.controller;
+            
+            console.log(`SW Регистрации: ${swClean ? '✅ Чисто' : '❌ Есть остатки'}`);
+            console.log(`Кеши: ${cacheClean ? '✅ Чисто' : '⚠️  Есть остатки'}`);
+            console.log(`SW Контроллер: ${noController ? '✅ Нет' : '⚠️  Активен'}`);
+            
+            if (swClean && noController) {
+                console.log('\n✅✅✅ ВСЁ ИДЕАЛЬНО! ✅✅✅');
+                console.log('\n🎉 Service Workers полностью удалены!');
+                console.log('💡 Теперь можно тестировать приложение');
+            } else {
+                console.log('\n⚠️  ТРЕБУЮТСЯ ДОПОЛНИТЕЛЬНЫЕ ДЕЙСТВИЯ:');
+                
+                if (!swClean) {
+                    console.log('\n1️⃣  Удалите оставшиеся SW:');
+                    console.log('   Application → Service Workers → Unregister');
+                }
+                
+                if (!noController) {
+                    console.log('\n2️⃣  Перезагрузите страницу:');
+                    console.log('   Ctrl+Shift+R (жёсткая перезагрузка)');
+                }
+                
+                console.log('\n3️⃣  Если не помогло:');
+                console.log('   - Закройте ВСЕ вкладки с сайтом');
+                console.log('   - Закройте браузер ПОЛНОСТЬЮ');
+                console.log('   - Откройте браузер снова');
+            }
+            
+            console.log('\n═══════════════════════════════════\n');
+        }, 3000); // Выполняется через 3 секунды после загрузки страницы
+    </script>
 </body>
 </html>

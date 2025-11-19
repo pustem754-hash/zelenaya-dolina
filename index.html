@@ -446,108 +446,97 @@
         }, 3000);
     </script>
     
-    <!-- Service Worker: ЭКСТРЕННАЯ ОЧИСТКА -->
+    <!-- Service Worker: ЯДЕРНАЯ ОЧИСТКА -->
     <script>
-        // ЭКСТРЕННАЯ ОЧИСТКА - ВЫПОЛНЯЕТСЯ ПРИ КАЖДОЙ ЗАГРУЗКЕ
-        (async function emergencyCleanup() {
-            console.log('🆘 ЭКСТРЕННАЯ ОЧИСТКА ЗАПУЩЕНА');
-            console.log('=====================================\n');
+        // ЯДЕРНЫЙ ВАРИАНТ - полное уничтожение SW
+        (async function nuclearCleanup() {
+            console.log('☢️ ЯДЕРНАЯ ОЧИСТКА ЗАПУЩЕНА');
+            console.log('==========================================\n');
             
             try {
-                // 1. Остановить все активные SW
+                // 1. Получаем все регистрации
                 const regs = await navigator.serviceWorker.getRegistrations();
-                console.log(`📋 Найдено регистраций: ${regs.length}`);
+                console.log(`Найдено SW: ${regs.length}\n`);
                 
                 for (const reg of regs) {
-                    console.log(`\n🔄 Обработка SW: ${reg.scope}`);
+                    console.log(`Обработка: ${reg.scope}`);
                     
-                    // Принудительно активируем waiting SW (если есть)
-                    if (reg.waiting) {
-                        console.log('  ⏭️  skipWaiting для waiting SW');
-                        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-                        await new Promise(resolve => setTimeout(resolve, 100));
+                    // Получаем все состояния SW
+                    const workers = [reg.active, reg.waiting, reg.installing].filter(Boolean);
+                    
+                    console.log(`  Найдено worker состояний: ${workers.length}`);
+                    
+                    // Пытаемся послать SKIP_WAITING всем
+                    for (const worker of workers) {
+                        try {
+                            worker.postMessage({ type: 'SKIP_WAITING' });
+                            console.log(`    → Отправлено SKIP_WAITING`);
+                        } catch (e) {
+                            console.log(`    → Ошибка postMessage:`, e.message);
+                        }
                     }
                     
-                    // Принудительно активируем installing SW (если есть)
-                    if (reg.installing) {
-                        console.log('  ⏭️  skipWaiting для installing SW');
-                        reg.installing.postMessage({ type: 'SKIP_WAITING' });
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
+                    // Ждём немного
+                    await new Promise(resolve => setTimeout(resolve, 300));
                     
-                    // Получаем активный SW
-                    const activeSW = reg.active;
-                    if (activeSW) {
-                        console.log('  🛑 Остановка активного SW');
-                        
-                        // Пытаемся послать команду на самоуничтожение
-                        activeSW.postMessage({ type: 'KILL_YOURSELF' });
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
-                    
-                    // Удаляем регистрацию
-                    console.log('  🗑️  Удаление регистрации...');
-                    const unregistered = await reg.unregister();
-                    console.log(`  ${unregistered ? '✅' : '❌'} Результат: ${unregistered}`);
+                    // УДАЛЯЕМ регистрацию
+                    const result = await reg.unregister();
+                    console.log(`  ${result ? '✅' : '❌'} Unregister: ${result}\n`);
                 }
                 
-                // 2. Удаляем все кеши
-                console.log('\n🗄️  Очистка кешей...');
-                const cacheNames = await caches.keys();
-                console.log(`Найдено кешей: ${cacheNames.length}`);
+                // 2. Удаляем ВСЕ кеши
+                const keys = await caches.keys();
+                console.log(`\nНайдено кешей: ${keys.length}`);
                 
-                for (const cacheName of cacheNames) {
-                    await caches.delete(cacheName);
-                    console.log(`  ✅ Удалён: ${cacheName}`);
+                for (const key of keys) {
+                    await caches.delete(key);
+                    console.log(`  ✅ Удалён: ${key}`);
                 }
                 
-                // 3. Очищаем storage
-                console.log('\n🧹 Очистка storage...');
+                // 3. Storage
                 localStorage.clear();
                 sessionStorage.clear();
+                console.log('\n✅ Storage очищен');
                 
                 // 4. Финальная проверка
-                console.log('\n🔍 ФИНАЛЬНАЯ ПРОВЕРКА:');
                 const finalRegs = await navigator.serviceWorker.getRegistrations();
                 const finalCaches = await caches.keys();
                 
-                console.log(`SW: ${finalRegs.length}`);
+                console.log('\n==========================================');
+                console.log('ФИНАЛЬНАЯ ПРОВЕРКА:');
+                console.log(`Service Workers: ${finalRegs.length}`);
                 console.log(`Кеши: ${finalCaches.length}`);
                 
-                if (finalRegs.length === 0 && finalCaches.length === 0) {
-                    console.log('\n✅ ВСЁ ЧИСТО!');
-                    console.log('\n⚠️  ВАЖНО: Для полной очистки:');
-                    console.log('1. Закройте все вкладки с этим сайтом');
-                    console.log('2. Закройте браузер ПОЛНОСТЬЮ');
-                    console.log('3. Откройте браузер снова');
-                } else {
-                    console.error('\n❌ ОСТАЛИСЬ СЛЕДЫ:');
-                    console.error(`SW: ${finalRegs.length}`);
-                    console.error(`Кеши: ${finalCaches.length}`);
-                    console.error('\n🔧 ТРЕБУЕТСЯ РУЧНАЯ ОЧИСТКА:');
-                    console.error('1. Application → Service Workers → Unregister');
+                if (finalRegs.length > 0) {
+                    console.error('\n⚠️ SW ВСЁ ЕЩЁ ТАМ!');
+                    console.error('ТРЕБУЕТСЯ РУЧНОЕ УДАЛЕНИЕ:');
+                    console.error('1. Нажмите "Unregister" в Application → Service Workers');
                     console.error('2. Application → Storage → Clear site data');
-                    console.error('3. Закрыть все вкладки');
-                    console.error('4. Закрыть браузер полностью');
+                    console.error('3. ЗАКРОЙТЕ ВСЕ вкладки с этим сайтом');
+                    console.error('4. ЗАКРОЙТЕ браузер ПОЛНОСТЬЮ');
+                    console.error('5. Откройте браузер заново');
                     
-                    // Перенаправление на emergency reset если есть проблемы
-                    if (finalRegs.length > 0) {
-                        console.error('\n🔄 Перенаправление на emergency reset через 3 секунды...');
-                        setTimeout(() => {
-                            window.location.href = '/emergency-reset.html';
-                        }, 3000);
-                    }
+                    // Перенаправление на emergency reset
+                    setTimeout(() => {
+                        window.location.href = '/emergency-reset.html';
+                    }, 3000);
+                } else {
+                    console.log('\n✅✅✅ ВСЁ ЧИСТО! ✅✅✅');
+                    console.log('\n⚠️ КРИТИЧЕСКИ ВАЖНО:');
+                    console.log('1. ЗАКРОЙТЕ ВСЕ вкладки с этим сайтом');
+                    console.log('2. ЗАКРОЙТЕ Chrome ПОЛНОСТЬЮ');
+                    console.log('3. Откройте Chrome заново');
+                    console.log('4. Откройте сайт снова\n');
                 }
                 
+                console.log('==========================================');
+                
             } catch (error) {
-                console.error('\n❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
-                console.error('🔄 Перенаправление на emergency reset...');
+                console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
                 setTimeout(() => {
                     window.location.href = '/emergency-reset.html';
                 }, 2000);
             }
-            
-            console.log('\n=====================================');
         })();
     </script>
 </body>

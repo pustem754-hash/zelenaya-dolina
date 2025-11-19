@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <!-- Агрессивное отключение кеширования -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
     <meta name="theme-color" content="#10b981">
+    
+    <!-- Версия приложения для отладки -->
+    <meta name="app-version" content="2.0.0">
     
     <title>🏠 УК "Зелёная Долина" - Личный кабинет жильца</title>
     
@@ -448,9 +452,59 @@
         }, 3000);
     </script>
     
+    <!-- ПРОВЕРКА ВЕРСИИ И ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА -->
+    <script>
+        // ============================================
+        // ПРОВЕРКА ВЕРСИИ И ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА
+        // ============================================
+        
+        (function versionCheck() {
+            const CURRENT_VERSION = '2.0.0';
+            const STORAGE_KEY = 'app_version';
+            
+            // Проверяем версию в localStorage
+            const storedVersion = localStorage.getItem(STORAGE_KEY);
+            
+            console.log('═══════════════════════════════════');
+            console.log('🔍 ПРОВЕРКА ВЕРСИИ ПРИЛОЖЕНИЯ');
+            console.log('═══════════════════════════════════');
+            console.log('Текущая версия:', CURRENT_VERSION);
+            console.log('Сохранённая версия:', storedVersion || 'не найдена');
+            
+            if (storedVersion !== CURRENT_VERSION) {
+                console.log('⚠️  ОБНАРУЖЕНА СТАРАЯ ВЕРСИЯ!');
+                console.log('🔄 Выполняется жёсткая перезагрузка...\n');
+                
+                // Сохраняем новую версию
+                localStorage.setItem(STORAGE_KEY, CURRENT_VERSION);
+                
+                // Очищаем весь кеш перед перезагрузкой
+                if ('caches' in window) {
+                    caches.keys().then(keys => {
+                        return Promise.all(keys.map(key => caches.delete(key)));
+                    }).then(() => {
+                        // Жёсткая перезагрузка с очисткой кеша
+                        window.location.reload(true);
+                    });
+                } else {
+                    // Жёсткая перезагрузка
+                    window.location.reload(true);
+                }
+                
+                // Прерываем выполнение остального кода
+                return;
+            }
+            
+            console.log('✅ Версия актуальна');
+            console.log('═══════════════════════════════════\n');
+        })();
+    </script>
+    
     <!-- Service Worker: УЛЬТРА-АГРЕССИВНОЕ УДАЛЕНИЕ -->
     <script>
+        // ============================================
         // УЛЬТРА-АГРЕССИВНОЕ УДАЛЕНИЕ SERVICE WORKERS
+        // ============================================
         // Выполняется немедленно при загрузке страницы
         
         if ('serviceWorker' in navigator) {
@@ -514,15 +568,14 @@
                         }
                     }
                     
-                    // 4. Очищаем Storage
-                    console.log('\n🗑️  Очистка Storage...');
-                    try {
-                        localStorage.clear();
-                        sessionStorage.clear();
-                        console.log('   ✅ localStorage и sessionStorage очищены');
-                    } catch (error) {
-                        console.log(`   ⚠️  Ошибка: ${error.message}`);
-                    }
+          // 4. Очищаем только sessionStorage (НЕ localStorage - там версия!)
+          console.log('\n🗑️  Очистка sessionStorage...');
+          try {
+            sessionStorage.clear();
+            console.log('   ✅ sessionStorage очищен');
+          } catch (error) {
+            console.log(`   ⚠️  Ошибка: ${error.message}`);
+          }
                     
                     // 5. ФИНАЛЬНАЯ ПРОВЕРКА
                     console.log('\n═══════════════════════════════════');

@@ -1,10 +1,51 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script>
+        // КРИТИЧНО: Версия приложения
+        const APP_VERSION = '2.0.0';
+        const VERSION_KEY = 'app_version';
+
+        // Проверяем версию при загрузке
+        const savedVersion = localStorage.getItem(VERSION_KEY);
+
+        if (savedVersion !== APP_VERSION) {
+            console.log('🔄 Обнаружена новая версия! Очищаем кэш...');
+            
+            // Очищаем localStorage
+            localStorage.clear();
+            
+            // Очищаем sessionStorage
+            sessionStorage.clear();
+            
+            // Удаляем все Service Workers
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(reg => reg.unregister());
+                });
+            }
+            
+            // Очищаем кэши
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            
+            // Сохраняем новую версию
+            localStorage.setItem(VERSION_KEY, APP_VERSION);
+            
+            // ПРИНУДИТЕЛЬНАЯ перезагрузка с очисткой кэша
+            window.location.href = window.location.pathname + '?t=' + Date.now();
+            window.location.reload(true);
+        }
+    </script>
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma-directive" content="no-cache">
+    <meta http-equiv="Cache-directive" content="no-cache">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">

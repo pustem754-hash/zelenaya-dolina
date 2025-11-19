@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Аварийный сброс - УК Зелёная Долина</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    #status {
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      margin: 20px 0;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .step {
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+    .step.pending { color: #999; }
+    .step.active { 
+      background: #ffeaa7; 
+      color: #333;
+      font-weight: bold;
+    }
+    .step.done { 
+      background: #55efc4; 
+      color: #00b894;
+      font-weight: bold;
+    }
+    .step.error { 
+      background: #ff7675; 
+      color: #d63031;
+      font-weight: bold;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+    }
+    .btn:hover { 
+      background: #764ba2; 
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Аварийный сброс</h1>
+    <p>Очистка кеша и Service Workers</p>
+    
+    <div id="status">
+      <div class="spinner"></div>
+      <p>Инициализация...</p>
+    </div>
+    
+    <button id="manualBtn" class="btn" style="display:none;">
+      Повторить очистку
+    </button>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const manualBtn = document.getElementById('manualBtn');
+    
+    let steps = [
+      { name: 'Поиск Service Workers', fn: findServiceWorkers },
+      { name: 'Удаление Service Workers', fn: unregisterServiceWorkers },
+      { name: 'Очистка кешей', fn: clearCaches },
+      { name: 'Очистка localStorage', fn: clearStorage },
+      { name: 'Финальная проверка', fn: finalCheck }
+    ];
+    
+    async function findServiceWorkers() {
+      if (!('serviceWorker' in navigator)) {
+        throw new Error('Service Workers не поддерживаются');
+      }
+      
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      console.log('Найдено SW регистраций:', registrations.length);
+      
+      if (registrations.length === 0) {
+        return 'Service Workers не найдены ✓';
+      }
+      
+      return `Найдено ${registrations.length} Service Worker(s)`;
+    }
+    
+    async function unregisterServiceWorkers() {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      
+      if (registrations.length === 0) {
+        return 'Нечего удалять ✓';
+      }
+      
+      await Promise.all(
+        registrations.map(async (reg, i) => {
+          console.log(`Удаление SW ${i + 1}/${registrations.length}:`, reg.scope);
+          
+          // Попытка активировать waiting SW перед удалением
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+          
+          const success = await reg.unregister();
+          console.log(`SW ${i + 1} удалён:`, success);
+          return success;
+        })
+      );
+      
+      // Проверка
+      const remaining = await navigator.serviceWorker.getRegistrations();
+      if (remaining.length > 0) {
+        throw new Error(`Остались активные SW: ${remaining.length}`);
+      }
+      
+      return `Удалено ${registrations.length} Service Worker(s) ✓`;
+    }
+    
+    async function clearCaches() {
+      if (!('caches' in window)) {
+        return 'Cache API недоступно';
+      }
+      
+      const cacheNames = await caches.keys();
+      console.log('Найдено кешей:', cacheNames.length);
+      
+      if (cacheNames.length === 0) {
+        return 'Кеши не найдены ✓';
+      }
+      
+      await Promise.all(
+        cacheNames.map(async (cacheName) => {
+          console.log('Удаление кеша:', cacheName);
+          return await caches.delete(cacheName);
+        })
+      );
+      
+      // Проверка
+      const remaining = await caches.keys();
+      if (remaining.length > 0) {
+        throw new Error(`Остались кеши: ${remaining.length}`);
+      }
+      
+      return `Очищено ${cacheNames.length} кешей ✓`;
+    }
+    
+    async function clearStorage() {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log('Storage очищен');
+        return 'localStorage и sessionStorage очищены ✓';
+      } catch (e) {
+        console.warn('Ошибка очистки storage:', e);
+        return 'Storage частично очищен ⚠️';
+      }
+    }
+    
+    async function finalCheck() {
+      const swRegs = await navigator.serviceWorker.getRegistrations();
+      const cacheKeys = await caches.keys();
+      
+      if (swRegs.length === 0 && cacheKeys.length === 0) {
+        return 'Всё чисто! ✨';
+      }
+      
+      const issues = [];
+      if (swRegs.length > 0) issues.push(`SW: ${swRegs.length}`);
+      if (cacheKeys.length > 0) issues.push(`Кеши: ${cacheKeys.length}`);
+      
+      throw new Error(`Обнаружены остатки: ${issues.join(', ')}`);
+    }
+    
+    function renderStatus(currentStep, state, message) {
+      statusEl.innerHTML = steps.map((step, i) => {
+        let className = 'step pending';
+        let icon = '⏳';
+        
+        if (i < currentStep) {
+          className = 'step done';
+          icon = '✅';
+        } else if (i === currentStep) {
+          if (state === 'error') {
+            className = 'step error';
+            icon = '❌';
+          } else {
+            className = 'step active';
+            icon = '🔄';
+          }
+        }
+        
+        return `<div class="${className}">${icon} ${step.name}</div>`;
+      }).join('');
+      
+      if (message) {
+        statusEl.innerHTML += `<p style="margin-top: 15px; font-size: 14px; color: #666;">${message}</p>`;
+      }
+    }
+    
+    async function runCleanup() {
+      manualBtn.style.display = 'none';
+      
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        
+        try {
+          renderStatus(i, 'active', `Выполняется...`);
+          const result = await step.fn();
+          renderStatus(i, 'done', result);
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } catch (error) {
+          console.error(`Ошибка на шаге "${step.name}":`, error);
+          renderStatus(i, 'error', error.message);
+          manualBtn.style.display = 'block';
+          return;
+        }
+      }
+      
+      // Успех!
+      statusEl.innerHTML = `
+        <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+        <h2 style="color: #00b894; margin-bottom: 10px;">Очистка завершена!</h2>
+        <p style="color: #666;">Перенаправление на главную через <span id="countdown">3</span>...</p>
+      `;
+      
+      let countdown = 3;
+      const interval = setInterval(() => {
+        countdown--;
+        const countdownEl = document.getElementById('countdown');
+        if (countdownEl) countdownEl.textContent = countdown;
+        
+        if (countdown === 0) {
+          clearInterval(interval);
+          window.location.href = '/';
+        }
+      }, 1000);
+    }
+    
+    manualBtn.addEventListener('click', runCleanup);
+    
+    // Автозапуск при загрузке
+    setTimeout(runCleanup, 500);
+  </script>
+</body>
+</html>
+

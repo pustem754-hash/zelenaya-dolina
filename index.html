@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta http-equiv="Cache-Control" content="no-store">
-    <meta http-equiv="Expires" content="0">
-    <meta http-equiv="Pragma-directive" content="no-cache">
-    <meta http-equiv="Cache-directive" content="no-cache">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -29,8 +28,8 @@
     <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/styles.css?v=20250119">
+    <link rel="stylesheet" href="css/mobile.css?v=20250119">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -421,9 +420,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/camera.js" onerror="console.error('Ошибка загрузки camera.js')"></script>
-    <script src="js/app.js" onerror="console.error('Ошибка загрузки app.js')"></script>
-    <script src="js/mobile.js" onerror="console.error('Ошибка загрузки mobile.js')"></script>
+    <script src="js/camera.js?v=20250119" onerror="console.error('Ошибка загрузки camera.js')"></script>
+    <script src="js/app.js?v=20250119" onerror="console.error('Ошибка загрузки app.js')"></script>
+    <script src="js/mobile.js?v=20250119" onerror="console.error('Ошибка загрузки mobile.js')"></script>
     
     <!-- Fallback: показать приложение если скрипты не загрузились -->
     <script>
@@ -447,31 +446,26 @@
         }, 3000);
     </script>
     
-    <!-- Service Worker: Регистрация с самоудалением -->
+    <!-- Service Worker: Отмена регистрации -->
     <script>
+        // Отменяем регистрацию всех Service Workers (если есть)
         if ('serviceWorker' in navigator) {
-            // Сначала отменяем регистрацию старого SW
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) {
-                    console.log('Отмена регистрации SW:', registration);
+                registrations.forEach(function(registration) {
+                    console.log('Удаление Service Worker:', registration.scope);
                     registration.unregister();
-                }
+                });
             });
             
-            // Регистрируем новый SW который самоудалится
-            navigator.serviceWorker.register('/sw.js?v=' + Date.now())
-                .then(function(registration) {
-                    console.log('SW зарегистрирован для самоудаления:', registration);
-                    
-                    // Перезагружаем через 2 секунды после активации
-                    setTimeout(function() {
-                        console.log('Принудительная перезагрузка...');
-                        window.location.reload(true);
-                    }, 2000);
-                })
-                .catch(function(err) {
-                    console.log('Ошибка регистрации SW:', err);
+            // Очищаем весь кэш
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    cacheNames.forEach(function(cacheName) {
+                        console.log('Удаление кэша:', cacheName);
+                        caches.delete(cacheName);
+                    });
                 });
+            }
         }
     </script>
 </body>

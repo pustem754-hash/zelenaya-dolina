@@ -1,45 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script>
-        // КРИТИЧНО: Версия приложения
-        const APP_VERSION = '2.0.0';
-        const VERSION_KEY = 'app_version';
-
-        // Проверяем версию при загрузке
-        const savedVersion = localStorage.getItem(VERSION_KEY);
-
-        if (savedVersion !== APP_VERSION) {
-            console.log('🔄 Обнаружена новая версия! Очищаем кэш...');
-            
-            // Очищаем localStorage
-            localStorage.clear();
-            
-            // Очищаем sessionStorage
-            sessionStorage.clear();
-            
-            // Удаляем все Service Workers
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(registrations => {
-                    registrations.forEach(reg => reg.unregister());
-                });
-            }
-            
-            // Очищаем кэши
-            if ('caches' in window) {
-                caches.keys().then(names => {
-                    names.forEach(name => caches.delete(name));
-                });
-            }
-            
-            // Сохраняем новую версию
-            localStorage.setItem(VERSION_KEY, APP_VERSION);
-            
-            // ПРИНУДИТЕЛЬНАЯ перезагрузка с очисткой кэша
-            window.location.href = window.location.pathname + '?t=' + Date.now();
-            window.location.reload(true);
-        }
-    </script>
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Expires" content="0">
     <meta http-equiv="Pragma-directive" content="no-cache">
@@ -486,51 +447,31 @@
         }, 3000);
     </script>
     
-    <!-- Service Worker: Отключение и очистка кэша -->
+    <!-- Service Worker: Регистрация с самоудалением -->
     <script>
-        console.log('🔧 Начинаем отключение Service Worker...');
-
         if ('serviceWorker' in navigator) {
-            // Удаляем все Service Workers
-            navigator.serviceWorker.getRegistrations().then((registrations) => {
-                if (registrations.length > 0) {
-                    console.log(`🗑️ Найдено ${registrations.length} Service Worker(s), удаляем...`);
-                    registrations.forEach((registration) => {
-                        registration.unregister().then((success) => {
-                            if (success) {
-                                console.log('✅ Service Worker удалён:', registration.scope);
-                            }
-                        });
-                    });
-                } else {
-                    console.log('ℹ️ Service Worker не найден');
+            // Сначала отменяем регистрацию старого SW
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    console.log('Отмена регистрации SW:', registration);
+                    registration.unregister();
                 }
-            }).catch((error) => {
-                console.error('❌ Ошибка при удалении Service Worker:', error);
             });
-
-            // Очищаем все кэши
-            if ('caches' in window) {
-                caches.keys().then((cacheNames) => {
-                    if (cacheNames.length > 0) {
-                        console.log(`🗑️ Найдено ${cacheNames.length} кэш(ей), удаляем...`);
-                        cacheNames.forEach((cacheName) => {
-                            caches.delete(cacheName).then((success) => {
-                                if (success) {
-                                    console.log('✅ Кэш удалён:', cacheName);
-                                }
-                            });
-                        });
-                    } else {
-                        console.log('ℹ️ Кэши не найдены');
-                    }
-                }).catch((error) => {
-                    console.error('❌ Ошибка при очистке кэша:', error);
+            
+            // Регистрируем новый SW который самоудалится
+            navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+                .then(function(registration) {
+                    console.log('SW зарегистрирован для самоудаления:', registration);
+                    
+                    // Перезагружаем через 2 секунды после активации
+                    setTimeout(function() {
+                        console.log('Принудительная перезагрузка...');
+                        window.location.reload(true);
+                    }, 2000);
+                })
+                .catch(function(err) {
+                    console.log('Ошибка регистрации SW:', err);
                 });
-            }
-
-            console.log('✅ Очистка завершена! Приложение работает БЕЗ Service Worker');
-            console.log('✅ Теперь всегда будет загружаться свежая версия');
         }
     </script>
 </body>

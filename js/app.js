@@ -10,19 +10,28 @@ class ZelenayaDolinaApp {
     init() {
         console.log('🏠 УК Зелёная Долина - инициализация...');
         
-        // Hide loading screen and show app
-        setTimeout(() => {
-            this.hideLoadingScreen();
-            this.showApp();
-        }, 2000);
-
-        // Setup event listeners
-        this.setupEventListeners();
-        
-        // Setup network monitoring
-        this.setupNetworkMonitoring();
-        
-        console.log('✅ УК Зелёная Долина - инициализировано успешно');
+        try {
+            // Setup event listeners
+            this.setupEventListeners();
+            
+            // Setup network monitoring
+            this.setupNetworkMonitoring();
+            
+            // Hide loading screen and show app
+            setTimeout(() => {
+                this.hideLoadingScreen();
+                this.showApp();
+            }, 1000);
+            
+            console.log('✅ УК Зелёная Долина - инициализировано успешно');
+        } catch (error) {
+            console.error('Ошибка при инициализации:', error);
+            // Все равно показать приложение
+            setTimeout(() => {
+                this.hideLoadingScreen();
+                this.showApp();
+            }, 500);
+        }
     }
 
     hideLoadingScreen() {
@@ -39,6 +48,9 @@ class ZelenayaDolinaApp {
         const app = document.getElementById('app');
         if (app) {
             app.style.display = 'block';
+            app.style.opacity = '1';
+        } else {
+            console.error('Элемент #app не найден!');
         }
     }
 
@@ -67,6 +79,7 @@ class ZelenayaDolinaApp {
                 this.handleQuickAction(action);
             });
         });
+
     }
 
     setupNetworkMonitoring() {
@@ -134,16 +147,69 @@ class ZelenayaDolinaApp {
             submittedDate: new Date().toLocaleDateString('ru-RU'),
             status: 'ожидает',
             assignedTo: null,
-            estimatedCompletion: null
+            estimatedCompletion: null,
+            attachedPhoto: window.cameraManager?.photoData || null // Сохранить фото в base64
         };
 
         console.log('📝 Подача заявки:', request);
+        
+        // Добавить заявку в список
+        this.addRequestToList(request);
         
         // Show success message
         alert('✅ Заявка подана успешно! Номер заявки: #' + Date.now());
         
         // Reset form
         form.reset();
+        
+        // Очистить фото
+        if (window.cameraManager) {
+            window.cameraManager.photoData = null;
+        }
+        const thumbnailContainer = document.getElementById('photoThumbnailContainer');
+        if (thumbnailContainer) {
+            thumbnailContainer.style.display = 'none';
+        }
+    }
+
+    // Добавить заявку в список
+    addRequestToList(request) {
+        const requestsList = document.getElementById('requestsList');
+        if (!requestsList) return;
+
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item';
+        
+        // Определить класс статуса для приоритета
+        const priorityClass = request.priority === 'высокий' ? 'status-high' : 
+                              request.priority === 'средний' ? 'status-medium' : 'status-low';
+        
+        // Определить класс статуса для статуса заявки
+        const statusClass = request.status === 'ожидает' ? 'status-pending' : 
+                           request.status === 'в работе' ? 'status-active' : 
+                           request.status === 'завершено' ? 'status-completed' : 'status-pending';
+        
+        // Иконка фото если есть
+        const photoIcon = request.attachedPhoto ? ' 📷' : '';
+        
+        // Экранировать специальные символы для безопасного использования в innerHTML
+        const safeTitle = this.escapeHtml(request.title);
+        const safeType = this.escapeHtml(request.type);
+        const safePriority = this.escapeHtml(request.priority);
+        const safeDescription = this.escapeHtml(request.description);
+        const safeDate = this.escapeHtml(request.submittedDate);
+        
+        listItem.innerHTML = `
+            <h3>${safeTitle}${photoIcon} <span class="status-badge ${statusClass}">${request.status}</span></h3>
+            <p><strong>Тип:</strong> ${safeType}</p>
+            <p><strong>Приоритет:</strong> <span class="status-badge ${priorityClass}">${safePriority}</span></p>
+            <p><strong>Квартира:</strong> №15</p>
+            <p><strong>Описание:</strong> ${safeDescription}</p>
+            <p><strong>Дата:</strong> ${safeDate}</p>
+        `;
+        
+        // Вставить в начало списка
+        requestsList.insertBefore(listItem, requestsList.firstChild);
     }
 
     handleQuickAction(action) {
@@ -163,6 +229,14 @@ class ZelenayaDolinaApp {
                 this.showSection('apartments');
                 break;
         }
+    }
+
+    // Экранирование HTML для безопасности
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
 
@@ -193,9 +267,104 @@ function submitCounterReading(counterId) {
     alert('📊 Показания счетчика переданы!');
 }
 
+function removePhoto() {
+    if (window.cameraManager) {
+        window.cameraManager.photoData = null;
+    }
+    const thumbnailContainer = document.getElementById('photoThumbnailContainer');
+    if (thumbnailContainer) {
+        thumbnailContainer.style.display = 'none';
+    }
+}
+
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.zelenayaDolinaApp = new ZelenayaDolinaApp();
+    try {
+        // Инициализация основного приложения
+        window.zelenayaDolinaApp = new ZelenayaDolinaApp();
+        
+        // Инициализация камеры (если класс доступен)
+        if (typeof CameraManager !== 'undefined') {
+            const cameraManager = new CameraManager();
+            window.cameraManager = cameraManager;
+
+            // Обработчик открытия камеры
+            const openCameraBtn = document.getElementById('openCameraBtn');
+            if (openCameraBtn) {
+                openCameraBtn.addEventListener('click', () => {
+                    cameraManager.openCamera((photoData) => {
+                        // Фото уже обработано в usePhoto()
+                    });
+                });
+            }
+
+            // Обработчики кнопок камеры
+            const captureBtn = document.getElementById('captureBtn');
+            if (captureBtn) {
+                captureBtn.addEventListener('click', () => {
+                    cameraManager.capturePhoto();
+                });
+            }
+
+            const switchCameraBtn = document.getElementById('switchCameraBtn');
+            if (switchCameraBtn) {
+                switchCameraBtn.addEventListener('click', () => {
+                    cameraManager.switchCamera();
+                });
+            }
+
+            const closeCameraBtn = document.getElementById('closeCameraBtn');
+            if (closeCameraBtn) {
+                closeCameraBtn.addEventListener('click', () => {
+                    cameraManager.closeCamera();
+                });
+            }
+
+            const retakeBtn = document.getElementById('retakeBtn');
+            if (retakeBtn) {
+                retakeBtn.addEventListener('click', () => {
+                    cameraManager.retakePhoto();
+                });
+            }
+
+            const usePhotoBtn = document.getElementById('usePhotoBtn');
+            if (usePhotoBtn) {
+                usePhotoBtn.addEventListener('click', () => {
+                    cameraManager.usePhoto();
+                });
+            }
+        } else {
+            console.warn('CameraManager не найден. Камера недоступна.');
+        }
+
+        // Обработчик удаления фото
+        const removePhotoBtn = document.getElementById('removePhotoBtn');
+        if (removePhotoBtn) {
+            removePhotoBtn.addEventListener('click', () => {
+                removePhoto();
+            });
+        }
+    } catch (error) {
+        console.error('Ошибка при инициализации приложения:', error);
+        // Все равно попытаться показать приложение
+        const loadingScreen = document.getElementById('loading-screen');
+        const app = document.getElementById('app');
+        
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
+        
+        if (app) {
+            app.style.display = 'block';
+            console.log('Приложение показано несмотря на ошибку инициализации');
+        } else {
+            console.error('Критическая ошибка: элемент #app не найден!');
+            document.body.innerHTML = '<div style="padding: 2rem; text-align: center; color: red;"><h2>Критическая ошибка</h2><p>Элемент приложения не найден. Проверьте файл index.html</p></div>';
+        }
+    }
 });
 
 // Service Worker registration

@@ -446,27 +446,86 @@
         }, 3000);
     </script>
     
-    <!-- Service Worker: Отмена регистрации -->
+    <!-- Service Worker: Агрессивная деактивация -->
     <script>
-        // Отменяем регистрацию всех Service Workers (если есть)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                registrations.forEach(function(registration) {
-                    console.log('Удаление Service Worker:', registration.scope);
-                    registration.unregister();
-                });
-            });
+        (function() {
+            console.log('[APP] Запуск агрессивной деактивации Service Worker');
             
-            // Очищаем весь кэш
-            if ('caches' in window) {
-                caches.keys().then(function(cacheNames) {
-                    cacheNames.forEach(function(cacheName) {
-                        console.log('Удаление кэша:', cacheName);
-                        caches.delete(cacheName);
-                    });
+            if ('serviceWorker' in navigator) {
+                
+                // 1. Слушаем сообщения от SW
+                navigator.serviceWorker.addEventListener('message', function(event) {
+                    console.log('[APP] Сообщение от SW:', event.data);
+                    if (event.data && event.data.type === 'SW_KILLED') {
+                        console.log('[APP] SW убит, принудительная перезагрузка через 2 секунды');
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 2000);
+                    }
                 });
+                
+                // 2. Получаем все зарегистрированные SW
+                navigator.serviceWorker.getRegistrations()
+                    .then(function(registrations) {
+                        
+                        if (registrations.length === 0) {
+                            console.log('[APP] Service Workers не найдены - всё чисто!');
+                            return;
+                        }
+                        
+                        console.log('[APP] Найдено Service Workers:', registrations.length);
+                        
+                        // 3. Регистрируем "убийцу" SW
+                        navigator.serviceWorker.register('/sw.js?killer=' + Date.now(), {
+                            scope: '/',
+                            updateViaCache: 'none'
+                        })
+                        .then(function(registration) {
+                            console.log('[APP] SW-убийца зарегистрирован');
+                            
+                            // Принудительно активируем нового SW
+                            if (registration.waiting) {
+                                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                            
+                            if (registration.installing) {
+                                registration.installing.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                            
+                            // 4. Удаляем старые SW
+                            registrations.forEach(function(reg) {
+                                if (reg.scope !== registration.scope) {
+                                    console.log('[APP] Удаление старого SW:', reg.scope);
+                                    reg.unregister();
+                                }
+                            });
+                            
+                        })
+                        .catch(function(error) {
+                            console.error('[APP] Ошибка регистрации SW-убийцы:', error);
+                        });
+                        
+                    })
+                    .catch(function(error) {
+                        console.error('[APP] Ошибка получения SW:', error);
+                    });
+                
+                // 5. Очищаем все кэши
+                if ('caches' in window) {
+                    caches.keys().then(function(cacheNames) {
+                        console.log('[APP] Найдено кэшей:', cacheNames.length);
+                        cacheNames.forEach(function(cacheName) {
+                            console.log('[APP] Удаление кэша:', cacheName);
+                            caches.delete(cacheName);
+                        });
+                    });
+                }
+                
+            } else {
+                console.log('[APP] Service Workers не поддерживаются');
             }
-        }
+            
+        })();
     </script>
 </body>
 </html>

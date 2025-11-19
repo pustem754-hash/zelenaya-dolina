@@ -15,7 +15,8 @@
     <title>🏠 УК "Зелёная Долина" - Личный кабинет жильца</title>
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
+    <!-- ВРЕМЕННО ОТКЛЮЧАЕМ MANIFEST -->
+    <!-- <link rel="manifest" href="manifest.json"> -->
     
     <!-- Favicon -->
     <link rel="icon" href="icons/favicon.png" type="image/png">
@@ -446,98 +447,70 @@
         }, 3000);
     </script>
     
-    <!-- Service Worker: ЯДЕРНАЯ ОЧИСТКА -->
+    <!-- Service Worker: SW DESTROYER -->
     <script>
-        // ЯДЕРНЫЙ ВАРИАНТ - полное уничтожение SW
-        (async function nuclearCleanup() {
-            console.log('☢️ ЯДЕРНАЯ ОЧИСТКА ЗАПУЩЕНА');
-            console.log('==========================================\n');
-            
-            try {
-                // 1. Получаем все регистрации
-                const regs = await navigator.serviceWorker.getRegistrations();
-                console.log(`Найдено SW: ${regs.length}\n`);
+        // SW DESTROYER - гарантированное удаление Service Worker
+        if ('serviceWorker' in navigator) {
+            (async function initDestroyer() {
+                console.log('🔥 Инициализация SW Destroyer...');
                 
-                for (const reg of regs) {
-                    console.log(`Обработка: ${reg.scope}`);
+                try {
+                    // 1. Проверяем существующие SW
+                    const existingRegs = await navigator.serviceWorker.getRegistrations();
+                    console.log(`Найдено существующих SW: ${existingRegs.length}`);
                     
-                    // Получаем все состояния SW
-                    const workers = [reg.active, reg.waiting, reg.installing].filter(Boolean);
-                    
-                    console.log(`  Найдено worker состояний: ${workers.length}`);
-                    
-                    // Пытаемся послать SKIP_WAITING всем
-                    for (const worker of workers) {
-                        try {
-                            worker.postMessage({ type: 'SKIP_WAITING' });
-                            console.log(`    → Отправлено SKIP_WAITING`);
-                        } catch (e) {
-                            console.log(`    → Ошибка postMessage:`, e.message);
+                    if (existingRegs.length > 0) {
+                        console.log('⚠️ Обнаружены старые SW, запускаем Destroyer...');
+                        
+                        // 2. Регистрируем SW Destroyer
+                        const registration = await navigator.serviceWorker.register('/sw-destroyer.js', {
+                            scope: '/',
+                            updateViaCache: 'none' // Не кешируем SW файл
+                        });
+                        
+                        console.log('✅ SW Destroyer зарегистрирован');
+                        
+                        // 3. Слушаем сообщения от SW
+                        navigator.serviceWorker.addEventListener('message', (event) => {
+                            if (event.data.type === 'SW_DESTROYED') {
+                                console.log('💥 SW уничтожен, перезагрузка через 2 секунды...');
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 2000);
+                            }
+                        });
+                        
+                        // 4. Ждём активации Destroyer
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
                         }
+                        
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'activated') {
+                                        console.log('✅ SW Destroyer активирован');
+                                    }
+                                });
+                            }
+                        });
+                        
+                    } else {
+                        console.log('✅ Service Workers не найдены, всё чисто!');
                     }
                     
-                    // Ждём немного
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                } catch (error) {
+                    console.error('❌ Ошибка инициализации Destroyer:', error);
                     
-                    // УДАЛЯЕМ регистрацию
-                    const result = await reg.unregister();
-                    console.log(`  ${result ? '✅' : '❌'} Unregister: ${result}\n`);
-                }
-                
-                // 2. Удаляем ВСЕ кеши
-                const keys = await caches.keys();
-                console.log(`\nНайдено кешей: ${keys.length}`);
-                
-                for (const key of keys) {
-                    await caches.delete(key);
-                    console.log(`  ✅ Удалён: ${key}`);
-                }
-                
-                // 3. Storage
-                localStorage.clear();
-                sessionStorage.clear();
-                console.log('\n✅ Storage очищен');
-                
-                // 4. Финальная проверка
-                const finalRegs = await navigator.serviceWorker.getRegistrations();
-                const finalCaches = await caches.keys();
-                
-                console.log('\n==========================================');
-                console.log('ФИНАЛЬНАЯ ПРОВЕРКА:');
-                console.log(`Service Workers: ${finalRegs.length}`);
-                console.log(`Кеши: ${finalCaches.length}`);
-                
-                if (finalRegs.length > 0) {
-                    console.error('\n⚠️ SW ВСЁ ЕЩЁ ТАМ!');
-                    console.error('ТРЕБУЕТСЯ РУЧНОЕ УДАЛЕНИЕ:');
-                    console.error('1. Нажмите "Unregister" в Application → Service Workers');
-                    console.error('2. Application → Storage → Clear site data');
-                    console.error('3. ЗАКРОЙТЕ ВСЕ вкладки с этим сайтом');
-                    console.error('4. ЗАКРОЙТЕ браузер ПОЛНОСТЬЮ');
-                    console.error('5. Откройте браузер заново');
-                    
-                    // Перенаправление на emergency reset
+                    // Fallback: перенаправляем на emergency reset
+                    console.log('Перенаправление на emergency reset через 2 секунды...');
                     setTimeout(() => {
                         window.location.href = '/emergency-reset.html';
-                    }, 3000);
-                } else {
-                    console.log('\n✅✅✅ ВСЁ ЧИСТО! ✅✅✅');
-                    console.log('\n⚠️ КРИТИЧЕСКИ ВАЖНО:');
-                    console.log('1. ЗАКРОЙТЕ ВСЕ вкладки с этим сайтом');
-                    console.log('2. ЗАКРОЙТЕ Chrome ПОЛНОСТЬЮ');
-                    console.log('3. Откройте Chrome заново');
-                    console.log('4. Откройте сайт снова\n');
+                    }, 2000);
                 }
-                
-                console.log('==========================================');
-                
-            } catch (error) {
-                console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
-                setTimeout(() => {
-                    window.location.href = '/emergency-reset.html';
-                }, 2000);
-            }
-        })();
+            })();
+        }
     </script>
 </body>
 </html>

@@ -6,8 +6,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Отключаем предложение установки PWA -->
+    <meta name="mobile-web-app-capable" content="no">
+    <meta name="apple-mobile-web-app-capable" content="no">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
     <meta name="theme-color" content="#10b981">
@@ -447,69 +448,117 @@
         }, 3000);
     </script>
     
-    <!-- Service Worker: SW DESTROYER -->
+    <!-- Service Worker: УЛЬТРА-АГРЕССИВНОЕ УДАЛЕНИЕ -->
     <script>
-        // SW DESTROYER - гарантированное удаление Service Worker
+        // УЛЬТРА-АГРЕССИВНОЕ УДАЛЕНИЕ SERVICE WORKERS
+        // Выполняется немедленно при загрузке страницы
+        
         if ('serviceWorker' in navigator) {
-            (async function initDestroyer() {
-                console.log('🔥 Инициализация SW Destroyer...');
+            (async function killAllServiceWorkers() {
+                console.log('🔥🔥🔥 УЛЬТРА-ОЧИСТКА SERVICE WORKERS 🔥🔥🔥');
+                console.log('==========================================\n');
                 
                 try {
-                    // 1. Проверяем существующие SW
-                    const existingRegs = await navigator.serviceWorker.getRegistrations();
-                    console.log(`Найдено существующих SW: ${existingRegs.length}`);
+                    // 1. Получаем ВСЕ регистрации
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    console.log(`Найдено Service Workers: ${registrations.length}`);
                     
-                    if (existingRegs.length > 0) {
-                        console.log('⚠️ Обнаружены старые SW, запускаем Destroyer...');
-                        
-                        // 2. Регистрируем SW Destroyer
-                        const registration = await navigator.serviceWorker.register('/sw-destroyer.js', {
-                            scope: '/',
-                            updateViaCache: 'none' // Не кешируем SW файл
-                        });
-                        
-                        console.log('✅ SW Destroyer зарегистрирован');
-                        
-                        // 3. Слушаем сообщения от SW
-                        navigator.serviceWorker.addEventListener('message', (event) => {
-                            if (event.data.type === 'SW_DESTROYED') {
-                                console.log('💥 SW уничтожен, перезагрузка через 2 секунды...');
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 2000);
-                            }
-                        });
-                        
-                        // 4. Ждём активации Destroyer
-                        if (registration.waiting) {
-                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                        }
-                        
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            if (newWorker) {
-                                newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'activated') {
-                                        console.log('✅ SW Destroyer активирован');
+                    if (registrations.length === 0) {
+                        console.log('✅ Service Workers не найдены\n');
+                    } else {
+                        // 2. Удаляем КАЖДЫЙ SW без исключений
+                        for (let i = 0; i < registrations.length; i++) {
+                            const reg = registrations[i];
+                            console.log(`\n🗑️  Удаление SW ${i + 1}/${registrations.length}:`);
+                            console.log(`   Scope: ${reg.scope}`);
+                            
+                            try {
+                                // Пытаемся получить все состояния SW
+                                const workers = [reg.active, reg.waiting, reg.installing].filter(Boolean);
+                                
+                                // Отправляем команду самоуничтожения каждому состоянию
+                                workers.forEach(worker => {
+                                    try {
+                                        worker.postMessage({ type: 'KILL', action: 'unregister' });
+                                    } catch (e) {
+                                        // Игнорируем ошибки postMessage
                                     }
                                 });
+                                
+                                // Ждём немного
+                                await new Promise(resolve => setTimeout(resolve, 100));
+                                
+                                // УДАЛЯЕМ регистрацию
+                                const success = await reg.unregister();
+                                console.log(`   ${success ? '✅' : '❌'} Результат: ${success}`);
+                                
+                            } catch (error) {
+                                console.log(`   ⚠️  Ошибка: ${error.message}`);
                             }
-                        });
-                        
-                    } else {
-                        console.log('✅ Service Workers не найдены, всё чисто!');
+                        }
                     }
                     
-                } catch (error) {
-                    console.error('❌ Ошибка инициализации Destroyer:', error);
+                    // 3. Удаляем ВСЕ кеши
+                    console.log('\n🗑️  Очистка кешей...');
+                    const cacheNames = await caches.keys();
+                    console.log(`Найдено кешей: ${cacheNames.length}`);
                     
-                    // Fallback: перенаправляем на emergency reset
-                    console.log('Перенаправление на emergency reset через 2 секунды...');
-                    setTimeout(() => {
-                        window.location.href = '/emergency-reset.html';
-                    }, 2000);
+                    if (cacheNames.length > 0) {
+                        for (const cacheName of cacheNames) {
+                            try {
+                                await caches.delete(cacheName);
+                                console.log(`   ✅ Удалён: ${cacheName}`);
+                            } catch (error) {
+                                console.log(`   ⚠️  Ошибка: ${error.message}`);
+                            }
+                        }
+                    }
+                    
+                    // 4. Очищаем Storage
+                    console.log('\n🗑️  Очистка Storage...');
+                    try {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        console.log('   ✅ localStorage и sessionStorage очищены');
+                    } catch (error) {
+                        console.log(`   ⚠️  Ошибка: ${error.message}`);
+                    }
+                    
+                    // 5. ФИНАЛЬНАЯ ПРОВЕРКА
+                    console.log('\n═══════════════════════════════════');
+                    console.log('📊 ФИНАЛЬНАЯ ПРОВЕРКА:');
+                    console.log('═══════════════════════════════════');
+                    
+                    const finalRegs = await navigator.serviceWorker.getRegistrations();
+                    const finalCaches = await caches.keys();
+                    const hasController = !!navigator.serviceWorker.controller;
+                    
+                    console.log(`Service Workers: ${finalRegs.length}`);
+                    console.log(`Кеши: ${finalCaches.length}`);
+                    console.log(`SW Контроллер: ${hasController ? 'АКТИВЕН ⚠️' : 'НЕТ ✅'}`);
+                    
+                    if (finalRegs.length === 0 && !hasController) {
+                        console.log('\n✅✅✅ ВСЁ ИДЕАЛЬНО! ✅✅✅');
+                        console.log('Service Workers полностью удалены!');
+                        console.log('Приложение работает как обычный сайт.\n');
+                    } else {
+                        console.log('\n⚠️⚠️⚠️ ОСТАЛИСЬ СЛЕДЫ! ⚠️⚠️⚠️');
+                        console.log('\nВЫПОЛНИТЕ ВРУЧНУЮ:');
+                        console.log('1. DevTools → Application → Service Workers → Unregister');
+                        console.log('2. DevTools → Application → Storage → Clear site data');
+                        console.log('3. Закройте ВСЕ вкладки с сайтом');
+                        console.log('4. Закройте браузер ПОЛНОСТЬЮ');
+                        console.log('5. Откройте браузер снова\n');
+                    }
+                    
+                    console.log('==========================================');
+                    
+                } catch (error) {
+                    console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
                 }
             })();
+        } else {
+            console.log('ℹ️  Service Workers не поддерживаются в этом браузере');
         }
     </script>
     

@@ -32,9 +32,27 @@
     Cache-Control = "no-cache, no-store, must-revalidate, max-age=0"
 
 [[redirects]]
-  # Редирект для старых Service Worker URL
+  # Редирект для ЛЮБЫХ старых Service Worker URL на пустой SW
   from = "/sw.js"
-  to = "/sw-destroyer.js"
+  to = "/sw-empty.js"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/sw-killer.js"
+  to = "/sw-empty.js"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/sw-destroyer.js"
+  to = "/sw-empty.js"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/service-worker.js"
+  to = "/sw-empty.js"
   status = 301
   force = true
 

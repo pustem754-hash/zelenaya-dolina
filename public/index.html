@@ -1,81 +1,316 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UK Zelenaya Dolina v5.0</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;color:#fff;padding-bottom:70px}.app{max-width:600px;margin:0 auto;padding:20px}.header{text-align:center;padding:30px 20px;background:rgba(255,255,255,.1);border-radius:20px;margin-bottom:20px}.header h1{font-size:28px;margin-bottom:10px}.version{background:#4CAF50;padding:8px 16px;border-radius:20px;display:inline-block}.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;padding:8px 0;box-shadow:0 -2px 10px rgba(0,0,0,.1)}.nav-item{flex:1;text-align:center;padding:8px;color:#666;cursor:pointer;font-size:11px}.nav-item.active{color:#667eea;font-weight:700}.section{display:none;animation:fadeIn .3s}.section.active{display:block}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.card{background:#fff;color:#333;padding:20px;border-radius:15px;margin-bottom:15px}.card h3{margin-bottom:10px;color:#667eea}.stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}.stat:last-child{border:0}button{background:#667eea;color:#fff;border:0;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:16px;width:100%;margin-top:10px}button:active{opacity:.8}input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:10px 0;font-size:16px}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>УК Зелёная Долина v5.1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        .header .version {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #27ae60;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:active {
+            background: #229954;
+        }
+        .btn-camera {
+            background: #3498db;
+            margin-bottom: 10px;
+        }
+        .btn-camera:active {
+            background: #2980b9;
+        }
+        #preview {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 10px 0;
+            display: none;
+        }
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+        }
+        .nav-item {
+            padding: 12px 5px;
+            text-align: center;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 11px;
+            color: #666;
+        }
+        .nav-item.active {
+            color: #27ae60;
+        }
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-<div class="header">
-<h1>🏢 УК Зелёная Долина</h1>
-<div class="version">✅ v5.0.0</div>
-</div>
-<div id="s1" class="section active">
-<div class="card"><h3>📊 Статистика</h3>
-<div class="stat"><span>К оплате:</span><strong>5 234 ₽</strong></div>
-<div class="stat"><span>Активные заявки:</span><strong>2</strong></div>
-<div class="stat"><span>Уведомления:</span><strong>3</strong></div></div>
-<div class="card"><h3>📞 Контакты УК</h3>
-<p>☎️ Диспетчер: 8 960 072 03 21</p>
-<p>📧 Email: uk-zeldol@yandex.ru</p>
-<p>📍 Адрес: ул. Шустова, 4А, пом. 15</p></div>
-</div>
-<div id="s2" class="section">
-<div class="card"><h3>🏢 Квартира №45</h3>
-<div class="stat"><span>Площадь:</span><strong>54 м²</strong></div>
-<div class="stat"><span>Комнаты:</span><strong>2</strong></div>
-<div class="stat"><span>Этаж:</span><strong>5 из 9</strong></div>
-<div class="stat"><span>Подъезд:</span><strong>2</strong></div></div>
-</div>
-<div id="s3" class="section">
-<div class="card"><h3>💳 Платежи</h3>
-<div class="stat"><span>Декабрь 2024:</span><strong>5 234 ₽</strong></div>
-<button onclick="alert('Функция оплаты')">Оплатить</button>
-<button onclick="alert('Функция скачивания')">Скачать квитанцию</button></div>
-</div>
-<div id="s4" class="section">
-<div class="card"><h3>📝 Новая заявка</h3>
-<select><option>Выберите тип</option><option>Ремонт</option><option>Электрика</option><option>Сантехника</option><option>Уборка</option></select>
-<input type="text" placeholder="Название проблемы">
-<textarea rows="4" placeholder="Описание проблемы"></textarea>
-<button onclick="alert('Откроется камера')">📷 Добавить фото</button>
-<button onclick="alert('Заявка отправлена!')">Отправить заявку</button></div>
-</div>
-<div id="s5" class="section">
-<div class="card"><h3>🔔 Уведомления</h3>
-<p style="padding:10px;background:#f0f0f0;border-radius:8px;margin:10px 0">Плановое отключение воды 25 декабря</p>
-<p style="padding:10px;background:#f0f0f0;border-radius:8px;margin:10px 0">Новая квитанция за декабрь готова</p></div>
-</div>
-<div id="s6" class="section">
-<div class="card"><h3>📊 Передать показания</h3>
-<label>⚡ Электричество (кВт·ч):</label>
-<input type="number" placeholder="12345">
-<label>💧 Холодная вода (м³):</label>
-<input type="number" placeholder="45">
-<label>🔥 Горячая вода (м³):</label>
-<input type="number" placeholder="23">
-<button onclick="alert('Показания переданы!')">Передать показания</button></div>
-</div>
-</div>
-<div class="nav">
-<div class="nav-item active" onclick="go(1,this)">🏠<br>Главная</div>
-<div class="nav-item" onclick="go(2,this)">🏢<br>Квартиры</div>
-<div class="nav-item" onclick="go(3,this)">💳<br>Платежи</div>
-<div class="nav-item" onclick="go(4,this)">📝<br>Заявки</div>
-<div class="nav-item" onclick="go(5,this)">🔔<br>Уведомления</div>
-<div class="nav-item" onclick="go(6,this)">📊<br>Счётчики</div>
-</div>
-<script>
-function go(n,el){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-document.getElementById('s'+n).classList.add('active');
-el.classList.add('active');
-}
-console.log('%c✅ УК Зелёная Долина v5.0.0 РАБОТАЕТ!','background:#4CAF50;color:#fff;padding:10px;font-size:16px;font-weight:bold');
-</script>
+    <div class="header">
+        <h1>🏡 УК Зелёная Долина</h1>
+        <div class="version">v5.1.0</div>
+    </div>
+
+    <!-- Главная -->
+    <div id="home" class="section active">
+        <div class="card">
+            <h2>📊 Статистика</h2>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-value">5 234 ₽</div>
+                    <div class="stat-label">К оплате</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Активные заявки</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Уведомления</div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>📞 Контакты УК</h2>
+            <p>📱 Диспетчер: 8 960 072 03 21</p>
+            <p>✉️ Email: uk.gdom@yandex.ru</p>
+            <p>🏢 Адрес: ул. Шоссейная 4А, пом. 15</p>
+        </div>
+    </div>
+
+    <!-- Квартиры -->
+    <div id="apartments" class="section">
+        <div class="card">
+            <h2>🏠 Моя квартира</h2>
+            <p><strong>Адрес:</strong> ул. Зелёная, д. 15, кв. 42</p>
+            <p><strong>Площадь:</strong> 65 м²</p>
+            <p><strong>Собственники:</strong> 2</p>
+        </div>
+    </div>
+
+    <!-- Платежи -->
+    <div id="payments" class="section">
+        <div class="card">
+            <h2>💳 Платежи</h2>
+            <div class="stat-item">
+                <div class="stat-value">5 234 ₽</div>
+                <div class="stat-label">К оплате за январь</div>
+            </div>
+            <button class="btn">Оплатить</button>
+        </div>
+    </div>
+
+    <!-- Заявки -->
+    <div id="requests" class="section">
+        <div class="card">
+            <h2>📝 Новая заявка</h2>
+            <div class="input-group">
+                <label>Тип проблемы</label>
+                <input type="text" placeholder="Например: течёт кран">
+            </div>
+            <div class="input-group">
+                <label>Описание</label>
+                <textarea placeholder="Подробное описание проблемы..."></textarea>
+            </div>
+            <button class="btn btn-camera" onclick="openCamera()">📷 Сделать фото</button>
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
+            <img id="preview" alt="Предпросмотр">
+            <button class="btn">Отправить заявку</button>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="notifications" class="section">
+        <div class="card">
+            <h2>🔔 Уведомления</h2>
+            <p>📢 Плановое отключение воды 25.01 с 10:00 до 16:00</p>
+            <p>✅ Заявка №123 выполнена</p>
+            <p>💰 Новая квитанция за январь</p>
+        </div>
+    </div>
+
+    <!-- Счётчики -->
+    <div id="counters" class="section">
+        <div class="card">
+            <h2>🔢 Передать показания</h2>
+            <div class="input-group">
+                <label>Холодная вода (м³)</label>
+                <input type="number" placeholder="Текущие показания">
+            </div>
+            <div class="input-group">
+                <label>Горячая вода (м³)</label>
+                <input type="number" placeholder="Текущие показания">
+            </div>
+            <div class="input-group">
+                <label>Электричество (кВт⋅ч)</label>
+                <input type="number" placeholder="Текущие показания">
+            </div>
+            <button class="btn">Отправить показания</button>
+        </div>
+    </div>
+
+    <!-- Навигация -->
+    <nav class="nav">
+        <button class="nav-item active" onclick="showSection('home')">
+            <div class="nav-icon">🏠</div>
+            <div>Главная</div>
+        </button>
+        <button class="nav-item" onclick="showSection('apartments')">
+            <div class="nav-icon">🏢</div>
+            <div>Квартиры</div>
+        </button>
+        <button class="nav-item" onclick="showSection('payments')">
+            <div class="nav-icon">💳</div>
+            <div>Платежи</div>
+        </button>
+        <button class="nav-item" onclick="showSection('requests')">
+            <div class="nav-icon">📝</div>
+            <div>Заявки</div>
+        </button>
+        <button class="nav-item" onclick="showSection('notifications')">
+            <div class="nav-icon">🔔</div>
+            <div>Уведомления</div>
+        </button>
+        <button class="nav-item" onclick="showSection('counters')">
+            <div class="nav-icon">🔢</div>
+            <div>Счётчики</div>
+        </button>
+    </nav>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        function openCamera() {
+            document.getElementById('photoInput').click();
+        }
+        
+        function handlePhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 </body>
 </html>
-

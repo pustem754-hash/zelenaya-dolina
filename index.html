@@ -481,9 +481,12 @@
                 // Очищаем весь кеш перед перезагрузкой
                 if ('caches' in window) {
                     caches.keys().then(keys => {
-                        return Promise.all(keys.map(key => caches.delete(key)));
+                        return Promise.all(keys.map(key => caches.delete(key).catch(() => {})));
                     }).then(() => {
                         // Жёсткая перезагрузка с очисткой кеша
+                        window.location.reload(true);
+                    }).catch(() => {
+                        // Если ошибка при очистке кэша - всё равно перезагружаем
                         window.location.reload(true);
                     });
                 } else {
@@ -527,27 +530,38 @@
                             console.log(`   Scope: ${reg.scope}`);
                             
                             try {
-                                // Пытаемся получить все состояния SW
-                                const workers = [reg.active, reg.waiting, reg.installing].filter(Boolean);
-                                
-                                // Отправляем команду самоуничтожения каждому состоянию
-                                workers.forEach(worker => {
+                                // Пытаемся активировать waiting/installing SW перед удалением
+                                if (reg.waiting) {
                                     try {
-                                        worker.postMessage({ type: 'KILL', action: 'unregister' });
+                                        reg.waiting.postMessage({ type: 'SKIP_WAITING' }).catch(() => {});
                                     } catch (e) {
-                                        // Игнорируем ошибки postMessage
+                                        // Игнорируем ошибки
                                     }
-                                });
+                                }
                                 
-                                // Ждём немного
+                                if (reg.installing) {
+                                    try {
+                                        reg.installing.postMessage({ type: 'SKIP_WAITING' }).catch(() => {});
+                                    } catch (e) {
+                                        // Игнорируем ошибки
+                                    }
+                                }
+                                
+                                // Ждём немного для обработки сообщений
                                 await new Promise(resolve => setTimeout(resolve, 100));
                                 
-                                // УДАЛЯЕМ регистрацию
-                                const success = await reg.unregister();
+                                // УДАЛЯЕМ регистрацию напрямую (без postMessage)
+                                const success = await reg.unregister().catch(() => false);
                                 console.log(`   ${success ? '✅' : '❌'} Результат: ${success}`);
                                 
                             } catch (error) {
                                 console.log(`   ⚠️  Ошибка: ${error.message}`);
+                                // Пытаемся удалить даже при ошибке
+                                try {
+                                    await reg.unregister().catch(() => {});
+                                } catch (e) {
+                                    // Игнорируем
+                                }
                             }
                         }
                     }

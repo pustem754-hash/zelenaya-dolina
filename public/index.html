@@ -154,6 +154,85 @@
             margin: 10px 0;
             display: none;
         }
+        .photos-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .photo-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        .photo-item .btn-delete-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .photo-item .btn-delete-photo:active {
+            background: rgba(192, 57, 43, 0.9);
+        }
+        .photo-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-viewer.active {
+            display: flex;
+        }
+        .photo-viewer #fullPhoto {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .btn-close-photo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-close-photo:active {
+            background: rgba(255,255,255,0.7);
+        }
         .audio-player {
             width: 100%;
             margin: 10px 0;
@@ -269,7 +348,15 @@
             <!-- Камера -->
             <button class="btn btn-camera" onclick="openCamera()">📷 Сделать фото</button>
             <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
-            <img id="preview" alt="Предпросмотр">
+            
+            <!-- Галерея фото -->
+            <div id="photosGallery" class="photos-gallery"></div>
+            
+            <!-- Полноэкранный просмотр -->
+            <div id="photoViewer" class="photo-viewer" onclick="closePhotoViewer()">
+                <img id="fullPhoto" alt="Фото">
+                <button class="btn-close-photo" onclick="closePhotoViewer()">✕</button>
+            </div>
             
             <!-- Аудио запись -->
             <button class="btn btn-audio" id="audioBtn" onclick="toggleAudio()">🎤 Записать голосовое сообщение</button>
@@ -358,16 +445,111 @@
         
         function handlePhoto(event) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Создаём canvas для сжатия
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Сжимаем до максимум 1024px по большей стороне
+                    const maxSize = 1024;
+                    if (width > height && width > maxSize) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else if (height > maxSize) {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Конвертируем в base64
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    // Сохраняем в localStorage
+                    savePhotoToStorage(compressedDataUrl);
+                    
+                    // Добавляем в галерею
+                    addPhotoToGallery(compressedDataUrl);
                 };
-                reader.readAsDataURL(file);
-            }
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            // Очищаем input для возможности повторного выбора того же файла
+            event.target.value = '';
         }
+        
+        function savePhotoToStorage(dataUrl) {
+            let photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
+            photos.push(dataUrl);
+            localStorage.setItem('requestPhotos', JSON.stringify(photos));
+        }
+        
+        function loadPhotosFromStorage() {
+            const photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
+            const gallery = document.getElementById('photosGallery');
+            gallery.innerHTML = '';
+            photos.forEach((photo, index) => {
+                addPhotoToGallery(photo, index);
+            });
+        }
+        
+        function addPhotoToGallery(dataUrl, index = null) {
+            const gallery = document.getElementById('photosGallery');
+            if (!gallery) return;
+            
+            const photoItem = document.createElement('div');
+            photoItem.className = 'photo-item';
+            
+            const img = document.createElement('img');
+            img.src = dataUrl;
+            img.onclick = () => showFullPhoto(dataUrl);
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn-delete-photo';
+            deleteBtn.textContent = '✕';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deletePhoto(index !== null ? index : gallery.children.length);
+            };
+            
+            photoItem.appendChild(img);
+            photoItem.appendChild(deleteBtn);
+            gallery.appendChild(photoItem);
+        }
+        
+        function deletePhoto(index) {
+            let photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
+            photos.splice(index, 1);
+            localStorage.setItem('requestPhotos', JSON.stringify(photos));
+            loadPhotosFromStorage();
+        }
+        
+        function showFullPhoto(dataUrl) {
+            const viewer = document.getElementById('photoViewer');
+            const fullPhoto = document.getElementById('fullPhoto');
+            fullPhoto.src = dataUrl;
+            viewer.classList.add('active');
+        }
+        
+        function closePhotoViewer() {
+            const viewer = document.getElementById('photoViewer');
+            viewer.classList.remove('active');
+        }
+        
+        // Загружаем фото при загрузке страницы
+        window.addEventListener('DOMContentLoaded', function() {
+            loadPhotosFromStorage();
+        });
 
         async function toggleAudio() {
             const btn = document.getElementById('audioBtn');

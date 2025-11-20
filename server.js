@@ -59,12 +59,12 @@ const server = http.createServer((req, res) => {
     const extname = String(path.extname(filePath)).toLowerCase();
     const contentType = MIME_TYPES[extname] || 'application/octet-stream';
 
-    // Читать и отправить файл
-    fs.readFile(filePath, (error, content) => {
+    // Читать и отправить файл с UTF-8 кодировкой
+    fs.readFile(filePath, 'utf8', (error, content) => {
         if (error) {
             if (error.code === 'ENOENT') {
                 // Файл не найден - вернуть index.html для SPA роутинга
-                fs.readFile('./index.html', (err, indexContent) => {
+                fs.readFile('./index.html', 'utf8', (err, indexContent) => {
                     if (err) {
                         res.writeHead(500);
                         res.end('Ошибка сервера: ' + err.code);

@@ -3,12 +3,12 @@
   "short_name": "Зелёная Долина",
   "version": "3.0.0",
   "description": "PWA приложение для управления ЖК и коммунальными услугами",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#10b981",
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "./",
   "lang": "ru",
   "dir": "ltr",
   "categories": ["business", "productivity", "utilities", "finance"],
@@ -80,7 +80,7 @@
       "name": "Платежи",
       "short_name": "Платежи",
       "description": "Просмотр и оплата счетов",
-      "url": "/?section=payments",
+      "url": "./index.html?section=payments",
       "icons": [
         {
           "src": "icons/icon-192x192.png",
@@ -93,7 +93,7 @@
       "name": "Заявки",
       "short_name": "Заявки",
       "description": "Подача заявок на ремонт",
-      "url": "/?section=requests",
+      "url": "./index.html?section=requests",
       "icons": [
         {
           "src": "icons/icon-192x192.png",
@@ -106,7 +106,7 @@
       "name": "Счетчики",
       "short_name": "Счетчики",
       "description": "Передача показаний счетчиков",
-      "url": "/?section=counters",
+      "url": "./index.html?section=counters",
       "icons": [
         {
           "src": "icons/icon-192x192.png",

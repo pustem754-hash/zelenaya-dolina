@@ -1,38 +1,19 @@
-// ПУСТОЙ SERVICE WORKER - НИЧЕГО НЕ ДЕЛАЕТ
-// Используется только для замены старых SW
-
-const VERSION = 'empty-v1';
-
-console.log(`[${VERSION}] Пустой Service Worker загружен`);
-
-// Немедленная активация
-self.addEventListener('install', (event) => {
-  console.log(`[${VERSION}] Install - пропускаем waiting`);
+// Пустой Service Worker - ничего не делает
+self.addEventListener('install', function(event) {
   self.skipWaiting();
 });
 
-// Немедленное управление клиентами и самоуничтожение
-self.addEventListener('activate', (event) => {
-  console.log(`[${VERSION}] Activate - берём контроль и самоуничтожаемся`);
+self.addEventListener('activate', function(event) {
   event.waitUntil(
-    Promise.all([
-      self.clients.claim(),
-      // Самоуничтожение через 1 секунду
-      new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
-        console.log(`[${VERSION}] Самоуничтожение...`);
-        return self.registration.unregister().catch(() => {});
-      })
-    ]).then(() => {
-      console.log(`[${VERSION}] ✅ Самоуничтожение завершено`);
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          return caches.delete(cacheName);
+        })
+      );
+    }).then(function() {
+      return self.registration.unregister();
     })
   );
 });
-
-// НЕ перехватываем fetch - все запросы идут в сеть напрямую
-self.addEventListener('fetch', (event) => {
-  // НИЧЕГО НЕ ДЕЛАЕМ - запрос идёт в сеть
-  return;
-});
-
-console.log(`[${VERSION}] Пустой SW инициализирован - fetch НЕ перехватывается`);
 

@@ -319,7 +319,7 @@
         
         if (countdown === 0) {
           clearInterval(interval);
-          window.location.href = '/';
+          window.location.href = './index.html';
         }
       }, 1000);
     }
@@ -333,7 +333,7 @@
       // Очищаем версию чтобы при следующей загрузке сработала проверка
       localStorage.removeItem('app_version');
       // Используем replace вместо reload для полной очистки истории
-      window.location.replace('/');
+      window.location.replace('./index.html');
     });
     
     // Показываем кнопку принудительной перезагрузки если есть проблемы

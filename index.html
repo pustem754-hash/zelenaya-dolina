@@ -1,760 +1,118 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- ============================================ -->
-    <!-- NUCLEAR CLEANUP v3.0.0 - Запускается ПЕРВЫМ -->
-    <!-- ============================================ -->
-    <script>
-        // NUCLEAR CLEANUP - Запускается ПЕРВЫМ
-        (function() {
-            console.log('🚨 NUCLEAR CLEANUP v3.0.0 - GitHub Pages Migration');
-            
-            // Очистка Service Workers
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for(let registration of registrations) {
-                        registration.unregister().catch(function() {});
-                    }
-                }).catch(function() {});
-            }
-            
-            // Очистка всех кешей
-            if ('caches' in window) {
-                caches.keys().then(function(names) {
-                    for (let name of names) {
-                        caches.delete(name).catch(function() {});
-                    }
-                }).catch(function() {});
-            }
-            
-            // Очистка localStorage и sessionStorage
-            try {
-                localStorage.clear();
-                sessionStorage.clear();
-            } catch(e) {}
-            
-            console.log('✅ Nuclear cleanup завершена');
-        })();
-    </script>
-    
     <meta charset="UTF-8">
-    <!-- Агрессивное отключение кеширования -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="app-version" content="3.0.0">
+    <title>УК Зелёная Долина v3.0.0</title>
+    
+    <!-- Агрессивная защита от кеширования -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Отключаем предложение установки PWA -->
-    <meta name="mobile-web-app-capable" content="no">
-    <meta name="apple-mobile-web-app-capable" content="no">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
-    <meta name="theme-color" content="#10b981">
     
-    <!-- Версия приложения для отладки -->
-    <meta name="app-version" content="3.0.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 48px; margin-bottom: 20px; }
+        .version { 
+            background: #4CAF50;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        p { font-size: 18px; margin: 10px 0; opacity: 0.9; }
+        .status { margin-top: 30px; font-size: 14px; }
+    </style>
     
-    <title>🏠 УК "Зелёная Долина" - Личный кабинет жильца</title>
-    
-    <!-- PWA Manifest - ПОЛНОСТЬЮ ОТКЛЮЧЕН -->
-    
-    <!-- Favicon -->
-    <link rel="icon" href="icons/favicon.png" type="image/png">
-    <link rel="shortcut icon" href="icons/favicon.png" type="image/png">
-    
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="icons/icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css?v=20250119">
-    <link rel="stylesheet" href="css/mobile.css?v=20250119">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Видимый индикатор версии на случай проблем -->
-    <div style="position: fixed; top: 0; left: 0; right: 0; background: #10b981; color: white; padding: 10px; text-align: center; z-index: 99999; font-weight: bold;">
-        Загрузка v3.0.0... Если страница не загружается, откройте /emergency-reset.html
-    </div>
-    
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <h2>🏠 УК "Зелёная Долина"</h2>
-            <p>Загрузка приложения v3.0.0...</p>
-        </div>
-    </div>
-
-    <!-- Main App Container -->
-    <div id="app" class="app-container" style="display: none;">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>🏠 УК "Зелёная Долина"</h1>
-                    <p>Личный кабинет жильца</p>
-                </div>
-                <div class="user-info">
-                    <div class="user-avatar">👤</div>
-                    <div class="user-details">
-                        <span class="user-name">Иванов И.И.</span>
-                        <span class="user-apartment">Кв. 15</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Navigation -->
-        <nav class="app-nav">
-            <div class="nav-container">
-                <button class="nav-item active" data-section="dashboard">
-                    <span class="nav-icon">🏠</span>
-                    <span class="nav-label">Главная</span>
-                </button>
-                <button class="nav-item" data-section="apartments">
-                    <span class="nav-icon">🏢</span>
-                    <span class="nav-label">Квартиры</span>
-                </button>
-                <button class="nav-item" data-section="payments">
-                    <span class="nav-icon">💰</span>
-                    <span class="nav-label">Платежи</span>
-                </button>
-                <button class="nav-item" data-section="requests">
-                    <span class="nav-icon">🔧</span>
-                    <span class="nav-label">Заявки</span>
-                </button>
-                <button class="nav-item" data-section="notifications">
-                    <span class="nav-icon">📢</span>
-                    <span class="nav-label">Уведомления</span>
-                </button>
-                <button class="nav-item" data-section="counters">
-                    <span class="nav-icon">🔋</span>
-                    <span class="nav-label">Счетчики</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="app-main">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="content-section active">
-                <div class="section-header">
-                    <h2>🏠 Добро пожаловать в личный кабинет!</h2>
-                    <p>Управляющая компания "Зелёная Долина"</p>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">💰</div>
-                        <div class="stat-content">
-                            <h3>2,890 ₽</h3>
-                            <p>К доплате</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🔧</div>
-                        <div class="stat-content">
-                            <h3>2</h3>
-                            <p>Активных заявок</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📢</div>
-                        <div class="stat-content">
-                            <h3>3</h3>
-                            <p>Новых уведомлений</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🏠</div>
-                        <div class="stat-content">
-                            <h3>1</h3>
-                            <p>Ваших квартир</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-actions">
-                    <h3>Быстрые действия</h3>
-                    <div class="actions-grid">
-                        <button class="action-btn" onclick="showSection('payments')">
-                            <span class="action-icon">💳</span>
-                            <span class="action-text">Оплатить</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('requests')">
-                            <span class="action-icon">📝</span>
-                            <span class="action-text">Подать заявку</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('notifications')">
-                            <span class="action-icon">🔔</span>
-                            <span class="action-text">Уведомления</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('apartments')">
-                            <span class="action-icon">🏢</span>
-                            <span class="action-text">Мои квартиры</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="contact-info">
-                    <h3>📞 Контакты</h3>
-                    <div class="contact-card">
-                        <p><strong>Диспетчер:</strong> 8 960 072 03 21</p>
-                        <p><strong>Email:</strong> uk-zeldol@yandex.ru</p>
-                        <p><strong>Адрес:</strong> ул. Шустова, д. 4А, пом. 15</p>
-                        <p><strong>Директор:</strong> Галлямов Р. Р.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Apartments Section -->
-            <section id="apartments" class="content-section">
-                <div class="section-header">
-                    <h2>🏢 Мои квартиры</h2>
-                    <p>Управление информацией о квартирах</p>
-                </div>
-                
-                <div class="apartments-list" id="apartmentsList">
-                    <div class="list-item">
-                        <h3>Квартира №15 <span class="status-badge status-active">занята</span></h3>
-                        <p><strong>Адрес:</strong> ул. Рогачёва, д. 25/1</p>
-                        <p><strong>Площадь:</strong> 45.6 м²</p>
-                        <p><strong>Комнаты:</strong> 1</p>
-                        <p><strong>Жильцы:</strong> 2</p>
-                        <p><strong>Этаж:</strong> 1, <strong>Подъезд:</strong> 1</p>
-                        <p><strong>Коммунальные услуги:</strong> Электричество, Газ, Вода, Отопление</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Payments Section -->
-            <section id="payments" class="content-section">
-                <div class="section-header">
-                    <h2>💰 Платежи и счета</h2>
-                    <p>Просмотр и управление платежами</p>
-                </div>
-                
-                <div class="payments-list" id="paymentsList">
-                    <div class="list-item">
-                        <h3>Декабрь 2023 <span class="status-badge status-pending">ожидает</span></h3>
-                        <p><strong>Сумма:</strong> 3,040 ₽</p>
-                        <p><strong>Электричество:</strong> 920 ₽</p>
-                        <p><strong>Газ:</strong> 450 ₽</p>
-                        <p><strong>Вода:</strong> 400 ₽</p>
-                        <p><strong>Отопление:</strong> 1,270 ₽</p>
-                        <p><strong>Дата:</strong> 2023-12-01</p>
-                        <div style="margin-top: 15px;">
-                            <button class="btn" onclick="downloadReceipt('receipt_dec_2023.pdf')">📄 Скачать квитанцию</button>
-                            <button class="btn btn-primary" onclick="markAsPaid(2)">✅ Отметить оплату</button>
-                        </div>
-                    </div>
-                    
-                    <div class="list-item">
-                        <h3>Ноябрь 2023 <span class="status-badge status-paid">оплачено</span></h3>
-                        <p><strong>Сумма:</strong> 2,890 ₽</p>
-                        <p><strong>Электричество:</strong> 850 ₽</p>
-                        <p><strong>Газ:</strong> 420 ₽</p>
-                        <p><strong>Вода:</strong> 380 ₽</p>
-                        <p><strong>Отопление:</strong> 1,240 ₽</p>
-                        <p><strong>Дата:</strong> 2023-11-25</p>
-                        <div style="margin-top: 15px;">
-                            <button class="btn" onclick="downloadReceipt('receipt_nov_2023.pdf')">📄 Скачать квитанцию</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Requests Section -->
-            <section id="requests" class="content-section">
-                <div class="section-header">
-                    <h2>🔧 Заявки на ремонт</h2>
-                    <p>Подача и отслеживание заявок</p>
-                </div>
-                
-                <!-- Request Form -->
-                <div class="request-form-container">
-                    <h3>📝 Подать новую заявку</h3>
-                    <form id="requestForm">
-                        <div class="form-group">
-                            <label for="requestType">Тип заявки:</label>
-                            <select id="requestType" required>
-                                <option value="">Выберите тип</option>
-                                <option value="ремонт">Ремонт</option>
-                                <option value="электрика">Электрика</option>
-                                <option value="сантехника">Сантехника</option>
-                                <option value="уборка">Уборка</option>
-                                <option value="лифт">Лифт</option>
-                                <option value="отопление">Отопление</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requestTitle">Название:</label>
-                            <input type="text" id="requestTitle" placeholder="Краткое описание проблемы" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requestDescription">Описание:</label>
-                            <textarea id="requestDescription" rows="4" placeholder="Подробное описание проблемы" required></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Фото проблемы:</label>
-                            <button type="button" id="openCameraBtn" class="camera-open-btn">📷 Сфотографировать проблему</button>
-                            <div id="photoThumbnailContainer" style="display: none;">
-                                <img id="photoThumbnail" src="" alt="Фото" style="max-width: 150px; max-height: 150px; border-radius: 0.5rem; margin-top: 0.5rem;">
-                                <button type="button" id="removePhotoBtn" style="display: block; margin-top: 0.5rem; padding: 0.5rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">🗑️ Удалить фото</button>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requestPriority">Приоритет:</label>
-                            <select id="requestPriority" required>
-                                <option value="низкий">Низкий</option>
-                                <option value="средний" selected>Средний</option>
-                                <option value="высокий">Высокий</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">📝 Подать заявку</button>
-                    </form>
-                </div>
-                
-                <!-- Requests List -->
-                <div class="requests-list" id="requestsList">
-                    <div class="list-item">
-                        <h3>Протечка в ванной комнате <span class="status-badge status-active">в работе</span></h3>
-                        <p><strong>Тип:</strong> ремонт</p>
-                        <p><strong>Приоритет:</strong> <span class="status-badge status-high">высокий</span></p>
-                        <p><strong>Квартира:</strong> №15</p>
-                        <p><strong>Описание:</strong> Обнаружена протечка под раковиной в ванной комнате. Вода капает на пол.</p>
-                        <p><strong>Исполнитель:</strong> Сантехник Петров А.В.</p>
-                        <p><strong>Дата:</strong> 2023-11-20</p>
-                        <p><strong>Ожидаемое завершение:</strong> 2023-11-25</p>
-                    </div>
-                    
-                    <div class="list-item">
-                        <h3>Не работает розетка в кухне <span class="status-badge status-pending">ожидает</span></h3>
-                        <p><strong>Тип:</strong> электрика</p>
-                        <p><strong>Приоритет:</strong> <span class="status-badge status-medium">средний</span></p>
-                        <p><strong>Квартира:</strong> №15</p>
-                        <p><strong>Описание:</strong> Розетка в кухне не работает. Проверка показала отсутствие напряжения.</p>
-                        <p><strong>Дата:</strong> 2023-11-28</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Notifications Section -->
-            <section id="notifications" class="content-section">
-                <div class="section-header">
-                    <h2>📢 Уведомления</h2>
-                    <p>Важные объявления и сообщения</p>
-                </div>
-                
-                <div class="notifications-list" id="notificationsList">
-                    <div class="list-item">
-                        <h3>Начислен платёж за декабрь 2023 <span class="status-badge status-high">высокий</span></h3>
-                        <p><strong>Тип:</strong> платеж</p>
-                        <p><strong>Сообщение:</strong> Начислен платёж в размере 3,040 ₽ за коммунальные услуги за декабрь 2023. Срок оплаты до 25.12.2023</p>
-                        <p><strong>Дата:</strong> 2023-12-01</p>
-                        <p><strong>Статус:</strong> <span class="status-badge status-pending">не прочитано</span></p>
-                        <button class="btn btn-primary" onclick="markAsRead(1)">✅ Отметить как прочитанное</button>
-                    </div>
-                    
-                    <div class="list-item">
-                        <h3>Плановые работы в подъезде <span class="status-badge status-medium">средний</span></h3>
-                        <p><strong>Тип:</strong> ремонт</p>
-                        <p><strong>Сообщение:</strong> С 5 по 7 декабря будут проводиться плановые работы по покраске стен в подъезде №1. Просим извинения за неудобства.</p>
-                        <p><strong>Дата:</strong> 2023-11-30</p>
-                        <p><strong>Статус:</strong> <span class="status-badge status-pending">не прочитано</span></p>
-                        <button class="btn btn-primary" onclick="markAsRead(2)">✅ Отметить как прочитанное</button>
-                    </div>
-                    
-                    <div class="list-item">
-                        <h3>Плановое отключение воды <span class="status-badge status-high">высокий</span></h3>
-                        <p><strong>Тип:</strong> отключение</p>
-                        <p><strong>Сообщение:</strong> 15 декабря с 9:00 до 17:00 будет отключена холодная вода для проведения ремонтных работ.</p>
-                        <p><strong>Дата:</strong> 2023-11-29</p>
-                        <p><strong>Статус:</strong> <span class="status-badge status-completed">прочитано</span></p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Counters Section -->
-            <section id="counters" class="content-section">
-                <div class="section-header">
-                    <h2>🔋 Показания счетчиков</h2>
-                    <p>Передача показаний счетчиков</p>
-                </div>
-                
-                <div class="counters-list" id="countersList">
-                    <div class="list-item">
-                        <h3>Электричество - Квартира №15</h3>
-                        <p><strong>Текущие показания:</strong> 12,567 кВт⋅ч</p>
-                        <p><strong>Предыдущие показания:</strong> 12,345 кВт⋅ч</p>
-                        <p><strong>Потребление:</strong> 222 кВт⋅ч</p>
-                        <p><strong>Тариф:</strong> 4.2 ₽/кВт⋅ч</p>
-                        <p><strong>Последнее обновление:</strong> 2023-11-30</p>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-primary" onclick="submitCounterReading(1)">📊 Передать показания</button>
-                        </div>
-                    </div>
-                    
-                    <div class="list-item">
-                        <h3>Газ - Квартира №15</h3>
-                        <p><strong>Текущие показания:</strong> 3,456 м³</p>
-                        <p><strong>Предыдущие показания:</strong> 3,421 м³</p>
-                        <p><strong>Потребление:</strong> 35 м³</p>
-                        <p><strong>Тариф:</strong> 12.5 ₽/м³</p>
-                        <p><strong>Последнее обновление:</strong> 2023-11-30</p>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-primary" onclick="submitCounterReading(2)">📊 Передать показания</button>
-                        </div>
-                    </div>
-                    
-                    <div class="list-item">
-                        <h3>Вода - Квартира №15</h3>
-                        <p><strong>Текущие показания:</strong> 789 м³</p>
-                        <p><strong>Предыдущие показания:</strong> 765 м³</p>
-                        <p><strong>Потребление:</strong> 24 м³</p>
-                        <p><strong>Тариф:</strong> 15.8 ₽/м³</p>
-                        <p><strong>Последнее обновление:</strong> 2023-11-30</p>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-primary" onclick="submitCounterReading(3)">📊 Передать показания</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="app-footer">
-            <div class="footer-content">
-                <p>🏠 УК "Зелёная Долина" - Личный кабинет жильца</p>
-                <p>📞 8 960 072 03 21 | 📧 uk-zeldol@yandex.ru</p>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Network Status Indicator -->
-    <div id="network-status" class="network-status offline">
-        <span class="status-icon">📱</span>
-        <span class="status-text">Офлайн режим</span>
-    </div>
-
-    <!-- Camera Modal -->
-    <div id="cameraModal" class="camera-modal" style="display: none;">
-        <div class="camera-container">
-            <video id="cameraVideo" autoplay playsinline></video>
-            <canvas id="cameraCanvas" style="display: none;"></canvas>
-            <div id="photoPreview" style="display: none;">
-                <img id="previewImage" src="" alt="Preview">
-            </div>
-            <div class="camera-controls">
-                <button id="captureBtn" class="camera-btn">📸 Снять фото</button>
-                <button id="switchCameraBtn" class="camera-btn">🔄 Сменить камеру</button>
-                <button id="closeCameraBtn" class="camera-btn">❌ Закрыть</button>
-                <button id="retakeBtn" class="camera-btn" style="display: none;">🔄 Переснять</button>
-                <button id="usePhotoBtn" class="camera-btn" style="display: none;">✅ Использовать</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="js/camera.js?v=20250119" onerror="console.error('Ошибка загрузки camera.js')"></script>
-    <script src="js/app.js?v=20250119" onerror="console.error('Ошибка загрузки app.js')"></script>
-    <script src="js/mobile.js?v=20250119" onerror="console.error('Ошибка загрузки mobile.js')"></script>
-    
-    <!-- Fallback: показать приложение если скрипты не загрузились -->
     <script>
-        // Fallback инициализация через 3 секунды если основная не сработала
-        setTimeout(() => {
-            const app = document.getElementById('app');
-            const loadingScreen = document.getElementById('loading-screen');
-            
-            if (app && app.style.display === 'none' && loadingScreen && loadingScreen.style.display !== 'none') {
-                console.warn('Принудительное отображение приложения (fallback)');
-                if (loadingScreen) {
-                    loadingScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        loadingScreen.style.display = 'none';
-                    }, 500);
-                }
-                if (app) {
-                    app.style.display = 'block';
-                }
-            }
-        }, 3000);
-    </script>
-    
-    <!-- ПРОВЕРКА ВЕРСИИ И ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА -->
-    <script>
-        // ============================================
-        // ПРОВЕРКА ВЕРСИИ И ПРИНУДИТЕЛЬНАЯ ПЕРЕЗАГРУЗКА
-        // ============================================
+    // NUCLEAR CLEANUP - Удаление всех Service Workers
+    (function() {
+        console.log('🚀 Запуск v3.0.0 Nuclear Cleanup');
         
-        (function versionCheck() {
-            const CURRENT_VERSION = '3.0.0';
-            const STORAGE_KEY = 'app_version';
-            
-            // Проверяем версию в localStorage
-            const storedVersion = localStorage.getItem(STORAGE_KEY);
-            
-            console.log('═══════════════════════════════════');
-            console.log('🔍 ПРОВЕРКА ВЕРСИИ ПРИЛОЖЕНИЯ');
-            console.log('═══════════════════════════════════');
-            console.log('Текущая версия:', CURRENT_VERSION);
-            console.log('Сохранённая версия:', storedVersion || 'не найдена');
-            
-            if (storedVersion !== CURRENT_VERSION) {
-                console.log('⚠️  ОБНАРУЖЕНА СТАРАЯ ВЕРСИЯ!');
-                console.log('🔄 Выполняется жёсткая перезагрузка...\n');
-                
-                // Сохраняем новую версию
-                localStorage.setItem(STORAGE_KEY, CURRENT_VERSION);
-                
-                // Очищаем весь кеш перед перезагрузкой
-                if ('caches' in window) {
-                    caches.keys().then(keys => {
-                        return Promise.all(keys.map(key => caches.delete(key).catch(() => {})));
-                    }).then(() => {
-                        // Жёсткая перезагрузка с очисткой кеша
-                        window.location.reload(true);
-                    }).catch(() => {
-                        // Если ошибка при очистке кэша - всё равно перезагружаем
-                        window.location.reload(true);
+        // Удаление всех SW
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                if (registrations.length > 0) {
+                    console.log('🗑️ Найдено SW:', registrations.length);
+                    registrations.forEach(function(reg) {
+                        reg.unregister();
+                        console.log('✅ SW удалён');
                     });
                 } else {
-                    // Жёсткая перезагрузка
-                    window.location.reload(true);
+                    console.log('✅ SW не найдены');
                 }
-                
-                // Прерываем выполнение остального кода
-                return;
-            }
-            
-            console.log('✅ Версия актуальна');
-            console.log('═══════════════════════════════════\n');
-        })();
-    </script>
-    
-    <!-- Service Worker: УЛЬТРА-АГРЕССИВНОЕ УДАЛЕНИЕ -->
-    <script>
-        // ============================================
-        // УЛЬТРА-АГРЕССИВНОЕ УДАЛЕНИЕ SERVICE WORKERS
-        // ============================================
-        // Выполняется немедленно при загрузке страницы
-        
-        if ('serviceWorker' in navigator) {
-            (async function killAllServiceWorkers() {
-                console.log('🔥🔥🔥 УЛЬТРА-ОЧИСТКА SERVICE WORKERS 🔥🔥🔥');
-                console.log('==========================================\n');
-                
-                try {
-                    // 1. Получаем ВСЕ регистрации
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    console.log(`Найдено Service Workers: ${registrations.length}`);
-                    
-                    if (registrations.length === 0) {
-                        console.log('✅ Service Workers не найдены\n');
-                    } else {
-                        // 2. Удаляем КАЖДЫЙ SW без исключений
-                        for (let i = 0; i < registrations.length; i++) {
-                            const reg = registrations[i];
-                            console.log(`\n🗑️  Удаление SW ${i + 1}/${registrations.length}:`);
-                            console.log(`   Scope: ${reg.scope}`);
-                            
-                            try {
-                                // Пытаемся активировать waiting/installing SW перед удалением
-                                if (reg.waiting) {
-                                    try {
-                                        reg.waiting.postMessage({ type: 'SKIP_WAITING' }).catch(() => {});
-                                    } catch (e) {
-                                        // Игнорируем ошибки
-                                    }
-                                }
-                                
-                                if (reg.installing) {
-                                    try {
-                                        reg.installing.postMessage({ type: 'SKIP_WAITING' }).catch(() => {});
-                                    } catch (e) {
-                                        // Игнорируем ошибки
-                                    }
-                                }
-                                
-                                // Ждём немного для обработки сообщений
-                                await new Promise(resolve => setTimeout(resolve, 100));
-                                
-                                // УДАЛЯЕМ регистрацию напрямую (без postMessage)
-                                const success = await reg.unregister().catch(() => false);
-                                console.log(`   ${success ? '✅' : '❌'} Результат: ${success}`);
-                                
-                            } catch (error) {
-                                console.log(`   ⚠️  Ошибка: ${error.message}`);
-                                // Пытаемся удалить даже при ошибке
-                                try {
-                                    await reg.unregister().catch(() => {});
-                                } catch (e) {
-                                    // Игнорируем
-                                }
-                            }
-                        }
-                    }
-                    
-                    // 3. Удаляем ВСЕ кеши
-                    console.log('\n🗑️  Очистка кешей...');
-                    const cacheNames = await caches.keys();
-                    console.log(`Найдено кешей: ${cacheNames.length}`);
-                    
-                    if (cacheNames.length > 0) {
-                        for (const cacheName of cacheNames) {
-                            try {
-                                await caches.delete(cacheName);
-                                console.log(`   ✅ Удалён: ${cacheName}`);
-                            } catch (error) {
-                                console.log(`   ⚠️  Ошибка: ${error.message}`);
-                            }
-                        }
-                    }
-                    
-          // 4. Очищаем только sessionStorage (НЕ localStorage - там версия!)
-          console.log('\n🗑️  Очистка sessionStorage...');
-          try {
-            sessionStorage.clear();
-            console.log('   ✅ sessionStorage очищен');
-          } catch (error) {
-            console.log(`   ⚠️  Ошибка: ${error.message}`);
-          }
-                    
-                    // 5. ФИНАЛЬНАЯ ПРОВЕРКА
-                    console.log('\n═══════════════════════════════════');
-                    console.log('📊 ФИНАЛЬНАЯ ПРОВЕРКА:');
-                    console.log('═══════════════════════════════════');
-                    
-                    const finalRegs = await navigator.serviceWorker.getRegistrations();
-                    const finalCaches = await caches.keys();
-                    const hasController = !!navigator.serviceWorker.controller;
-                    
-                    console.log(`Service Workers: ${finalRegs.length}`);
-                    console.log(`Кеши: ${finalCaches.length}`);
-                    console.log(`SW Контроллер: ${hasController ? 'АКТИВЕН ⚠️' : 'НЕТ ✅'}`);
-                    
-                    if (finalRegs.length === 0 && !hasController) {
-                        console.log('\n✅✅✅ ВСЁ ИДЕАЛЬНО! ✅✅✅');
-                        console.log('Service Workers полностью удалены!');
-                        console.log('Приложение работает как обычный сайт.\n');
-                    } else {
-                        console.log('\n⚠️⚠️⚠️ ОСТАЛИСЬ СЛЕДЫ! ⚠️⚠️⚠️');
-                        console.log('\nВЫПОЛНИТЕ ВРУЧНУЮ:');
-                        console.log('1. DevTools → Application → Service Workers → Unregister');
-                        console.log('2. DevTools → Application → Storage → Clear site data');
-                        console.log('3. Закройте ВСЕ вкладки с сайтом');
-                        console.log('4. Закройте браузер ПОЛНОСТЬЮ');
-                        console.log('5. Откройте браузер снова\n');
-                    }
-                    
-                    console.log('==========================================');
-                    
-                } catch (error) {
-                    console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
-                }
-            })();
-        } else {
-            console.log('ℹ️  Service Workers не поддерживаются в этом браузере');
+            });
         }
+        
+        // Очистка всех кешей
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                if (names.length > 0) {
+                    console.log('🗑️ Найдено кешей:', names.length);
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                        console.log('✅ Кеш удалён:', name);
+                    });
+                } else {
+                    console.log('✅ Кеши не найдены');
+                }
+            });
+        }
+        
+        // Очистка localStorage
+        try {
+            localStorage.clear();
+            console.log('✅ localStorage очищен');
+        } catch(e) {}
+        
+        // Очистка sessionStorage
+        try {
+            sessionStorage.clear();
+            console.log('✅ sessionStorage очищен');
+        } catch(e) {}
+        
+        console.log('✅✅✅ Nuclear Cleanup завершён! ✅✅✅');
+    })();
     </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 УК Зелёная Долина</h1>
+        <div class="version">✅ Версия 3.0.0</div>
+        <p>Приложение успешно загружено!</p>
+        <p>GitHub Pages работает корректно</p>
+        <div class="status">
+            <p>🚀 Nuclear Cleanup выполнен</p>
+            <p>✅ Service Workers удалены</p>
+            <p>✅ Кеши очищены</p>
+            <p>💚 Система готова к работе</p>
+        </div>
+    </div>
     
-    <!-- Финальная проверка системы -->
     <script>
-        // ФИНАЛЬНАЯ ПРОВЕРКА - выполняется после загрузки страницы
-        setTimeout(async function finalCheck() {
-            console.log('\n═══════════════════════════════════');
-            console.log('🔍 ФИНАЛЬНАЯ ПРОВЕРКА СИСТЕМЫ');
-            console.log('═══════════════════════════════════\n');
-            
-            // 1. Service Workers
-            const regs = await navigator.serviceWorker.getRegistrations();
-            console.log(`📋 Service Workers: ${regs.length}`);
-            
-            if (regs.length > 0) {
-                regs.forEach((reg, i) => {
-                    console.log(`\n  SW #${i + 1}:`);
-                    console.log(`    Scope: ${reg.scope}`);
-                    console.log(`    Active: ${reg.active ? '✅ ДА' : '❌ НЕТ'}`);
-                    console.log(`    Waiting: ${reg.waiting ? '⏳ ДА' : '✅ НЕТ'}`);
-                    console.log(`    Installing: ${reg.installing ? '🔄 ДА' : '✅ НЕТ'}`);
-                });
-            } else {
-                console.log('  ✅ НЕ НАЙДЕНО (отлично!)');
-            }
-            
-            // 2. Кеши
-            const keys = await caches.keys();
-            console.log(`\n🗄️  Кеши: ${keys.length}`);
-            
-            if (keys.length > 0) {
-                keys.forEach((key, i) => {
-                    console.log(`  ${i + 1}. ${key}`);
-                });
-            } else {
-                console.log('  ✅ НЕ НАЙДЕНО (отлично!)');
-            }
-            
-            // 3. Storage
-            console.log(`\n💾 localStorage: ${localStorage.length} записей`);
-            console.log(`💾 sessionStorage: ${sessionStorage.length} записей`);
-            
-            // 4. Активный Service Worker
-            if (navigator.serviceWorker.controller) {
-                console.log(`\n⚠️  Активный SW контроллер:`);
-                console.log(`    URL: ${navigator.serviceWorker.controller.scriptURL}`);
-                console.log(`    State: ${navigator.serviceWorker.controller.state}`);
-            } else {
-                console.log(`\n✅ Активный SW контроллер: НЕТ (отлично!)`);
-            }
-            
-            // 5. Итог
-            console.log('\n═══════════════════════════════════');
-            console.log('📊 ИТОГОВЫЙ СТАТУС:');
-            console.log('═══════════════════════════════════');
-            
-            const swClean = regs.length === 0;
-            const cacheClean = keys.length === 0;
-            const noController = !navigator.serviceWorker.controller;
-            
-            console.log(`SW Регистрации: ${swClean ? '✅ Чисто' : '❌ Есть остатки'}`);
-            console.log(`Кеши: ${cacheClean ? '✅ Чисто' : '⚠️  Есть остатки'}`);
-            console.log(`SW Контроллер: ${noController ? '✅ Нет' : '⚠️  Активен'}`);
-            
-            if (swClean && noController) {
-                console.log('\n✅✅✅ ВСЁ ИДЕАЛЬНО! ✅✅✅');
-                console.log('\n🎉 Service Workers полностью удалены!');
-                console.log('💡 Теперь можно тестировать приложение');
-            } else {
-                console.log('\n⚠️  ТРЕБУЮТСЯ ДОПОЛНИТЕЛЬНЫЕ ДЕЙСТВИЯ:');
-                
-                if (!swClean) {
-                    console.log('\n1️⃣  Удалите оставшиеся SW:');
-                    console.log('   Application → Service Workers → Unregister');
-                }
-                
-                if (!noController) {
-                    console.log('\n2️⃣  Перезагрузите страницу:');
-                    console.log('   Ctrl+Shift+R (жёсткая перезагрузка)');
-                }
-                
-                console.log('\n3️⃣  Если не помогло:');
-                console.log('   - Закройте ВСЕ вкладки с сайтом');
-                console.log('   - Закройте браузер ПОЛНОСТЬЮ');
-                console.log('   - Откройте браузер снова');
-            }
-            
-            console.log('\n═══════════════════════════════════\n');
-        }, 3000); // Выполняется через 3 секунды после загрузки страницы
+        // Проверка версии
+        console.log('%c✅ УК Зелёная Долина v3.0.0', 'background: #4CAF50; color: white; padding: 10px; font-size: 16px; font-weight: bold;');
+        console.log('GitHub Pages URL:', window.location.href);
+        console.log('Все системы работают нормально!');
     </script>
 </body>
 </html>

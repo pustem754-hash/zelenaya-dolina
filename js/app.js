@@ -367,15 +367,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Service Worker registration
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-            .then(registration => {
-                console.log('✅ Service Worker зарегистрирован:', registration.scope);
-            })
-            .catch(error => {
-                console.log('❌ Service Worker регистрация не удалась:', error);
-            });
-    });
-}
+// Service Worker registration - ОТКЛЮЧЕНО для GitHub Pages
+// Все Service Workers удаляются через Nuclear Cleanup в index.html

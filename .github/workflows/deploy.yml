@@ -29,6 +29,16 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+          exclude-paths: |
+            .git
+            .github
+            node_modules
+            .gitignore
+            README.md
+            package.json
+            server.js
+            MISSING_FILES.txt
+            netlify.toml
           
       - name: Deploy to GitHub Pages
         id: deployment

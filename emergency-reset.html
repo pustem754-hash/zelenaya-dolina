@@ -99,8 +99,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>🔧 Аварийный сброс</h1>
-    <p>Очистка кеша и Service Workers</p>
+    <h1>🔧 Аварийный сброс v3.0.0</h1>
+    <p>Emergency Nuclear Reset - Полная очистка кеша и Service Workers</p>
     
     <div id="status">
       <div class="spinner"></div>
@@ -109,6 +109,10 @@
     
     <button id="manualBtn" class="btn" style="display:none;">
       Повторить очистку
+    </button>
+    
+    <button id="forceReloadBtn" class="btn" style="display:none; background: #e74c3c; margin-top: 10px;">
+      🔄 Принудительная перезагрузка
     </button>
   </div>
 
@@ -146,25 +150,54 @@
         return 'Нечего удалять ✓';
       }
       
-      await Promise.all(
-        registrations.map(async (reg, i) => {
-          console.log(`Удаление SW ${i + 1}/${registrations.length}:`, reg.scope);
-          
-          // Попытка активировать waiting SW перед удалением
-          if (reg.waiting) {
-            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-          
-          const success = await reg.unregister();
-          console.log(`SW ${i + 1} удалён:`, success);
-          return success;
-        })
-      );
+      // АГРЕССИВНОЕ удаление - пытаемся несколько раз
+      for (let attempt = 0; attempt < 3; attempt++) {
+        await Promise.all(
+          registrations.map(async (reg, i) => {
+            try {
+              console.log(`Удаление SW ${i + 1}/${registrations.length} (попытка ${attempt + 1}):`, reg.scope);
+              
+              // Попытка активировать waiting/installing SW перед удалением
+              if (reg.waiting) {
+                try {
+                  reg.waiting.postMessage({ type: 'SKIP_WAITING' }).catch(() => {});
+                } catch(e) {}
+              }
+              
+              if (reg.installing) {
+                try {
+                  reg.installing.postMessage({ type: 'SKIP_WAITING' }).catch(() => {});
+                } catch(e) {}
+              }
+              
+              await new Promise(resolve => setTimeout(resolve, 100));
+              
+              const success = await reg.unregister().catch(() => false);
+              console.log(`SW ${i + 1} удалён:`, success);
+              return success;
+            } catch (error) {
+              console.error(`Ошибка удаления SW ${i + 1}:`, error);
+              return false;
+            }
+          })
+        );
+        
+        // Проверка после попытки
+        const remaining = await navigator.serviceWorker.getRegistrations();
+        if (remaining.length === 0) {
+          return `Удалено ${registrations.length} Service Worker(s) ✓`;
+        }
+        
+        // Если остались - ждём и пробуем снова
+        if (attempt < 2) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
       
-      // Проверка
-      const remaining = await navigator.serviceWorker.getRegistrations();
-      if (remaining.length > 0) {
-        throw new Error(`Остались активные SW: ${remaining.length}`);
+      // Финальная проверка
+      const finalRemaining = await navigator.serviceWorker.getRegistrations();
+      if (finalRemaining.length > 0) {
+        throw new Error(`Остались активные SW: ${finalRemaining.length}`);
       }
       
       return `Удалено ${registrations.length} Service Worker(s) ✓`;
@@ -291,6 +324,27 @@
     }
     
     manualBtn.addEventListener('click', runCleanup);
+    
+    // Кнопка принудительной перезагрузки
+    const forceReloadBtn = document.getElementById('forceReloadBtn');
+    forceReloadBtn.addEventListener('click', function() {
+      console.log('🔄 Принудительная перезагрузка через location.replace()');
+      // Очищаем версию чтобы при следующей загрузке сработала проверка
+      localStorage.removeItem('app_version');
+      // Используем replace вместо reload для полной очистки истории
+      window.location.replace('/');
+    });
+    
+    // Показываем кнопку принудительной перезагрузки если есть проблемы
+    setTimeout(function() {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        if (regs.length > 0) {
+          forceReloadBtn.style.display = 'block';
+        }
+      }).catch(function() {
+        forceReloadBtn.style.display = 'block';
+      });
+    }, 2000);
     
     // Автозапуск при загрузке
     setTimeout(runCleanup, 500);

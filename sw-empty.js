@@ -11,12 +11,19 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Немедленное управление клиентами
+// Немедленное управление клиентами и самоуничтожение
 self.addEventListener('activate', (event) => {
-  console.log(`[${VERSION}] Activate - берём контроль`);
+  console.log(`[${VERSION}] Activate - берём контроль и самоуничтожаемся`);
   event.waitUntil(
-    self.clients.claim().then(() => {
-      console.log(`[${VERSION}] Контроль захвачен`);
+    Promise.all([
+      self.clients.claim(),
+      // Самоуничтожение через 1 секунду
+      new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
+        console.log(`[${VERSION}] Самоуничтожение...`);
+        return self.registration.unregister().catch(() => {});
+      })
+    ]).then(() => {
+      console.log(`[${VERSION}] ✅ Самоуничтожение завершено`);
     })
   );
 });

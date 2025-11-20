@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- ============================================ -->
+    <!-- EMERGENCY NUCLEAR RESET v3.0.0 - СИНХРОННАЯ ОЧИСТКА SW -->
+    <!-- ============================================ -->
+    <script>
+        (function() {
+            console.log('🚨 EMERGENCY NUCLEAR RESET v3.0.0 - СИНХРОННАЯ ОЧИСТКА');
+            
+            // СИНХРОННАЯ очистка Service Workers БЕЗ async/await
+            if ('serviceWorker' in navigator) {
+                // Немедленное удаление всех SW
+                navigator.serviceWorker.getRegistrations().then(function(regs) {
+                    if (regs.length > 0) {
+                        console.log('⚠️ Найдено SW:', regs.length, '- удаляем немедленно');
+                        regs.forEach(function(reg) {
+                            reg.unregister().catch(function() {});
+                        });
+                    }
+                }).catch(function() {});
+                
+                // Очистка кэшей
+                if ('caches' in window) {
+                    caches.keys().then(function(keys) {
+                        keys.forEach(function(key) {
+                            caches.delete(key).catch(function() {});
+                        });
+                    }).catch(function() {});
+                }
+            }
+            
+            // Очистка sessionStorage (localStorage оставляем для версии)
+            try {
+                sessionStorage.clear();
+            } catch(e) {}
+            
+            console.log('✅ Синхронная очистка завершена');
+        })();
+    </script>
+    
     <meta charset="UTF-8">
     <!-- Агрессивное отключение кеширования -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
@@ -15,13 +53,11 @@
     <meta name="theme-color" content="#10b981">
     
     <!-- Версия приложения для отладки -->
-    <meta name="app-version" content="2.0.0">
+    <meta name="app-version" content="3.0.0">
     
     <title>🏠 УК "Зелёная Долина" - Личный кабинет жильца</title>
     
-    <!-- PWA Manifest -->
-    <!-- ВРЕМЕННО ОТКЛЮЧАЕМ MANIFEST -->
-    <!-- <link rel="manifest" href="manifest.json"> -->
+    <!-- PWA Manifest - ПОЛНОСТЬЮ ОТКЛЮЧЕН -->
     
     <!-- Favicon -->
     <link rel="icon" href="icons/favicon.png" type="image/png">
@@ -41,12 +77,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Видимый индикатор версии на случай проблем -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; background: #10b981; color: white; padding: 10px; text-align: center; z-index: 99999; font-weight: bold;">
+        Загрузка v3.0.0... Если страница не загружается, откройте /emergency-reset.html
+    </div>
+    
     <!-- Loading Screen -->
     <div id="loading-screen" class="loading-screen">
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <h2>🏠 УК "Зелёная Долина"</h2>
-            <p>Загрузка приложения...</p>
+            <p>Загрузка приложения v3.0.0...</p>
         </div>
     </div>
 
@@ -459,7 +500,7 @@
         // ============================================
         
         (function versionCheck() {
-            const CURRENT_VERSION = '2.0.0';
+            const CURRENT_VERSION = '3.0.0';
             const STORAGE_KEY = 'app_version';
             
             // Проверяем версию в localStorage

@@ -2,40 +2,38 @@
 <html lang="ru">
 <head>
     <!-- ============================================ -->
-    <!-- EMERGENCY NUCLEAR RESET v3.0.0 - СИНХРОННАЯ ОЧИСТКА SW -->
+    <!-- NUCLEAR CLEANUP v3.0.0 - Запускается ПЕРВЫМ -->
     <!-- ============================================ -->
     <script>
+        // NUCLEAR CLEANUP - Запускается ПЕРВЫМ
         (function() {
-            console.log('🚨 EMERGENCY NUCLEAR RESET v3.0.0 - СИНХРОННАЯ ОЧИСТКА');
+            console.log('🚨 NUCLEAR CLEANUP v3.0.0 - GitHub Pages Migration');
             
-            // СИНХРОННАЯ очистка Service Workers БЕЗ async/await
+            // Очистка Service Workers
             if ('serviceWorker' in navigator) {
-                // Немедленное удаление всех SW
-                navigator.serviceWorker.getRegistrations().then(function(regs) {
-                    if (regs.length > 0) {
-                        console.log('⚠️ Найдено SW:', regs.length, '- удаляем немедленно');
-                        regs.forEach(function(reg) {
-                            reg.unregister().catch(function() {});
-                        });
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister().catch(function() {});
                     }
                 }).catch(function() {});
-                
-                // Очистка кэшей
-                if ('caches' in window) {
-                    caches.keys().then(function(keys) {
-                        keys.forEach(function(key) {
-                            caches.delete(key).catch(function() {});
-                        });
-                    }).catch(function() {});
-                }
             }
             
-            // Очистка sessionStorage (localStorage оставляем для версии)
+            // Очистка всех кешей
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name).catch(function() {});
+                    }
+                }).catch(function() {});
+            }
+            
+            // Очистка localStorage и sessionStorage
             try {
+                localStorage.clear();
                 sessionStorage.clear();
             } catch(e) {}
             
-            console.log('✅ Синхронная очистка завершена');
+            console.log('✅ Nuclear cleanup завершена');
         })();
     </script>
     

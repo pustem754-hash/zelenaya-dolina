@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК Зелёная Долина v5.2</title>
+    <title>УК Зелёная Долина v5.5.0</title>
+    
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#27ae60">
@@ -171,7 +175,8 @@
             gap: 10px;
             margin: 15px 0;
         }
-        .videos-gallery {
+        .videos-gallery,
+        .video-gallery {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
@@ -268,8 +273,37 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             z-index: 10;
         }
-        .video-item .btn-delete-video:active {
+        .video-item .btn-delete-video:active,
+        .video-item .video-delete-btn:active {
             background: rgba(192, 57, 43, 0.9);
+        }
+        .video-item .video-delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .video-item .video-info {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
         }
         .video-viewer {
             display: none;
@@ -458,16 +492,37 @@
             <input type="file" id="photoGalleryInput" accept="image/*" style="display:none" onchange="handlePhoto(event)">
             
             <!-- Видео -->
-            <button class="btn btn-video" id="videoBtn" onclick="toggleVideoRecording()">🎥 Записать видео</button>
-            <button class="btn btn-video" onclick="selectVideoFromGallery()" style="background:#95a5a6;">📁 Выбрать из галереи</button>
-            <input type="file" id="videoInput" accept="video/*" style="display:none" onchange="handleVideoFile(event)">
-            <div id="videoRecordingStatus" style="display:none; text-align:center; padding:10px; color:#e74c3c; font-weight:bold;"></div>
+            <h3 style="margin-top: 30px;">🎥 Прикрепить видео</h3>
+            
+            <!-- iOS: две кнопки в ряд -->
+            <div id="videoButtonsIOS" style="display: none; flex-direction: row; gap: 10px; margin-bottom: 15px;">
+                <button class="btn btn-primary" onclick="document.getElementById('videoCameraInput').click()" style="flex: 1;">
+                    🎥 Камера
+                </button>
+                <button class="btn btn-primary" onclick="document.getElementById('videoGalleryInput').click()" style="flex: 1;">
+                    📁 Галерея
+                </button>
+            </div>
+            
+            <!-- Desktop/Android: две кнопки вертикально -->
+            <div id="videoButtonsDesktop" style="display: none; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <button id="recordVideoBtn" class="btn btn-primary" onclick="toggleVideoRecording()" style="width: 100%;">
+                    🎥 Записать видео
+                </button>
+                <button class="btn btn-primary" onclick="document.getElementById('videoGalleryInput').click()" style="width: 100%;">
+                    📁 Галерея
+                </button>
+            </div>
+            
+            <!-- Скрытые inputs -->
+            <input type="file" id="videoCameraInput" accept="video/*" capture="environment" style="display:none" onchange="handleVideoFile(event)">
+            <input type="file" id="videoGalleryInput" accept="video/*" multiple style="display:none" onchange="handleVideoFile(event)">
             
             <!-- Галерея фото -->
             <div id="photosGallery" class="photos-gallery"></div>
             
             <!-- Галерея видео -->
-            <div id="videosGallery" class="videos-gallery"></div>
+            <div id="videoGallery" class="video-gallery"></div>
             
             <!-- Полноэкранный просмотр фото -->
             <div id="photoViewer" class="photo-viewer" onclick="closePhotoViewer()">
@@ -481,13 +536,6 @@
                 <button class="btn-close-photo" onclick="closeVideoViewer()">✕</button>
             </div>
             
-            <!-- Аудио запись -->
-            <button class="btn btn-audio" id="audioBtn" onclick="toggleAudio()">🎤 Записать голосовое сообщение</button>
-            <div class="audio-player" id="audioPlayer">
-                <audio id="audioPlayback" controls></audio>
-                <div class="audio-info" id="audioInfo"></div>
-            </div>
-            
             <button class="btn">Отправить заявку</button>
         </div>
     </div>
@@ -499,6 +547,36 @@
             <p>📢 Плановое отключение воды 25.01 с 10:00 до 16:00</p>
             <p>✅ Заявка №123 выполнена</p>
             <p>💰 Новая квитанция за январь</p>
+        </div>
+    </div>
+
+    <!-- Квитанции -->
+    <div id="receipts" class="section">
+        <div class="card">
+            <h2>📄 Квитанции</h2>
+            
+            <!-- Фильтры -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Период:</label>
+                <select id="receiptPeriod" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                    <option value="2024-11">Ноябрь 2024</option>
+                    <option value="2024-10">Октябрь 2024</option>
+                    <option value="2024-09">Сентябрь 2024</option>
+                    <option value="2024-08">Август 2024</option>
+                    <option value="2024-07">Июль 2024</option>
+                </select>
+                
+                <button class="btn btn-success" onclick="generateReceipt()" style="width: 100%; background: #27ae60;">
+                    📥 Скачать квитанцию PDF
+                </button>
+            </div>
+            
+            <!-- Предпросмотр -->
+            <div id="receiptPreview" style="background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 8px; min-height: 100px;">
+                <p style="text-align: center; color: #666; margin: 20px 0;">
+                    Выберите период и нажмите "Скачать квитанцию"
+                </p>
+            </div>
         </div>
     </div>
 
@@ -544,6 +622,10 @@
             <div class="nav-icon">🔔</div>
             <div>Уведомления</div>
         </button>
+        <button class="nav-item" onclick="showSection('receipts')">
+            <div class="nav-icon">📄</div>
+            <div>Квитанции</div>
+        </button>
         <button class="nav-item" onclick="showSection('counters')">
             <div class="nav-icon">🔢</div>
             <div>Счётчики</div>
@@ -551,16 +633,16 @@
     </nav>
 
     <script>
-        let mediaRecorder;
-        let audioChunks = [];
-        let savedAudioBlob = null;
+        // Определение iOS устройства
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         
         // Видео переменные
-        let videoRecorder = null;
+        let mediaRecorder = null;
         let videoStream = null;
         let videoChunks = [];
-        let recordingTimer = null;
-        let recordingStartTime = null;
+        let isRecordingVideo = false;
+        let recordingTime = 0;
+        let videoTimer = null;
 
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -677,264 +759,264 @@
             loadPhotosFromStorage();
         });
 
-        async function toggleAudio() {
-            const btn = document.getElementById('audioBtn');
-            const player = document.getElementById('audioPlayer');
-            
-            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-                // Начать запись
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    
-                    mediaRecorder.ondataavailable = (event) => {
-                        audioChunks.push(event.data);
-                    };
-                    
-                    mediaRecorder.onstop = () => {
-                        savedAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const audioUrl = URL.createObjectURL(savedAudioBlob);
-                        const audio = document.getElementById('audioPlayback');
-                        audio.src = audioUrl;
-                        player.style.display = 'block';
-                        
-                        // Показать информацию
-                        const duration = Math.round(audioChunks.length * 0.5); // примерная длительность
-                        const size = (savedAudioBlob.size / 1024).toFixed(1);
-                        document.getElementById('audioInfo').textContent = 
-                            `📊 Длительность: ~${duration}с | Размер: ${size} КБ | ✅ Сохранено`;
-                        
-                        btn.textContent = '🎤 Записать новое сообщение';
-                        btn.classList.remove('recording');
-                    };
-                    
-                    mediaRecorder.start();
-                    btn.textContent = '⏹️ Остановить запись';
-                    btn.classList.add('recording');
-                    
-                } catch (error) {
-                    alert('Ошибка доступа к микрофону: ' + error.message);
-                }
-            } else {
-                // Остановить запись
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-            }
-        }
-        
         // ========== ВИДЕО ФУНКЦИИ ==========
         
         function toggleVideoRecording() {
-            const btn = document.getElementById('videoBtn');
+            const btn = document.getElementById('recordVideoBtn');
             
-            if (!videoRecorder || videoRecorder.state === 'inactive') {
+            if (!isRecordingVideo) {
                 startVideoRecording();
+                btn.textContent = '⏹️ Остановить запись';
+                btn.style.background = '#e74c3c'; // красный
             } else {
                 stopVideoRecording();
+                btn.textContent = '🎥 Записать видео';
+                btn.style.background = '#27ae60'; // зелёный
             }
         }
         
         async function startVideoRecording() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
+                videoStream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'environment' },
-                    audio: true 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
                 });
-                videoStream = stream;
                 
-                const options = { mimeType: 'video/webm;codecs=vp8,opus' };
-                videoRecorder = new MediaRecorder(stream, options);
+                // Проверка поддерживаемых кодеков с аудио
+                let options = null;
+                const codecs = [
+                    'video/webm;codecs=vp9,opus',
+                    'video/webm;codecs=vp8,opus',
+                    'video/webm;codecs=vp9',
+                    'video/webm;codecs=vp8',
+                    'video/webm'
+                ];
+                
+                for (const codec of codecs) {
+                    if (MediaRecorder.isTypeSupported(codec)) {
+                        options = { mimeType: codec };
+                        break;
+                    }
+                }
+                
+                if (!options) {
+                    options = {};
+                }
+                
+                mediaRecorder = new MediaRecorder(videoStream, options);
                 videoChunks = [];
                 
-                videoRecorder.ondataavailable = (event) => {
+                mediaRecorder.ondataavailable = (event) => {
                     if (event.data && event.data.size > 0) {
                         videoChunks.push(event.data);
                     }
                 };
                 
-                videoRecorder.onstop = () => {
-                    const blob = new Blob(videoChunks, { type: 'video/webm' });
+                mediaRecorder.onstop = async () => {
+                    const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+                    await saveVideoToStorage(videoBlob);
                     
-                    if (blob.size > 10 * 1024 * 1024) {
-                        alert('Видео слишком большое (максимум 10 МБ). Попробуйте записать короче.');
-                        videoStream.getTracks().forEach(track => track.stop());
-                        resetVideoRecording();
-                        return;
-                    }
-                    
-                    const videoUrl = URL.createObjectURL(blob);
-                    saveVideoToStorage(videoUrl, blob);
-                    addVideoToGallery(videoUrl);
-                    
+                    // Остановить камеру
                     videoStream.getTracks().forEach(track => track.stop());
-                    resetVideoRecording();
+                    
+                    // Сбросить таймер
+                    clearInterval(videoTimer);
+                    recordingTime = 0;
+                    isRecordingVideo = false;
+                    
+                    const btn = document.getElementById('recordVideoBtn');
+                    btn.textContent = '🎥 Записать видео';
+                    btn.style.background = '#27ae60';
                 };
                 
-                videoRecorder.start();
-                recordingStartTime = Date.now();
+                mediaRecorder.start();
+                isRecordingVideo = true;
+                recordingTime = 0;
                 
-                const btn = document.getElementById('videoBtn');
-                btn.textContent = '⏹️ Остановить запись';
-                btn.classList.add('recording');
-                
-                const statusDiv = document.getElementById('videoRecordingStatus');
-                statusDiv.style.display = 'block';
-                statusDiv.textContent = '🎥 Запись...';
-                
-                recordingTimer = setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
-                    const remaining = 30 - elapsed;
+                // Таймер в кнопке
+                const btn = document.getElementById('recordVideoBtn');
+                videoTimer = setInterval(() => {
+                    recordingTime++;
+                    btn.textContent = `⏹️ Запись... ${recordingTime}с`;
                     
-                    if (remaining <= 0) {
-                        stopVideoRecording();
-                        alert('Достигнут лимит записи (30 секунд)');
-                    } else {
-                        statusDiv.textContent = `🎥 Запись... ${remaining}с`;
+                    // Остановить через 30 секунд
+                    if (recordingTime >= 30) {
+                        toggleVideoRecording();
                     }
                 }, 1000);
                 
             } catch (error) {
-                alert('Ошибка доступа к камере: ' + error.message);
-                resetVideoRecording();
+                console.error('Ошибка запуска видео:', error);
+                alert('Не удалось получить доступ к камере');
+                isRecordingVideo = false;
             }
         }
         
         function stopVideoRecording() {
-            if (videoRecorder && videoRecorder.state !== 'inactive') {
-                videoRecorder.stop();
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
             }
-            resetVideoRecording();
+            if (videoTimer) {
+                clearInterval(videoTimer);
+                videoTimer = null;
+            }
+            isRecordingVideo = false;
+            recordingTime = 0;
         }
         
-        function resetVideoRecording() {
-            if (recordingTimer) {
-                clearInterval(recordingTimer);
-                recordingTimer = null;
+        async function handleVideoFile(event) {
+            const files = event.target.files;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Проверить размер (макс 10 МБ)
+                const sizeInMB = file.size / (1024 * 1024);
+                if (sizeInMB > 10) {
+                    alert(`❌ Видео "${file.name}" слишком большое (${sizeInMB.toFixed(2)} МБ). Максимум 10 МБ.`);
+                    continue;
+                }
+                
+                // Сохранить видео
+                await saveVideoToStorage(file);
             }
             
-            const btn = document.getElementById('videoBtn');
-            btn.textContent = '🎥 Записать видео';
-            btn.classList.remove('recording');
-            
-            const statusDiv = document.getElementById('videoRecordingStatus');
-            statusDiv.style.display = 'none';
-            statusDiv.textContent = '';
-            
-            recordingStartTime = null;
-        }
-        
-        function handleVideoFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Видео слишком большое (максимум 10 МБ)');
-                return;
-            }
-            
-            const videoUrl = URL.createObjectURL(file);
-            saveVideoToStorage(videoUrl, file);
-            addVideoToGallery(videoUrl);
-            
+            // Очистить input
             event.target.value = '';
         }
         
-        function saveVideoToStorage(videoUrl, blob) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                let videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-                videos.push({
-                    url: videoUrl,
-                    data: reader.result,
-                    timestamp: Date.now()
-                });
-                localStorage.setItem('requestVideos', JSON.stringify(videos));
-            };
-            
-            if (blob instanceof Blob) {
-                reader.readAsDataURL(blob);
-            } else if (blob instanceof File) {
-                const fileReader = new FileReader();
-                fileReader.onload = function() {
-                    let videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-                    videos.push({
-                        url: videoUrl,
-                        data: fileReader.result,
-                        timestamp: Date.now()
-                    });
-                    localStorage.setItem('requestVideos', JSON.stringify(videos));
+        async function saveVideoToStorage(videoBlob) {
+            try {
+                // Конвертировать blob в base64 для сохранения в localStorage
+                const reader = new FileReader();
+                
+                reader.onloadend = function() {
+                    const base64Video = reader.result; // data:video/webm;base64,...
+                    
+                    // Проверить размер (localStorage ограничен ~5-10 МБ)
+                    const sizeInMB = (base64Video.length * 0.75) / (1024 * 1024);
+                    if (sizeInMB > 10) {
+                        alert('❌ Видео слишком большое (> 10 МБ). Выберите более короткое видео.');
+                        return;
+                    }
+                    
+                    // Получить существующие видео
+                    let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+                    
+                    // Добавить новое видео
+                    const videoData = {
+                        id: Date.now(),
+                        data: base64Video,
+                        timestamp: new Date().toISOString(),
+                        size: sizeInMB.toFixed(2) + ' МБ'
+                    };
+                    
+                    videos.push(videoData);
+                    
+                    // Сохранить в localStorage
+                    localStorage.setItem('videos', JSON.stringify(videos));
+                    
+                    // Добавить в галерею
+                    addVideoToGallery(videoData);
+                    
+                    console.log('✅ Видео сохранено в localStorage');
                 };
-                fileReader.readAsDataURL(blob);
+                
+                reader.onerror = function() {
+                    console.error('❌ Ошибка конвертации видео в base64');
+                    alert('Ошибка сохранения видео');
+                };
+                
+                reader.readAsDataURL(videoBlob);
+            } catch (error) {
+                console.error('Ошибка сохранения видео:', error);
+                alert('Ошибка сохранения видео');
             }
         }
         
         function loadVideosFromStorage() {
-            const videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-            const gallery = document.getElementById('videosGallery');
-            if (!gallery) return;
-            
-            gallery.innerHTML = '';
-            videos.forEach((videoData, index) => {
-                let videoUrl = videoData.url || videoData.data;
-                addVideoToGallery(videoUrl, index);
-            });
+            try {
+                const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+                
+                videos.forEach(videoData => {
+                    addVideoToGallery(videoData);
+                });
+                
+                console.log(`✅ Загружено ${videos.length} видео из localStorage`);
+            } catch (error) {
+                console.error('Ошибка загрузки видео:', error);
+            }
         }
         
-        function addVideoToGallery(videoUrl, index = null) {
-            const gallery = document.getElementById('videosGallery');
+        function addVideoToGallery(videoData) {
+            const gallery = document.getElementById('videoGallery');
             if (!gallery) return;
             
             const videoItem = document.createElement('div');
             videoItem.className = 'video-item';
+            videoItem.dataset.videoId = videoData.id;
             
+            // Создать превью с base64 данными
             const preview = document.createElement('div');
             preview.className = 'video-preview';
+            preview.onclick = () => showFullVideo(videoData.id);
             
             const video = document.createElement('video');
-            video.src = videoUrl;
+            video.src = videoData.data;
             video.preload = 'metadata';
             video.muted = true;
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.objectFit = 'cover';
             
-            const playBtn = document.createElement('button');
+            const playBtn = document.createElement('div');
             playBtn.className = 'video-play-btn';
             playBtn.textContent = '▶';
-            playBtn.onclick = (e) => {
-                e.stopPropagation();
-                showFullVideo(videoUrl);
-            };
-            
-            preview.onclick = () => showFullVideo(videoUrl);
             
             const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn-delete-video';
+            deleteBtn.className = 'video-delete-btn';
             deleteBtn.textContent = '✕';
             deleteBtn.onclick = (e) => {
                 e.stopPropagation();
-                deleteVideo(index !== null ? index : gallery.children.length);
+                deleteVideo(videoData.id);
             };
+            
+            const info = document.createElement('div');
+            info.className = 'video-info';
+            info.textContent = videoData.size || 'N/A';
             
             preview.appendChild(video);
             preview.appendChild(playBtn);
             videoItem.appendChild(preview);
             videoItem.appendChild(deleteBtn);
+            videoItem.appendChild(info);
             gallery.appendChild(videoItem);
         }
         
-        function deleteVideo(index) {
-            let videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-            if (videos[index] && videos[index].url) {
-                URL.revokeObjectURL(videos[index].url);
+        function deleteVideo(videoId) {
+            let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            videos = videos.filter(v => v.id !== videoId);
+            localStorage.setItem('videos', JSON.stringify(videos));
+            
+            // Удалить из DOM
+            const videoItem = document.querySelector(`[data-video-id="${videoId}"]`);
+            if (videoItem) {
+                videoItem.remove();
             }
-            videos.splice(index, 1);
-            localStorage.setItem('requestVideos', JSON.stringify(videos));
-            loadVideosFromStorage();
         }
         
-        function showFullVideo(videoUrl) {
+        function showFullVideo(videoId) {
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const videoData = videos.find(v => v.id === videoId);
+            if (!videoData) return;
+            
             const viewer = document.getElementById('videoViewer');
             const fullVideo = document.getElementById('fullVideo');
-            fullVideo.src = videoUrl;
+            fullVideo.src = videoData.data;
             viewer.classList.add('active');
         }
         
@@ -946,9 +1028,199 @@
             viewer.classList.remove('active');
         }
         
-        function selectVideoFromGallery() {
-            document.getElementById('videoInput').click();
+        // ========== ГЕНЕРАЦИЯ КВИТАНЦИЙ PDF ==========
+        
+        async function generateReceipt() {
+            const period = document.getElementById('receiptPeriod').value;
+            const [year, month] = period.split('-');
+            const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                                'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+            const periodText = monthNames[parseInt(month)-1] + ' ' + year;
+            
+            // Создать PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            // Установить шрифт
+            doc.setFont('helvetica');
+            
+            let y = 20; // Начальная позиция по Y
+            
+            // ============ ШАПКА ============
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('КВИТАНЦИЯ', 105, y, { align: 'center' });
+            y += 7;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('УК "Зелёная Долина"', 105, y, { align: 'center' });
+            y += 5;
+            doc.text('ИНН: 7701234567  КПП: 770101001  ОГРН: 1234567890123', 105, y, { align: 'center' });
+            y += 5;
+            doc.text('г. Москва, ул. Примерная, д. 1', 105, y, { align: 'center' });
+            y += 10;
+            
+            // Линия разделитель
+            doc.line(20, y, 190, y);
+            y += 7;
+            
+            // ============ ИНФОРМАЦИЯ О СОБСТВЕННИКЕ ============
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Информация о собственнике', 20, y);
+            y += 7;
+            
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Период: ' + periodText, 20, y);
+            doc.text('Лицевой счёт: 1234567890', 120, y);
+            y += 5;
+            doc.text('Адрес: г. Москва, ул. Ленина, д. 10, кв. 45', 20, y);
+            y += 5;
+            doc.text('ФИО: Иванов Иван Иванович', 20, y);
+            y += 5;
+            doc.text('Площадь: 54.3 м²', 20, y);
+            doc.text('Прописано: 3 чел.', 120, y);
+            y += 8;
+            
+            // Линия
+            doc.line(20, y, 190, y);
+            y += 7;
+            
+            // ============ НАЧИСЛЕНИЯ ============
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Начисления за коммунальные услуги', 20, y);
+            y += 5;
+            
+            // Таблица начислений
+            const charges = [
+                ['Холодное водоснабжение', '12.5', 'м³', '45.67', '0.00', '570.88'],
+                ['Горячее водоснабжение', '8.2', 'м³', '187.21', '0.00', '1,535.12'],
+                ['Отопление', '54.3', 'м²', '215.34', '0.00', '11,692.96'],
+                ['Электроэнергия', '145', 'кВт*ч', '6.19', '0.00', '897.55'],
+                ['Содержание жилого помещения', '54.3', 'м²', '35.00', '0.00', '1,900.50'],
+                ['ОДН холодное водоснабжение', '2.1', 'м³', '45.67', '0.00', '95.91'],
+                ['ОДН горячее водоснабжение', '1.3', 'м³', '187.21', '0.00', '243.37'],
+                ['ОДН электроэнергия', '18', 'кВт*ч', '6.19', '0.00', '111.42']
+            ];
+            
+            doc.autoTable({
+                startY: y,
+                head: [['Наименование услуги', 'Объём', 'Ед.', 'Тариф', 'Перерасчёт', 'Итого']],
+                body: charges,
+                foot: [['', '', '', '', 'ИТОГО:', '17,047.71']],
+                theme: 'grid',
+                styles: { 
+                    fontSize: 8,
+                    cellPadding: 2,
+                    font: 'helvetica'
+                },
+                headStyles: { 
+                    fillColor: [39, 174, 96],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                footStyles: {
+                    fillColor: [240, 240, 240],
+                    fontStyle: 'bold'
+                },
+                columnStyles: {
+                    0: { cellWidth: 70 },
+                    1: { cellWidth: 18, halign: 'right' },
+                    2: { cellWidth: 15 },
+                    3: { cellWidth: 22, halign: 'right' },
+                    4: { cellWidth: 22, halign: 'right' },
+                    5: { cellWidth: 25, halign: 'right' }
+                }
+            });
+            
+            y = doc.lastAutoTable.finalY + 10;
+            
+            // ============ СПРАВОЧНО ============
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Справочно', 20, y);
+            y += 7;
+            
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Задолженность на начало периода:', 20, y);
+            doc.text('2,450.00 руб.', 150, y, { align: 'right' });
+            y += 5;
+            doc.text('Начислено за текущий период:', 20, y);
+            doc.text('17,047.71 руб.', 150, y, { align: 'right' });
+            y += 5;
+            doc.text('Оплачено:', 20, y);
+            doc.text('15,000.00 руб.', 150, y, { align: 'right' });
+            y += 5;
+            doc.setFont('helvetica', 'bold');
+            doc.text('Задолженность на конец периода:', 20, y);
+            doc.text('4,497.71 руб.', 150, y, { align: 'right' });
+            y += 8;
+            
+            // Линия
+            doc.line(20, y, 190, y);
+            y += 7;
+            
+            // ============ ПЛАТЁЖНЫЕ РЕКВИЗИТЫ ============
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Платёжные реквизиты', 20, y);
+            y += 7;
+            
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Получатель: УК "Зелёная Долина"', 20, y);
+            y += 5;
+            doc.text('ИНН: 7701234567  КПП: 770101001', 20, y);
+            y += 5;
+            doc.text('Банк: ПАО "Сбербанк"', 20, y);
+            y += 5;
+            doc.text('Р/с: 40702810400000012345', 20, y);
+            y += 5;
+            doc.text('К/с: 30101810400000000225  БИК: 044525225', 20, y);
+            y += 10;
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Оплатить до: 10.12.' + year, 20, y);
+            doc.text('Сумма к оплате: 4,497.71 руб.', 120, y);
+            
+            // Сохранить PDF
+            doc.save('kvitanciya_' + period + '.pdf');
+            
+            // Обновить предпросмотр
+            const preview = document.getElementById('receiptPreview');
+            preview.innerHTML = `
+                <p style="text-align: center; color: #27ae60; font-weight: bold; margin: 10px 0;">
+                    ✅ Квитанция за ${periodText} скачана!
+                </p>
+                <p style="text-align: center; color: #666; font-size: 14px;">
+                    Файл: kvitanciya_${period}.pdf
+                </p>
+            `;
         }
+        
+        // Показать правильные кнопки при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOSDevice) {
+                // iOS: показать кнопки "Камера" и "Галерея"
+                document.getElementById('videoButtonsIOS').style.display = 'flex';
+                document.getElementById('videoButtonsDesktop').style.display = 'none';
+            } else {
+                // Desktop/Android: показать "Записать видео" и "Галерея"
+                document.getElementById('videoButtonsIOS').style.display = 'none';
+                document.getElementById('videoButtonsDesktop').style.display = 'flex';
+            }
+            
+            // Загрузить сохраненные фото и видео
+            loadPhotosFromStorage();
+            loadVideosFromStorage();
+        });
     </script>
 </body>
 </html>

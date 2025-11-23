@@ -6,7 +6,7 @@
     <title>УК Зелёная Долина v6.0</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#27ae60">
+    <meta name="theme-color" content="#2E7D32">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,7 +26,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             min-height: 100vh;
-            padding: 20px 20px 80px 20px;
+            padding: 20px 20px 100px 20px;
         }
         .header {
             text-align: center;
@@ -60,7 +60,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .card h2 {
-            color: #27ae60;
+            color: #2E7D32;
             font-size: 20px;
             margin-bottom: 15px;
             display: flex;
@@ -81,7 +81,7 @@
         .stat-value {
             font-size: 24px;
             font-weight: bold;
-            color: #27ae60;
+            color: #2E7D32;
             margin-bottom: 5px;
         }
         .stat-label {
@@ -96,14 +96,15 @@
             margin-bottom: 5px;
             color: #333;
             font-weight: 500;
+            font-size: 16px;
         }
         .input-group input,
         .input-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 20px;
         }
         .input-group textarea {
             min-height: 100px;
@@ -111,29 +112,42 @@
         }
         .btn {
             width: 100%;
-            padding: 15px;
-            background: #27ae60;
+            padding: 18px 24px;
+            background: #2E7D32;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 16px;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .btn:active {
-            background: #229954;
+            background: #1B5E20;
         }
         .btn-camera {
             background: #3498db;
-            margin-bottom: 10px;
         }
         .btn-camera:active {
             background: #2980b9;
         }
+        .btn-video {
+            background: #9b59b6;
+        }
+        .btn-video:active {
+            background: #8e44ad;
+        }
+        .btn-video.recording {
+            background: #e74c3c;
+            animation: pulse 1s infinite;
+        }
         .btn-audio {
             background: #e74c3c;
-            margin-bottom: 10px;
         }
         .btn-audio:active {
             background: #c0392b;
@@ -145,14 +159,6 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
-        }
-        #preview {
-            width: 100%;
-            max-height: 300px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin: 10px 0;
-            display: none;
         }
         .photos-gallery {
             display: grid;
@@ -173,25 +179,25 @@
             object-fit: cover;
             cursor: pointer;
         }
-        .photo-item .btn-delete-photo {
+        .photo-overlay {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(231, 76, 60, 0.9);
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            width: 100%;
+            padding: 10px;
+            color: white;
+        }
+        .photo-date {
+            font-size: 12px;
+        }
+        .delete-photo {
+            float: right;
+            background: #e74c3c;
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 5px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .photo-item .btn-delete-photo:active {
-            background: rgba(192, 57, 43, 0.9);
         }
         .photo-viewer {
             display: none;
@@ -226,12 +232,53 @@
             height: 40px;
             font-size: 24px;
             cursor: pointer;
-            display: flex;
+        }
+        .videos-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .video-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #000;
+        }
+        .video-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            width: 100%;
+            padding: 10px;
+            color: white;
+        }
+        .video-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
         }
-        .btn-close-photo:active {
-            background: rgba(255,255,255,0.7);
+        .video-viewer.active {
+            display: flex;
+        }
+        .video-viewer video {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
         }
         .audio-player {
             width: 100%;
@@ -260,122 +307,55 @@
             box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
         }
         .nav-item {
-            padding: 12px 5px;
+            padding: 14px 5px;
             text-align: center;
             border: none;
             background: none;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             color: #666;
         }
         .nav-item.active {
-            color: #27ae60;
+            color: #2E7D32;
         }
         .nav-icon {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 4px;
         }
         
-        /* Улучшенные большие кнопки */
-        .btn {
-            padding: 18px 24px !important;
-            font-size: 20px !important;
-            min-height: 60px !important;
-            font-weight: 600;
-            border-radius: 16px;
+        /* Табы */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+            overflow-x: auto;
         }
-        
-        .btn-camera {
-            background: #3498db !important;
-        }
-        
-        .btn-pay {
-            background: #27ae60 !important;
-        }
-        
-        .btn-download {
-            background: #95a5a6 !important;
-        }
-        
-        /* Карточки услуг */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-        
-        .service-card {
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .service-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
-        }
-        
-        .service-name {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        
-        .service-amount {
-            font-size: 20px;
-            font-weight: bold;
-            color: #27ae60;
-            margin-bottom: 8px;
-        }
-        
-        .service-status {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-        
-        .service-status.paid {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .service-status.unpaid {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .payment-header .total-amount {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 15px;
-        }
-        
-        .amount-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #27ae60;
-        }
-        
-        .amount-label {
+        .tab-btn {
+            flex: 1;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
             font-size: 16px;
+            font-weight: 600;
             color: #666;
-            margin-top: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
         }
-        
-        /* Увеличенная навигация */
-        .nav-icon {
-            font-size: 28px !important;
+        .tab-btn.active {
+            color: #2E7D32;
+            border-bottom-color: #2E7D32;
         }
-        
-        .nav-item {
-            font-size: 12px !important;
-            padding: 14px 5px !important;
+        .tab-btn:active {
+            background: #f5f5f5;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
         }
     </style>
 </head>
@@ -424,103 +404,101 @@
 
     <!-- Платежи -->
     <div id="payments" class="section">
-        <div class="card payment-header">
-            <h2>💳 Платежи и квитанции</h2>
-            <div class="total-amount">
-                <div class="amount-value">7 834 ₽</div>
-                <div class="amount-label">К оплате за январь</div>
+        <div class="card">
+            <h2>💳 Платежи</h2>
+            <div class="stat-item">
+                <div class="stat-value">5 234 ₽</div>
+                <div class="stat-label">К оплате за январь</div>
             </div>
+            <button class="btn">Оплатить</button>
         </div>
-
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-icon">⚡</div>
-                <div class="service-name">Электроснабжение</div>
-                <div class="service-amount">1 324 ₽</div>
-                <div class="service-status paid">Оплачено</div>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">💧</div>
-                <div class="service-name">Холодная вода</div>
-                <div class="service-amount">523 ₽</div>
-                <div class="service-status unpaid">Не оплачено</div>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">🔥</div>
-                <div class="service-name">Горячая вода</div>
-                <div class="service-amount">942 ₽</div>
-                <div class="service-status unpaid">Не оплачено</div>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">⛽</div>
-                <div class="service-name">Газ</div>
-                <div class="service-amount">580 ₽</div>
-                <div class="service-status unpaid">Не оплачено</div>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">🏠</div>
-                <div class="service-name">Содержание</div>
-                <div class="service-amount">1 580 ₽</div>
-                <div class="service-status unpaid">Не оплачено</div>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">🔧</div>
-                <div class="service-name">Капремонт</div>
-                <div class="service-amount">600 ₽</div>
-                <div class="service-status unpaid">Не оплачено</div>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon">🗑️</div>
-                <div class="service-name">Мусор</div>
-                <div class="service-amount">420 ₽</div>
-                <div class="service-status paid">Оплачено</div>
-            </div>
-        </div>
-
-        <button class="btn btn-pay" onclick="alert('Переход на оплату')">💰 Оплатить онлайн</button>
-        <button class="btn btn-download" onclick="alert('Скачивание PDF')">📥 Скачать квитанцию PDF</button>
     </div>
 
     <!-- Заявки -->
     <div id="requests" class="section">
         <div class="card">
             <h2>📝 Новая заявка</h2>
+            
             <div class="input-group">
                 <label>Тип проблемы</label>
-                <input type="text" placeholder="Например: течёт кран">
+                <input type="text" id="problemType" placeholder="Например: течёт кран">
             </div>
             <div class="input-group">
                 <label>Описание</label>
-                <textarea placeholder="Подробное описание проблемы..."></textarea>
+                <textarea id="problemDescription" placeholder="Подробное описание проблемы..."></textarea>
             </div>
             
-            <!-- Камера -->
-            <button class="btn btn-camera" onclick="openCamera()">📷 Сделать фото</button>
-            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
+            <!-- Табы для медиа -->
+            <nav class="tabs" style="margin-top: 20px;">
+                <button class="tab-btn active" onclick="showRequestTab('photos', event)">📸 Фото</button>
+                <button class="tab-btn" onclick="showRequestTab('videos', event)">🎥 Видео</button>
+                <button class="tab-btn" onclick="showRequestTab('audio', event)">🎤 Аудио</button>
+            </nav>
             
-            <!-- Галерея фото -->
-            <div id="photosGallery" class="photos-gallery"></div>
+            <!-- Вкладка: Фото -->
+            <div id="requestPhotosTab" class="tab-content active">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фото проблемы</h3>
+                <p style="color: #666; margin-bottom: 15px;">Сфотографируйте проблему для наглядности</p>
+                
+                <button class="btn btn-camera" id="photoBtn">📸 Сделать фото</button>
+                <div id="photosContainer" class="photos-gallery" style="margin-top: 15px;"></div>
+            </div>
             
-            <!-- Полноэкранный просмотр -->
-            <div id="photoViewer" class="photo-viewer" onclick="closePhotoViewer()">
+            <!-- Вкладка: Видео -->
+            <div id="requestVideosTab" class="tab-content">
+                <h2 style="font-size: 24px; margin-bottom: 20px;">🎥 Видео заявки</h2>
+                
+                <div class="video-section">
+                    <p style="color: #666; margin-bottom: 15px;">Запишите видео для описания проблемы (макс. 2 видео по 5MB)</p>
+                    
+                    <button id="videoBtn" style="
+                        width: 100%;
+                        padding: 18px;
+                        font-size: 18px;
+                        background: #e74c3c;
+                        color: white;
+                        border: none;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        margin-bottom: 20px;
+                    ">
+                        🎥 Записать видео
+                    </button>
+                    
+                    <div id="videosContainer" style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                        gap: 15px;
+                    "></div>
+                </div>
+            </div>
+            
+            <!-- Вкладка: Аудио -->
+            <div id="requestAudioTab" class="tab-content">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">🎤 Голосовое сообщение</h3>
+                <p style="color: #666; margin-bottom: 15px;">Запишите голосовое описание проблемы</p>
+                
+                <button class="btn btn-audio" id="audioBtn">🎤 Записать голосовое сообщение</button>
+                <div class="audio-player" id="audioPlayer">
+                    <audio id="audioPlayback" controls></audio>
+                    <div class="audio-info" id="audioInfo"></div>
+                </div>
+            </div>
+            
+            <!-- Полноэкранный просмотр фото -->
+            <div id="photoViewer" class="photo-viewer">
                 <img id="fullPhoto" alt="Фото">
                 <button class="btn-close-photo" onclick="closePhotoViewer()">✕</button>
             </div>
             
-            <!-- Аудио запись -->
-            <button class="btn btn-audio" id="audioBtn" onclick="toggleAudio()">🎤 Записать голосовое сообщение</button>
-            <div class="audio-player" id="audioPlayer">
-                <audio id="audioPlayback" controls></audio>
-                <div class="audio-info" id="audioInfo"></div>
+            <!-- Полноэкранный просмотр видео -->
+            <div id="videoViewer" class="video-viewer">
+                <video id="fullVideo" controls></video>
+                <button class="btn-close-photo" onclick="closeVideoViewer()">✕</button>
             </div>
             
-            <button class="btn">Отправить заявку</button>
+            <button class="btn" onclick="submitRequest()" style="margin-top: 20px;">Отправить заявку</button>
         </div>
     </div>
 
@@ -538,23 +516,92 @@
     <div id="counters" class="section">
         <div class="card">
             <h2>🔢 Передать показания</h2>
-            <div class="input-group">
-                <label>💧 Холодная вода (м³)</label>
-                <input type="number" placeholder="Текущие показания">
+            
+            <!-- Табы -->
+            <nav class="tabs">
+                <button class="tab-btn active" onclick="showTab('payments', event)">💰 Оплата</button>
+                <button class="tab-btn" onclick="showTab('meters', event)">📊 Счётчики</button>
+                <button class="tab-btn" onclick="showTab('photos', event)">📸 Фото</button>
+                <button class="tab-btn" onclick="showTab('videos', event)">🎥 Видео</button>
+            </nav>
+            
+            <!-- Вкладка: Оплата -->
+            <div id="paymentsTab" class="tab-content active">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">💰 Оплата услуг</h3>
+                <div class="stat-item">
+                    <div class="stat-value">5 234 ₽</div>
+                    <div class="stat-label">К оплате за январь</div>
+                </div>
+                <button class="btn" onclick="alert('Переход на страницу оплаты')">💳 Оплатить онлайн</button>
             </div>
-            <div class="input-group">
-                <label>🔥 Горячая вода (м³)</label>
-                <input type="number" placeholder="Текущие показания">
+            
+            <!-- Вкладка: Счётчики -->
+            <div id="metersTab" class="tab-content">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📊 Показания счётчиков</h3>
+                
+                <!-- Форма ввода показаний -->
+                <div class="meter-form">
+                    <div class="input-group">
+                        <label>💧 Холодная вода (м³)</label>
+                        <input type="number" id="coldWater" placeholder="Текущие показания">
+                    </div>
+                    <div class="input-group">
+                        <label>🔥 Горячая вода (м³)</label>
+                        <input type="number" id="hotWater" placeholder="Текущие показания">
+                    </div>
+                    <div class="input-group">
+                        <label>⛽ Газ (м³)</label>
+                        <input type="number" id="gas" placeholder="Текущие показания">
+                    </div>
+                    <div class="input-group">
+                        <label>⚡ Электричество (кВт⋅ч)</label>
+                        <input type="number" id="electricity" placeholder="Текущие показания">
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="submitCounters()" style="margin-top: 20px;">📤 Отправить показания</button>
             </div>
-            <div class="input-group">
-                <label>⛽ Газ (м³)</label>
-                <input type="number" placeholder="Текущие показания" style="font-size: 20px; padding: 16px;">
+            
+            <!-- Вкладка: Фото -->
+            <div id="photosTab" class="tab-content">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фотофиксация счётчиков</h3>
+                <p style="color: #666; margin-bottom: 15px;">Сфотографируйте показания счётчиков для подтверждения</p>
+                
+                <button id="counterPhotoBtn" style="
+                    width: 100%;
+                    padding: 18px;
+                    font-size: 18px;
+                    background: #27ae60;
+                    color: white;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    margin-bottom: 20px;
+                ">
+                    📸 Сделать фото счётчика
+                </button>
+                
+                <div id="counterPhotosContainer" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 15px;
+                "></div>
             </div>
-            <div class="input-group">
-                <label>⚡ Электричество (кВт⋅ч)</label>
-                <input type="number" placeholder="Текущие показания">
+            
+            <!-- Вкладка: Видео -->
+            <div id="videosTab" class="tab-content">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">🎥 Видео счётчиков</h3>
+                <p style="color: #666; margin-bottom: 15px;">Запишите видео показаний счётчиков для подтверждения</p>
+                
+                <button id="counterVideoBtn" class="btn btn-video" style="margin-bottom: 20px;">🎥 Записать видео счётчика</button>
+                
+                <div id="counterVideosContainer" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 15px;
+                "></div>
             </div>
-            <button class="btn">Отправить показания</button>
         </div>
     </div>
 
@@ -587,174 +634,801 @@
     </nav>
 
     <script>
+        console.log('🚀 Инициализация приложения УК Зелёная Долина v6.0');
+        
         let mediaRecorder;
         let audioChunks = [];
         let savedAudioBlob = null;
+        let videoRecorder = null;
+        let videoStream = null;
+        let videoChunks = [];
 
+        // ===== НАВИГАЦИЯ =====
         function showSection(id) {
+            console.log('📱 Переключение секции:', id);
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
         }
         
-        function openCamera() {
-            document.getElementById('photoInput').click();
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====
+        function showTab(tabName, event) {
+            console.log('📑 Переключение вкладки:', tabName);
+            
+            // Скрыть все вкладки
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                const tabElement = document.getElementById(tab.id);
+                if (tabElement) {
+                    tabElement.style.display = 'none';
+                    tabElement.classList.remove('active');
+                }
+            });
+            
+            // Убрать активный класс у кнопок
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            
+            // Показать выбранную вкладку
+            const targetTab = document.getElementById(tabName + 'Tab');
+            if (targetTab) {
+                targetTab.style.display = 'block';
+                targetTab.classList.add('active');
+            }
+            
+            // Добавить активный класс к нажатой кнопке
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Если переключились на видео - загрузить видео
+            if (tabName === 'videos') {
+                renderCounterVideos();
+            }
         }
         
-        function handlePhoto(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ В ЗАЯВКАХ =====
+        function showRequestTab(tabName, event) {
+            console.log('📑 Переключение вкладки заявки:', tabName);
+            
+            // Найти родительский контейнер (секция заявок)
+            const requestsSection = document.getElementById('requests');
+            if (!requestsSection) return;
+            
+            // Скрыть все вкладки в секции заявок
+            const tabs = requestsSection.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                const tabElement = document.getElementById(tab.id);
+                if (tabElement) {
+                    tabElement.style.display = 'none';
+                    tabElement.classList.remove('active');
+                }
+            });
+            
+            // Убрать активный класс у кнопок
+            const btns = requestsSection.querySelectorAll('.tab-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            
+            // Показать выбранную вкладку
+            const tabId = 'request' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'Tab';
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.style.display = 'block';
+                targetTab.classList.add('active');
+            }
+            
+            // Добавить активный класс к нажатой кнопке
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Если переключились на видео - загрузить видео
+            if (tabName === 'videos') {
+                renderVideos();
+            }
+        }
+
+        // ===== ФОТО ГАЛЕРЕЯ: ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ =====
+        function initPhotoGallery() {
+            console.log('📸 Инициализация фото галереи');
+            
+            const photoBtn = document.getElementById('photoBtn');
+            if (photoBtn) {
+                photoBtn.addEventListener('click', function() {
+                    console.log('📸 Кнопка "Сделать фото" нажата');
+                    openPhotoInput();
+                });
+            }
+            
+            const counterPhotoBtn = document.getElementById('counterPhotoBtn');
+            if (counterPhotoBtn) {
+                counterPhotoBtn.addEventListener('click', function() {
+                    console.log('📸 Кнопка "Сфотографировать счётчики" нажата');
+                    openPhotoInput('counter');
+                });
+            }
+            
+            renderPhotos();
+            renderCounterPhotos();
+        }
+
+        function openPhotoInput(type = 'request') {
+            console.log('📸 Открытие фото input, тип:', type);
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment'; // ⚠️ КРИТИЧНО для iOS Safari
+            
+            input.onchange = function(e) {
+                console.log('📸 Файл выбран:', e.target.files[0]?.name);
+                const file = e.target.files[0];
+                if (!file) {
+                    console.log('❌ Файл не выбран');
+                    return;
+                }
+                
+                handlePhotoFile(file, type);
+            };
+            
+            console.log('📸 Запуск input.click()');
+            input.click();
+        }
+
+        function handlePhotoFile(file, type = 'request') {
+            console.log('📸 Обработка фото файла:', file.name, 'тип:', type);
             
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(event) {
+                console.log('📸 Файл прочитан, создание изображения');
                 const img = new Image();
                 img.onload = function() {
-                    // Создаём canvas для сжатия
+                    console.log('📸 Изображение загружено, размеры:', img.width, 'x', img.height);
+                    
+                    // Сжатие изображения до 800px
                     const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
                     let width = img.width;
                     let height = img.height;
+                    const maxSize = 800;
                     
-                    // Сжимаем до максимум 1024px по большей стороне
-                    const maxSize = 1024;
                     if (width > height && width > maxSize) {
-                        height = (height * maxSize) / width;
+                        height = (height / width) * maxSize;
                         width = maxSize;
                     } else if (height > maxSize) {
-                        width = (width * maxSize) / height;
+                        width = (width / height) * maxSize;
                         height = maxSize;
                     }
                     
+                    console.log('📸 Новые размеры после сжатия:', width, 'x', height);
+                    
                     canvas.width = width;
                     canvas.height = height;
-                    const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Конвертируем в base64
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    // Сохранение в localStorage
+                    const compressed = canvas.toDataURL('image/jpeg', 0.8);
+                    const storageKey = type === 'counter' ? 'counterPhotos' : 'photos';
+                    const photos = JSON.parse(localStorage.getItem(storageKey) || '[]');
                     
-                    // Сохраняем в localStorage
-                    savePhotoToStorage(compressedDataUrl);
+                    const photoData = {
+                        id: Date.now(),
+                        data: compressed,
+                        date: new Date().toLocaleString('ru-RU')
+                    };
                     
-                    // Добавляем в галерею
-                    addPhotoToGallery(compressedDataUrl);
+                    photos.push(photoData);
+                    localStorage.setItem(storageKey, JSON.stringify(photos));
+                    
+                    console.log('✅ Фото сохранено в localStorage:', storageKey, 'ID:', photoData.id);
+                    
+                    if (type === 'counter') {
+                        renderCounterPhotos();
+                    } else {
+                        renderPhotos();
+                    }
                 };
-                img.src = e.target.result;
+                img.onerror = function() {
+                    console.error('❌ Ошибка загрузки изображения');
+                    alert('Ошибка загрузки изображения');
+                };
+                img.src = event.target.result;
+            };
+            reader.onerror = function() {
+                console.error('❌ Ошибка чтения файла');
+                alert('Ошибка чтения файла');
             };
             reader.readAsDataURL(file);
-            
-            // Очищаем input для возможности повторного выбора того же файла
-            event.target.value = '';
         }
-        
-        function savePhotoToStorage(dataUrl) {
-            let photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
-            photos.push(dataUrl);
-            localStorage.setItem('requestPhotos', JSON.stringify(photos));
-        }
-        
-        function loadPhotosFromStorage() {
-            const photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
-            const gallery = document.getElementById('photosGallery');
-            gallery.innerHTML = '';
-            photos.forEach((photo, index) => {
-                addPhotoToGallery(photo, index);
-            });
-        }
-        
-        function addPhotoToGallery(dataUrl, index = null) {
-            const gallery = document.getElementById('photosGallery');
-            if (!gallery) return;
+
+        function renderPhotos() {
+            console.log('🖼️ Рендеринг фото галереи');
+            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+            const container = document.getElementById('photosContainer');
             
-            const photoItem = document.createElement('div');
-            photoItem.className = 'photo-item';
+            if (!container) {
+                console.log('⚠️ Контейнер photosContainer не найден');
+                return;
+            }
             
-            const img = document.createElement('img');
-            img.src = dataUrl;
-            img.onclick = () => showFullPhoto(dataUrl);
+            console.log('📸 Найдено фото:', photos.length);
             
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn-delete-photo';
-            deleteBtn.textContent = '✕';
-            deleteBtn.onclick = (e) => {
-                e.stopPropagation();
-                deletePhoto(index !== null ? index : gallery.children.length);
-            };
-            
-            photoItem.appendChild(img);
-            photoItem.appendChild(deleteBtn);
-            gallery.appendChild(photoItem);
+            container.innerHTML = photos.map(photo => `
+                <div class="photo-item" style="position: relative; margin: 10px;">
+                    <img src="${photo.data}" alt="Фото" onclick="showFullPhoto('${photo.data}')" style="width: 100%; border-radius: 8px; cursor: pointer;">
+                    <div class="photo-overlay">
+                        <span class="photo-date">${photo.date}</span>
+                        <button class="delete-photo" onclick="deletePhoto(${photo.id})">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `).join('');
         }
-        
-        function deletePhoto(index) {
-            let photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
-            photos.splice(index, 1);
-            localStorage.setItem('requestPhotos', JSON.stringify(photos));
-            loadPhotosFromStorage();
+
+        function renderCounterPhotos() {
+            console.log('🖼️ Рендеринг фото счётчиков');
+            const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
+            const container = document.getElementById('counterPhotosContainer');
+            
+            if (!container) {
+                console.log('⚠️ Контейнер counterPhotosContainer не найден');
+                return;
+            }
+            
+            console.log('📸 Найдено фото счётчиков:', photos.length);
+            
+            if (photos.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Нет загруженных фото</p>';
+                return;
+            }
+            
+            container.innerHTML = photos.map(photo => `
+                <div class="photo-item" style="position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
+                    <img src="${photo.data}" alt="Фото счётчика" onclick="showFullPhoto('${photo.data}')" style="width: 100%; height: auto; display: block; cursor: pointer;">
+                    <div class="photo-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); padding: 10px; color: white;">
+                        <div style="font-size: 12px; margin-bottom: 5px;">${photo.date}</div>
+                        <button class="delete-photo" onclick="deleteCounterPhoto(${photo.id})" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; width: 100%;">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `).join('');
         }
-        
+
+        function deletePhoto(id) {
+            console.log('🗑️ Удаление фото ID:', id);
+            if (!confirm('Удалить это фото?')) {
+                console.log('❌ Удаление отменено пользователем');
+                return;
+            }
+            
+            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+            const filtered = photos.filter(p => p.id !== id);
+            localStorage.setItem('photos', JSON.stringify(filtered));
+            console.log('✅ Фото удалено, осталось:', filtered.length);
+            renderPhotos();
+        }
+
+        function deleteCounterPhoto(id) {
+            console.log('🗑️ Удаление фото счётчика ID:', id);
+            if (!confirm('Удалить это фото?')) {
+                console.log('❌ Удаление отменено пользователем');
+                return;
+            }
+            
+            const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
+            const filtered = photos.filter(p => p.id !== id);
+            localStorage.setItem('counterPhotos', JSON.stringify(filtered));
+            console.log('✅ Фото счётчика удалено, осталось:', filtered.length);
+            renderCounterPhotos();
+        }
+
         function showFullPhoto(dataUrl) {
+            console.log('🔍 Показ полноэкранного фото');
             const viewer = document.getElementById('photoViewer');
             const fullPhoto = document.getElementById('fullPhoto');
-            fullPhoto.src = dataUrl;
-            viewer.classList.add('active');
+            if (viewer && fullPhoto) {
+                fullPhoto.src = dataUrl;
+                viewer.classList.add('active');
+            }
         }
-        
-        function closePhotoViewer() {
-            const viewer = document.getElementById('photoViewer');
-            viewer.classList.remove('active');
-        }
-        
-        // Загружаем фото при загрузке страницы
-        window.addEventListener('DOMContentLoaded', function() {
-            loadPhotosFromStorage();
-        });
 
+        function closePhotoViewer() {
+            console.log('❌ Закрытие просмотра фото');
+            const viewer = document.getElementById('photoViewer');
+            if (viewer) {
+                viewer.classList.remove('active');
+            }
+        }
+
+        // ===== ВИДЕО ФУНКЦИОНАЛ =====
+        function initVideoGallery() {
+            console.log('🎥 Инициализация видео галереи');
+            
+            const videoBtn = document.getElementById('videoBtn');
+            if (videoBtn) {
+                videoBtn.addEventListener('click', function() {
+                    console.log('🎥 Кнопка "Записать видео" нажата');
+                    handleVideoRecording();
+                });
+            }
+            
+            const counterVideoBtn = document.getElementById('counterVideoBtn');
+            if (counterVideoBtn) {
+                counterVideoBtn.addEventListener('click', function() {
+                    console.log('🎥 Кнопка "Записать видео счётчика" нажата');
+                    toggleCounterVideoRecording();
+                });
+            }
+            
+            renderVideos();
+            renderCounterVideos();
+        }
+
+        // ===== ВИДЕО ЗАПИСЬ =====
+        function handleVideoRecording() {
+            console.log('🎥 Обработка записи видео');
+            
+            // iOS Safari не поддерживает MediaRecorder - используем fallback
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS || !navigator.mediaDevices) {
+                console.log('📱 iOS обнаружен или MediaDevices недоступен, используем fallback');
+                // Fallback: выбор видео из галереи
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'video/*';
+                input.capture = 'environment';
+                
+                input.onchange = function(e) {
+                    console.log('📹 Файл видео выбран');
+                    const file = e.target.files[0];
+                    if (!file) {
+                        console.log('❌ Файл не выбран');
+                        return;
+                    }
+                    
+                    // Проверка размера (макс 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        console.error('❌ Видео слишком большое:', (file.size / (1024 * 1024)).toFixed(2), 'MB');
+                        alert('Видео слишком большое! Максимум 5MB');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        console.log('✅ Видео файл прочитан');
+                        const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+                        
+                        // Ограничение: максимум 2 видео
+                        if (videos.length >= 2) {
+                            console.error('❌ Достигнут лимит видео (макс. 2)');
+                            alert('Можно загрузить максимум 2 видео. Удалите старое видео.');
+                            return;
+                        }
+                        
+                        videos.push({
+                            id: Date.now(),
+                            data: event.target.result,
+                            date: new Date().toLocaleString('ru-RU')
+                        });
+                        localStorage.setItem('videos', JSON.stringify(videos));
+                        console.log('✅ Видео сохранено в localStorage');
+                        renderVideos();
+                    };
+                    reader.onerror = function() {
+                        console.error('❌ Ошибка чтения файла');
+                        alert('Ошибка чтения файла');
+                    };
+                    reader.readAsDataURL(file);
+                };
+                
+                console.log('📱 Запуск input.click() для iOS');
+                input.click();
+            } else {
+                console.log('💻 Desktop/Android обнаружен, используем MediaRecorder');
+                // MediaRecorder для Chrome/Edge/Android
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(function(stream) {
+                        console.log('✅ Доступ к камере получен');
+                        const mediaRecorder = new MediaRecorder(stream);
+                        const chunks = [];
+                        
+                        mediaRecorder.ondataavailable = function(e) {
+                            if (e.data && e.data.size > 0) {
+                                chunks.push(e.data);
+                                console.log('📹 Данные видео получены:', e.data.size, 'байт');
+                            }
+                        };
+                        
+                        mediaRecorder.onstop = function() {
+                            console.log('⏹️ Запись видео остановлена');
+                            const blob = new Blob(chunks, { type: 'video/webm' });
+                            
+                            if (blob.size > 5 * 1024 * 1024) {
+                                console.error('❌ Видео слишком большое:', (blob.size / (1024 * 1024)).toFixed(2), 'MB');
+                                alert('Видео слишком большое! Записывайте не более 30 секунд');
+                                stream.getTracks().forEach(track => track.stop());
+                                removeStopButton();
+                                return;
+                            }
+                            
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                console.log('✅ Видео blob прочитан');
+                                const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+                                
+                                if (videos.length >= 2) {
+                                    console.error('❌ Достигнут лимит видео (макс. 2)');
+                                    alert('Можно загрузить максимум 2 видео. Удалите старое видео.');
+                                    return;
+                                }
+                                
+                                videos.push({
+                                    id: Date.now(),
+                                    data: event.target.result,
+                                    date: new Date().toLocaleString('ru-RU')
+                                });
+                                localStorage.setItem('videos', JSON.stringify(videos));
+                                console.log('✅ Видео сохранено в localStorage');
+                                renderVideos();
+                            };
+                            reader.onerror = function() {
+                                console.error('❌ Ошибка чтения blob');
+                                alert('Ошибка чтения видео');
+                            };
+                            reader.readAsDataURL(blob);
+                            
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+                        
+                        mediaRecorder.start();
+                        console.log('🎥 Запись видео начата');
+                        
+                        // Автоостановка через 30 секунд
+                        const autoStopTimer = setTimeout(function() {
+                            if (mediaRecorder.state === 'recording') {
+                                console.log('⏰ Автоостановка записи через 30 секунд');
+                                mediaRecorder.stop();
+                                removeStopButton();
+                            }
+                        }, 30000);
+                        
+                        // Кнопка остановки
+                        const stopBtn = document.createElement('button');
+                        stopBtn.id = 'videoStopBtn';
+                        stopBtn.textContent = '⏹️ Остановить запись';
+                        stopBtn.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px 40px; font-size: 20px; background: #e74c3c; color: white; border: none; border-radius: 12px; z-index: 9999; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+                        stopBtn.onclick = function() {
+                            console.log('⏹️ Остановка записи по кнопке');
+                            clearTimeout(autoStopTimer);
+                            mediaRecorder.stop();
+                            removeStopButton();
+                        };
+                        document.body.appendChild(stopBtn);
+                        
+                        function removeStopButton() {
+                            const btn = document.getElementById('videoStopBtn');
+                            if (btn) {
+                                document.body.removeChild(btn);
+                            }
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error('❌ Ошибка доступа к камере:', err);
+                        alert('Ошибка доступа к камере: ' + err.message);
+                    });
+            }
+        }
+
+        // Рендеринг видео
+        function renderVideos() {
+            console.log('🎬 Рендеринг видео галереи');
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const container = document.getElementById('videosContainer');
+            
+            if (!container) {
+                console.log('⚠️ Контейнер videosContainer не найден');
+                return;
+            }
+            
+            console.log('🎥 Найдено видео:', videos.length);
+            
+            if (videos.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Нет записанных видео</p>';
+                return;
+            }
+            
+            container.innerHTML = videos.map(video => {
+                const videoSrc = video.data || video.url || '';
+                return `
+                <div class="video-item" style="position: relative; background: #f0f0f0; border-radius: 8px; padding: 15px;">
+                    <video src="${videoSrc}" controls onclick="showFullVideo('${videoSrc}')" style="width: 100%; border-radius: 8px; margin-bottom: 10px; cursor: pointer;"></video>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 12px; color: #666;">${video.date}</span>
+                        <button onclick="deleteVideo(${video.id})" style="background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 14px;">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+        
+        function renderCounterVideos() {
+            console.log('🎬 Рендеринг видео счётчиков');
+            const videos = JSON.parse(localStorage.getItem('counterVideos') || '[]');
+            const container = document.getElementById('counterVideosContainer');
+            
+            if (!container) {
+                console.log('⚠️ Контейнер counterVideosContainer не найден');
+                return;
+            }
+            
+            console.log('🎥 Найдено видео счётчиков:', videos.length);
+            
+            if (videos.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Нет записанных видео счётчиков</p>';
+                return;
+            }
+            
+            container.innerHTML = videos.map(video => `
+                <div class="video-item" style="position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: #000;">
+                    <video src="${video.url}" onclick="showFullVideo('${video.url}')" style="width: 100%; height: auto; display: block; cursor: pointer;"></video>
+                    <div class="video-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); padding: 10px; color: white;">
+                        <div style="font-size: 12px; margin-bottom: 5px;">${video.date}</div>
+                        <button class="delete-photo" onclick="deleteCounterVideo(${video.id})" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; width: 100%;">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function toggleCounterVideoRecording() {
+            console.log('🎥 Переключение записи видео счётчика');
+            
+            if (!videoRecorder || videoRecorder.state === 'inactive') {
+                startCounterVideoRecording();
+            } else {
+                stopCounterVideoRecording();
+            }
+        }
+        
+        async function startCounterVideoRecording() {
+            console.log('🎥 Начало записи видео счётчика');
+            
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' },
+                    audio: true
+                });
+                console.log('✅ Доступ к камере получен');
+                
+                videoRecorder = new MediaRecorder(videoStream);
+                videoChunks = [];
+                
+                videoRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        videoChunks.push(event.data);
+                        console.log('📹 Данные видео получены:', event.data.size, 'байт');
+                    }
+                };
+                
+                videoRecorder.onstop = () => {
+                    console.log('⏹️ Запись видео счётчика остановлена');
+                    const blob = new Blob(videoChunks, { type: 'video/webm' });
+                    const videoUrl = URL.createObjectURL(blob);
+                    
+                    const videos = JSON.parse(localStorage.getItem('counterVideos') || '[]');
+                    videos.push({
+                        id: Date.now(),
+                        url: videoUrl,
+                        date: new Date().toLocaleString('ru-RU')
+                    });
+                    localStorage.setItem('counterVideos', JSON.stringify(videos));
+                    
+                    console.log('✅ Видео счётчика сохранено в localStorage');
+                    renderCounterVideos();
+                    
+                    videoStream.getTracks().forEach(track => track.stop());
+                };
+                
+                videoRecorder.start();
+                console.log('🎥 Запись видео счётчика начата');
+                
+                const counterVideoBtn = document.getElementById('counterVideoBtn');
+                if (counterVideoBtn) {
+                    counterVideoBtn.textContent = '⏹️ Остановить запись';
+                    counterVideoBtn.classList.add('recording');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка доступа к камере:', error);
+                alert('Ошибка доступа к камере: ' + error.message);
+            }
+        }
+        
+        function stopCounterVideoRecording() {
+            console.log('⏹️ Остановка записи видео счётчика');
+            
+            if (videoRecorder && videoRecorder.state !== 'inactive') {
+                videoRecorder.stop();
+            }
+            
+            const counterVideoBtn = document.getElementById('counterVideoBtn');
+            if (counterVideoBtn) {
+                counterVideoBtn.textContent = '🎥 Записать видео счётчика';
+                counterVideoBtn.classList.remove('recording');
+            }
+        }
+        
+        function deleteCounterVideo(id) {
+            console.log('🗑️ Удаление видео счётчика ID:', id);
+            if (!confirm('Удалить это видео?')) {
+                console.log('❌ Удаление отменено пользователем');
+                return;
+            }
+            
+            const videos = JSON.parse(localStorage.getItem('counterVideos') || '[]');
+            const videoToDelete = videos.find(v => v.id === id);
+            if (videoToDelete && videoToDelete.url) {
+                URL.revokeObjectURL(videoToDelete.url);
+            }
+            
+            const filtered = videos.filter(v => v.id !== id);
+            localStorage.setItem('counterVideos', JSON.stringify(filtered));
+            console.log('✅ Видео счётчика удалено, осталось:', filtered.length);
+            renderCounterVideos();
+        }
+
+        // Удаление видео
+        function deleteVideo(id) {
+            console.log('🗑️ Удаление видео ID:', id);
+            if (!confirm('Удалить это видео?')) {
+                console.log('❌ Удаление отменено пользователем');
+                return;
+            }
+            
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const filtered = videos.filter(v => v.id !== id);
+            localStorage.setItem('videos', JSON.stringify(filtered));
+            console.log('✅ Видео удалено, осталось:', filtered.length);
+            renderVideos();
+        }
+
+        function showFullVideo(videoSrc) {
+            console.log('🔍 Показ полноэкранного видео');
+            const viewer = document.getElementById('videoViewer');
+            const fullVideo = document.getElementById('fullVideo');
+            if (viewer && fullVideo) {
+                fullVideo.src = videoSrc;
+                viewer.classList.add('active');
+            }
+        }
+
+        function closeVideoViewer() {
+            console.log('❌ Закрытие просмотра видео');
+            const viewer = document.getElementById('videoViewer');
+            const fullVideo = document.getElementById('fullVideo');
+            if (viewer) {
+                viewer.classList.remove('active');
+            }
+            if (fullVideo) {
+                fullVideo.pause();
+                fullVideo.src = '';
+            }
+        }
+
+        // ===== АУДИО ФУНКЦИОНАЛ =====
         async function toggleAudio() {
+            console.log('🎤 Переключение записи аудио');
             const btn = document.getElementById('audioBtn');
             const player = document.getElementById('audioPlayer');
             
             if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-                // Начать запись
+                console.log('🎤 Начало записи аудио');
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    console.log('✅ Доступ к микрофону получен');
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
                     
                     mediaRecorder.ondataavailable = (event) => {
                         audioChunks.push(event.data);
+                        console.log('🎤 Данные аудио получены:', event.data.size, 'байт');
                     };
                     
                     mediaRecorder.onstop = () => {
+                        console.log('⏹️ Запись аудио остановлена');
                         savedAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                         const audioUrl = URL.createObjectURL(savedAudioBlob);
                         const audio = document.getElementById('audioPlayback');
-                        audio.src = audioUrl;
-                        player.style.display = 'block';
+                        if (audio) {
+                            audio.src = audioUrl;
+                        }
+                        if (player) {
+                            player.style.display = 'block';
+                        }
                         
-                        // Показать информацию
-                        const duration = Math.round(audioChunks.length * 0.5); // примерная длительность
+                        const duration = Math.round(audioChunks.length * 0.5);
                         const size = (savedAudioBlob.size / 1024).toFixed(1);
-                        document.getElementById('audioInfo').textContent = 
-                            `📊 Длительность: ~${duration}с | Размер: ${size} КБ | ✅ Сохранено`;
+                        const audioInfo = document.getElementById('audioInfo');
+                        if (audioInfo) {
+                            audioInfo.textContent = `📊 Длительность: ~${duration}с | Размер: ${size} КБ | ✅ Сохранено`;
+                        }
                         
-                        btn.textContent = '🎤 Записать новое сообщение';
-                        btn.classList.remove('recording');
+                        if (btn) {
+                            btn.textContent = '🎤 Записать новое сообщение';
+                            btn.classList.remove('recording');
+                        }
+                        
+                        console.log('✅ Аудио сохранено');
                     };
                     
                     mediaRecorder.start();
-                    btn.textContent = '⏹️ Остановить запись';
-                    btn.classList.add('recording');
+                    console.log('🎤 Запись аудио начата');
+                    
+                    if (btn) {
+                        btn.textContent = '⏹️ Остановить запись';
+                        btn.classList.add('recording');
+                    }
                     
                 } catch (error) {
+                    console.error('❌ Ошибка доступа к микрофону:', error);
                     alert('Ошибка доступа к микрофону: ' + error.message);
                 }
             } else {
-                // Остановить запись
+                console.log('⏹️ Остановка записи аудио');
                 mediaRecorder.stop();
                 mediaRecorder.stream.getTracks().forEach(track => track.stop());
             }
         }
+
+        // ===== ОТПРАВКА ДАННЫХ =====
+        function submitRequest() {
+            console.log('📤 Отправка заявки');
+            const type = document.getElementById('problemType')?.value;
+            const description = document.getElementById('problemDescription')?.value;
+            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            
+            console.log('📝 Данные заявки:', { type, description, photos: photos.length, videos: videos.length });
+            
+            alert('Заявка отправлена!\nТип: ' + (type || 'не указан') + '\nФото: ' + photos.length + '\nВидео: ' + videos.length);
+        }
+
+        function submitCounters() {
+            console.log('📤 Отправка показаний счётчиков');
+            const coldWater = document.getElementById('coldWater')?.value;
+            const hotWater = document.getElementById('hotWater')?.value;
+            const gas = document.getElementById('gas')?.value;
+            const electricity = document.getElementById('electricity')?.value;
+            const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
+            
+            console.log('📊 Показания:', { coldWater, hotWater, gas, electricity, photos: photos.length });
+            
+            alert('Показания отправлены!\nХВС: ' + (coldWater || 'не указано') + '\nГВС: ' + (hotWater || 'не указано') + '\nГаз: ' + (gas || 'не указано') + '\nЭлектричество: ' + (electricity || 'не указано') + '\nФото: ' + photos.length);
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ DOM загружен, инициализация приложения');
+            
+            // Проверка localStorage
+            if (typeof localStorage === 'undefined') {
+                console.error('❌ localStorage не поддерживается');
+                alert('Ваш браузер не поддерживает сохранение данных. Некоторые функции могут не работать.');
+            }
+            
+            initPhotoGallery();
+            initVideoGallery();
+            
+            // Загрузить сохранённые видео при загрузке страницы
+            renderVideos();
+            
+            const audioBtn = document.getElementById('audioBtn');
+            if (audioBtn) {
+                audioBtn.addEventListener('click', toggleAudio);
+            }
+            
+            console.log('✅ Приложение инициализировано');
+        });
     </script>
 </body>
 </html>

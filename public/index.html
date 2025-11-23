@@ -131,17 +131,6 @@
         .btn-camera:active {
             background: #2980b9;
         }
-        .btn-video {
-            background: #9b59b6;
-            margin-bottom: 10px;
-        }
-        .btn-video:active {
-            background: #8e44ad;
-        }
-        .btn-video.recording {
-            background: #e74c3c;
-            animation: pulse 1s infinite;
-        }
         .btn-audio {
             background: #e74c3c;
             margin-bottom: 10px;
@@ -166,12 +155,6 @@
             display: none;
         }
         .photos-gallery {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .videos-gallery {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
@@ -209,87 +192,6 @@
         }
         .photo-item .btn-delete-photo:active {
             background: rgba(192, 57, 43, 0.9);
-        }
-        .video-item {
-            position: relative;
-            aspect-ratio: 16/9;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            background: #000;
-        }
-        .video-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .video-item .video-preview {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        .video-item .video-play-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(39, 174, 96, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        .video-item .video-play-btn:active {
-            background: rgba(34, 153, 84, 0.9);
-        }
-        .video-item .btn-delete-video {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(231, 76, 60, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-        .video-item .btn-delete-video:active {
-            background: rgba(192, 57, 43, 0.9);
-        }
-        .video-viewer {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .video-viewer.active {
-            display: flex;
-        }
-        .video-viewer #fullVideo {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 12px;
         }
         .photo-viewer {
             display: none;
@@ -444,41 +346,16 @@
             </div>
             
             <!-- Камера -->
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button class="btn btn-camera" onclick="document.getElementById('photoCameraInput').click()" style="flex: 1;">
-                    📷 Камера
-                </button>
-                <button class="btn btn-camera" onclick="document.getElementById('photoGalleryInput').click()" style="flex: 1;">
-                    🖼️ Галерея
-                </button>
-            </div>
-            <!-- Камера (сделать новое фото) -->
-            <input type="file" id="photoCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
-            <!-- Выбор из галереи -->
-            <input type="file" id="photoGalleryInput" accept="image/*" style="display:none" onchange="handlePhoto(event)">
-            
-            <!-- Видео -->
-            <button class="btn btn-video" id="videoBtn" onclick="toggleVideoRecording()">🎥 Записать видео</button>
-            <button class="btn btn-video" onclick="selectVideoFromGallery()" style="background:#95a5a6;">📁 Выбрать из галереи</button>
-            <input type="file" id="videoInput" accept="video/*" style="display:none" onchange="handleVideoFile(event)">
-            <div id="videoRecordingStatus" style="display:none; text-align:center; padding:10px; color:#e74c3c; font-weight:bold;"></div>
+            <button class="btn btn-camera" onclick="openCamera()">📷 Сделать фото</button>
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
             
             <!-- Галерея фото -->
             <div id="photosGallery" class="photos-gallery"></div>
             
-            <!-- Галерея видео -->
-            <div id="videosGallery" class="videos-gallery"></div>
-            
-            <!-- Полноэкранный просмотр фото -->
+            <!-- Полноэкранный просмотр -->
             <div id="photoViewer" class="photo-viewer" onclick="closePhotoViewer()">
                 <img id="fullPhoto" alt="Фото">
                 <button class="btn-close-photo" onclick="closePhotoViewer()">✕</button>
-            </div>
-            
-            <!-- Полноэкранный просмотр видео -->
-            <div id="videoViewer" class="video-viewer" onclick="closeVideoViewer()">
-                <video id="fullVideo" controls></video>
-                <button class="btn-close-photo" onclick="closeVideoViewer()">✕</button>
             </div>
             
             <!-- Аудио запись -->
@@ -554,19 +431,16 @@
         let mediaRecorder;
         let audioChunks = [];
         let savedAudioBlob = null;
-        
-        // Видео переменные
-        let videoRecorder = null;
-        let videoStream = null;
-        let videoChunks = [];
-        let recordingTimer = null;
-        let recordingStartTime = null;
 
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
+        }
+        
+        function openCamera() {
+            document.getElementById('photoInput').click();
         }
         
         function handlePhoto(event) {
@@ -721,233 +595,6 @@
                 mediaRecorder.stop();
                 mediaRecorder.stream.getTracks().forEach(track => track.stop());
             }
-        }
-        
-        // ========== ВИДЕО ФУНКЦИИ ==========
-        
-        function toggleVideoRecording() {
-            const btn = document.getElementById('videoBtn');
-            
-            if (!videoRecorder || videoRecorder.state === 'inactive') {
-                startVideoRecording();
-            } else {
-                stopVideoRecording();
-            }
-        }
-        
-        async function startVideoRecording() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' },
-                    audio: true 
-                });
-                videoStream = stream;
-                
-                const options = { mimeType: 'video/webm;codecs=vp8,opus' };
-                videoRecorder = new MediaRecorder(stream, options);
-                videoChunks = [];
-                
-                videoRecorder.ondataavailable = (event) => {
-                    if (event.data && event.data.size > 0) {
-                        videoChunks.push(event.data);
-                    }
-                };
-                
-                videoRecorder.onstop = () => {
-                    const blob = new Blob(videoChunks, { type: 'video/webm' });
-                    
-                    if (blob.size > 10 * 1024 * 1024) {
-                        alert('Видео слишком большое (максимум 10 МБ). Попробуйте записать короче.');
-                        videoStream.getTracks().forEach(track => track.stop());
-                        resetVideoRecording();
-                        return;
-                    }
-                    
-                    const videoUrl = URL.createObjectURL(blob);
-                    saveVideoToStorage(videoUrl, blob);
-                    addVideoToGallery(videoUrl);
-                    
-                    videoStream.getTracks().forEach(track => track.stop());
-                    resetVideoRecording();
-                };
-                
-                videoRecorder.start();
-                recordingStartTime = Date.now();
-                
-                const btn = document.getElementById('videoBtn');
-                btn.textContent = '⏹️ Остановить запись';
-                btn.classList.add('recording');
-                
-                const statusDiv = document.getElementById('videoRecordingStatus');
-                statusDiv.style.display = 'block';
-                statusDiv.textContent = '🎥 Запись...';
-                
-                recordingTimer = setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
-                    const remaining = 30 - elapsed;
-                    
-                    if (remaining <= 0) {
-                        stopVideoRecording();
-                        alert('Достигнут лимит записи (30 секунд)');
-                    } else {
-                        statusDiv.textContent = `🎥 Запись... ${remaining}с`;
-                    }
-                }, 1000);
-                
-            } catch (error) {
-                alert('Ошибка доступа к камере: ' + error.message);
-                resetVideoRecording();
-            }
-        }
-        
-        function stopVideoRecording() {
-            if (videoRecorder && videoRecorder.state !== 'inactive') {
-                videoRecorder.stop();
-            }
-            resetVideoRecording();
-        }
-        
-        function resetVideoRecording() {
-            if (recordingTimer) {
-                clearInterval(recordingTimer);
-                recordingTimer = null;
-            }
-            
-            const btn = document.getElementById('videoBtn');
-            btn.textContent = '🎥 Записать видео';
-            btn.classList.remove('recording');
-            
-            const statusDiv = document.getElementById('videoRecordingStatus');
-            statusDiv.style.display = 'none';
-            statusDiv.textContent = '';
-            
-            recordingStartTime = null;
-        }
-        
-        function handleVideoFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Видео слишком большое (максимум 10 МБ)');
-                return;
-            }
-            
-            const videoUrl = URL.createObjectURL(file);
-            saveVideoToStorage(videoUrl, file);
-            addVideoToGallery(videoUrl);
-            
-            event.target.value = '';
-        }
-        
-        function saveVideoToStorage(videoUrl, blob) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                let videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-                videos.push({
-                    url: videoUrl,
-                    data: reader.result,
-                    timestamp: Date.now()
-                });
-                localStorage.setItem('requestVideos', JSON.stringify(videos));
-            };
-            
-            if (blob instanceof Blob) {
-                reader.readAsDataURL(blob);
-            } else if (blob instanceof File) {
-                const fileReader = new FileReader();
-                fileReader.onload = function() {
-                    let videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-                    videos.push({
-                        url: videoUrl,
-                        data: fileReader.result,
-                        timestamp: Date.now()
-                    });
-                    localStorage.setItem('requestVideos', JSON.stringify(videos));
-                };
-                fileReader.readAsDataURL(blob);
-            }
-        }
-        
-        function loadVideosFromStorage() {
-            const videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-            const gallery = document.getElementById('videosGallery');
-            if (!gallery) return;
-            
-            gallery.innerHTML = '';
-            videos.forEach((videoData, index) => {
-                let videoUrl = videoData.url || videoData.data;
-                addVideoToGallery(videoUrl, index);
-            });
-        }
-        
-        function addVideoToGallery(videoUrl, index = null) {
-            const gallery = document.getElementById('videosGallery');
-            if (!gallery) return;
-            
-            const videoItem = document.createElement('div');
-            videoItem.className = 'video-item';
-            
-            const preview = document.createElement('div');
-            preview.className = 'video-preview';
-            
-            const video = document.createElement('video');
-            video.src = videoUrl;
-            video.preload = 'metadata';
-            video.muted = true;
-            
-            const playBtn = document.createElement('button');
-            playBtn.className = 'video-play-btn';
-            playBtn.textContent = '▶';
-            playBtn.onclick = (e) => {
-                e.stopPropagation();
-                showFullVideo(videoUrl);
-            };
-            
-            preview.onclick = () => showFullVideo(videoUrl);
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn-delete-video';
-            deleteBtn.textContent = '✕';
-            deleteBtn.onclick = (e) => {
-                e.stopPropagation();
-                deleteVideo(index !== null ? index : gallery.children.length);
-            };
-            
-            preview.appendChild(video);
-            preview.appendChild(playBtn);
-            videoItem.appendChild(preview);
-            videoItem.appendChild(deleteBtn);
-            gallery.appendChild(videoItem);
-        }
-        
-        function deleteVideo(index) {
-            let videos = JSON.parse(localStorage.getItem('requestVideos') || '[]');
-            if (videos[index] && videos[index].url) {
-                URL.revokeObjectURL(videos[index].url);
-            }
-            videos.splice(index, 1);
-            localStorage.setItem('requestVideos', JSON.stringify(videos));
-            loadVideosFromStorage();
-        }
-        
-        function showFullVideo(videoUrl) {
-            const viewer = document.getElementById('videoViewer');
-            const fullVideo = document.getElementById('fullVideo');
-            fullVideo.src = videoUrl;
-            viewer.classList.add('active');
-        }
-        
-        function closeVideoViewer() {
-            const viewer = document.getElementById('videoViewer');
-            const fullVideo = document.getElementById('fullVideo');
-            fullVideo.pause();
-            fullVideo.src = '';
-            viewer.classList.remove('active');
-        }
-        
-        function selectVideoFromGallery() {
-            document.getElementById('videoInput').click();
         }
     </script>
 </body>

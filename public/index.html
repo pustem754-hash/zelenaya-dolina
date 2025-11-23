@@ -16,6 +16,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
     <link rel="manifest" href="./manifest.json">
     
+    <!-- jsPDF для генерации PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -357,6 +361,124 @@
             display: block;
             animation: fadeIn 0.3s;
         }
+        
+        /* Стили для квитанции */
+        .receipt-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .receipt-qr {
+            width: 120px;
+            height: 120px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #999;
+            flex-shrink: 0;
+        }
+        .receipt-info {
+            flex: 1;
+        }
+        .receipt-info-row {
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .receipt-info-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .receipt-info-value {
+            color: #666;
+        }
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        .receipt-table th {
+            background: #2E7D32;
+            color: white;
+            padding: 10px 5px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #1B5E20;
+        }
+        .receipt-table td {
+            padding: 8px 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        .receipt-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .receipt-table .amount {
+            text-align: right;
+            font-weight: 600;
+        }
+        .receipt-table .total-row {
+            background: #e8f5e9;
+            font-weight: bold;
+        }
+        .receipt-table .sub-row {
+            padding-left: 20px;
+            font-size: 11px;
+            color: #666;
+        }
+        .receipt-meters-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+        }
+        .receipt-meters-table th {
+            background: #2E7D32;
+            color: white;
+            padding: 8px 4px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #1B5E20;
+            font-size: 10px;
+        }
+        .receipt-meters-table td {
+            padding: 6px 4px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 10px;
+        }
+        .receipt-total {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .receipt-total-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2E7D32;
+            margin: 10px 0;
+        }
+        .receipt-deadline {
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+        .receipt-deadline-label {
+            font-weight: 600;
+            color: #c62828;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -405,12 +527,299 @@
     <!-- Платежи -->
     <div id="payments" class="section">
         <div class="card">
-            <h2>💳 Платежи</h2>
-            <div class="stat-item">
-                <div class="stat-value">5 234 ₽</div>
-                <div class="stat-label">К оплате за январь</div>
+            <h2>💳 Квитанция за сентябрь 2025</h2>
+            
+            <!-- Шапка квитанции -->
+            <div class="receipt-header">
+                <div class="receipt-qr">
+                    <div style="text-align: center;">QR<br>КОД</div>
+                </div>
+                <div class="receipt-info">
+                    <div class="receipt-info-row">
+                        <span class="receipt-info-label">Адрес доставки:</span><br>
+                        <span class="receipt-info-value">420000, Казань, ул. ЧИСТОПОЛЬСКАЯ, д. 5, кв. 142</span>
+                    </div>
+                    <div class="receipt-info-row">
+                        <span class="receipt-info-label">Лицевой счёт:</span>
+                        <span class="receipt-info-value">№ 8105059550</span>
+                    </div>
+                    <div class="receipt-info-row">
+                        <span class="receipt-info-label">Собственник:</span>
+                        <span class="receipt-info-value">МИННУЛЛИНА Н. М.</span>
+                    </div>
+                    <div class="receipt-info-row">
+                        <span class="receipt-info-label">Площадь:</span>
+                        <span class="receipt-info-value">61.9 кв. м.</span>
+                        <span class="receipt-info-label" style="margin-left: 15px;">Проживающих:</span>
+                        <span class="receipt-info-value">4 чел.</span>
+                    </div>
+                    <div class="receipt-info-row">
+                        <span class="receipt-info-label">УК:</span>
+                        <span class="receipt-info-value">ТУ "Ягодная слобода", 8(843)598-32-30</span>
+                    </div>
+                </div>
             </div>
-            <button class="btn">Оплатить</button>
+            
+            <!-- Сроки оплаты и передачи показаний -->
+            <div class="receipt-deadline">
+                <div class="receipt-deadline-label">⚠️ НЕОБХОДИМО: Оплатить до 28.10.2025 г.</div>
+                <div style="color: #666; font-size: 14px;">Передать показания приборов учёта до 25.10.2025 г.</div>
+            </div>
+            
+            <!-- Таблица услуг -->
+            <h3 style="margin: 20px 0 10px 0; font-size: 16px; color: #2E7D32;">Коммунальные услуги</h3>
+            <table class="receipt-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Услуга</th>
+                        <th style="width: 10%;">Тариф</th>
+                        <th style="width: 8%;">Ед.</th>
+                        <th style="width: 10%;">Объём</th>
+                        <th style="width: 12%;">Начислено</th>
+                        <th style="width: 10%;">Перерасчёт</th>
+                        <th style="width: 10%;">Льгота</th>
+                        <th style="width: 15%;">К оплате</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Отопление</td>
+                        <td class="amount">-</td>
+                        <td>Gcal</td>
+                        <td class="amount">0.00</td>
+                        <td class="amount">1 838.65</td>
+                        <td class="amount">-2.19</td>
+                        <td class="amount">0.00</td>
+                        <td class="amount">1 836.46</td>
+                    </tr>
+                    <tr>
+                        <td>Горячее водоснабжение</td>
+                        <td class="amount">-</td>
+                        <td>м³</td>
+                        <td class="amount">6.35</td>
+                        <td class="amount">2 895.24</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">1 619.12</td>
+                    </tr>
+                    <tr class="sub-row">
+                        <td>в т.ч. Подогрев воды</td>
+                        <td class="amount">-</td>
+                        <td>Gcal</td>
+                        <td class="amount">6.35</td>
+                        <td class="amount">34.56</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">219.53</td>
+                    </tr>
+                    <tr class="sub-row">
+                        <td>в т.ч. Холодная вода для ГВС</td>
+                        <td class="amount">-</td>
+                        <td>м³</td>
+                        <td class="amount">33.00</td>
+                        <td class="amount">34.56</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">1 140.48</td>
+                    </tr>
+                    <tr>
+                        <td>Холодное водоснабжение</td>
+                        <td class="amount">-</td>
+                        <td>м³</td>
+                        <td class="amount">39.35</td>
+                        <td class="amount">46.20</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">1 818.06</td>
+                    </tr>
+                    <tr>
+                        <td>Водоотведение</td>
+                        <td class="amount">-</td>
+                        <td>м³</td>
+                        <td class="amount">5.73</td>
+                        <td class="amount">379.78</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">379.78</td>
+                    </tr>
+                    <tr>
+                        <td>Электроснабжение</td>
+                        <td class="amount">-</td>
+                        <td>кВт⋅ч</td>
+                        <td class="amount">4.00</td>
+                        <td class="amount">117.70</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">470.80</td>
+                    </tr>
+                    <tr>
+                        <td>Обращение с ТКО</td>
+                        <td class="amount">-</td>
+                        <td>-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">5 647.77</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">5 647.77</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="4"><strong>Итого по коммунальным услугам</strong></td>
+                        <td class="amount">8 021.36</td>
+                        <td class="amount">-2.19</td>
+                        <td class="amount">-</td>
+                        <td class="amount"><strong>7 027.51</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Содержание жилого помещения</td>
+                        <td class="amount">-</td>
+                        <td>м²</td>
+                        <td class="amount">61.90</td>
+                        <td class="amount">2 591.72</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">2 591.72</td>
+                    </tr>
+                    <tr class="sub-row">
+                        <td>в т.ч. Холодная вода (ОДН)</td>
+                        <td class="amount">-</td>
+                        <td>м³</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="4"><strong>Итого за содержание помещения</strong></td>
+                        <td class="amount">2 937.91</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount"><strong>2 739.22</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Домофон</td>
+                        <td class="amount">-</td>
+                        <td>-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">69.00</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">69.00</td>
+                    </tr>
+                    <tr>
+                        <td>Взнос на капитальный ремонт</td>
+                        <td class="amount">-</td>
+                        <td>м²</td>
+                        <td class="amount">61.90</td>
+                        <td class="amount">524.29</td>
+                        <td class="amount">-</td>
+                        <td class="amount">-</td>
+                        <td class="amount">524.29</td>
+                    </tr>
+                    <tr class="total-row" style="background: #fff3cd; font-size: 14px;">
+                        <td colspan="4"><strong>ВСЕГО К ОПЛАТЕ</strong></td>
+                        <td class="amount">11 552.56</td>
+                        <td class="amount">-2.19</td>
+                        <td class="amount">-</td>
+                        <td class="amount" style="font-size: 16px;"><strong>10 360.02 ₽</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Льготы -->
+            <div style="margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 8px; font-size: 13px;">
+                <strong>Льготы:</strong> как льгота 1 139.95 руб.; как малообеспеченным 6.00 руб.; как ЕДВ 630.00 руб.; как компенсация за тепло 0.00 руб.
+            </div>
+            
+            <!-- Таблица показаний счётчиков -->
+            <h3 style="margin: 20px 0 10px 0; font-size: 16px; color: #2E7D32;">Показания приборов учёта (ИПУ)</h3>
+            <div style="overflow-x: auto;">
+                <table class="receipt-meters-table">
+                    <thead>
+                        <tr>
+                            <th>Услуга</th>
+                            <th>№ прибора</th>
+                            <th>Дата поверки</th>
+                            <th>Пред. показания</th>
+                            <th>Дата пред.</th>
+                            <th>Тек. показания</th>
+                            <th>Дата тек.</th>
+                            <th>Разница</th>
+                            <th>Расход</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Гор. Вода</td>
+                            <td>82373415</td>
+                            <td>-</td>
+                            <td>98.00</td>
+                            <td>14.04.2023</td>
+                            <td>98.00</td>
+                            <td>01.10.2023</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Гор. Вода</td>
+                            <td>82373357</td>
+                            <td>-</td>
+                            <td>703.00</td>
+                            <td>02.09.2023</td>
+                            <td>703.00</td>
+                            <td>01.10.2023</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Хол. вода</td>
+                            <td>01465369</td>
+                            <td>-</td>
+                            <td>65.00</td>
+                            <td>01.05.2023</td>
+                            <td>65.00</td>
+                            <td>01.10.2023</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Хол. вода</td>
+                            <td>01465372</td>
+                            <td>-</td>
+                            <td>65.00</td>
+                            <td>01.05.2023</td>
+                            <td>65.00</td>
+                            <td>01.10.2023</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Электроснабжение</td>
+                            <td>020019949128</td>
+                            <td>-</td>
+                            <td>1806.60</td>
+                            <td>01.05.2023</td>
+                            <td>1806.60</td>
+                            <td>01.10.2023</td>
+                            <td>0.00</td>
+                            <td>1926.92</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Итоговая сумма -->
+            <div class="receipt-total">
+                <div style="font-size: 18px; color: #666; margin-bottom: 10px;">Всего к оплате</div>
+                <div class="receipt-total-value">10 360.02 ₽</div>
+                <div style="font-size: 14px; color: #666;">Срок оплаты: до 28.10.2025</div>
+            </div>
+            
+            <!-- Кнопки действий -->
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-pay" onclick="alert('Переход на оплату')" style="flex: 1;">💳 Оплатить онлайн</button>
+                <button class="btn btn-download" onclick="generateReceiptPDF()" style="flex: 1;">📥 Скачать PDF</button>
+            </div>
         </div>
     </div>
 
@@ -1630,6 +2039,160 @@
             console.log('📊 Показания:', { coldWater, hotWater, gas, electricity, photos: photos.length });
             
             alert('Показания отправлены!\nХВС: ' + (coldWater || 'не указано') + '\nГВС: ' + (hotWater || 'не указано') + '\nГаз: ' + (gas || 'не указано') + '\nЭлектричество: ' + (electricity || 'не указано') + '\nФото: ' + photos.length);
+        }
+        
+        // ===== ГЕНЕРАЦИЯ PDF КВИТАНЦИИ =====
+        function generateReceiptPDF() {
+            console.log('📄 Генерация PDF квитанции');
+            
+            if (typeof window.jspdf === 'undefined') {
+                alert('Библиотека для генерации PDF не загружена. Пожалуйста, обновите страницу.');
+                return;
+            }
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                let y = 20;
+                
+                // Заголовок
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('КВИТАНЦИЯ за сентябрь 2025', 105, y, { align: 'center' });
+                y += 10;
+                
+                // Информация о собственнике
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Адрес: 420000, Казань, ул. ЧИСТОПОЛЬСКАЯ, д. 5, кв. 142', 20, y);
+                y += 5;
+                doc.text('Лицевой счёт: № 8105059550', 20, y);
+                doc.text('Собственник: МИННУЛЛИНА Н. М.', 120, y);
+                y += 5;
+                doc.text('Площадь: 61.9 кв. м. | Проживающих: 4 чел.', 20, y);
+                y += 5;
+                doc.text('УК: ТУ "Ягодная слобода", 8(843)598-32-30', 20, y);
+                y += 8;
+                
+                // Сроки оплаты
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(200, 0, 0);
+                doc.text('⚠️ Оплатить до 28.10.2025 | Передать показания до 25.10.2025', 20, y);
+                doc.setTextColor(0, 0, 0);
+                y += 8;
+                
+                // Таблица услуг
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Коммунальные услуги', 20, y);
+                y += 5;
+                
+                const servicesData = [
+                    ['Услуга', 'Тариф', 'Ед.', 'Объём', 'Начислено', 'Перерасчёт', 'К оплате'],
+                    ['Отопление', '-', 'Gcal', '0.00', '1 838.65', '-2.19', '1 836.46'],
+                    ['Горячее водоснабжение', '-', 'м³', '6.35', '2 895.24', '-', '1 619.12'],
+                    ['Холодное водоснабжение', '-', 'м³', '39.35', '46.20', '-', '1 818.06'],
+                    ['Водоотведение', '-', 'м³', '5.73', '379.78', '-', '379.78'],
+                    ['Электроснабжение', '-', 'кВт⋅ч', '4.00', '117.70', '-', '470.80'],
+                    ['Обращение с ТКО', '-', '-', '-', '5 647.77', '-', '5 647.77'],
+                    ['Итого по коммунальным услугам', '', '', '', '8 021.36', '-2.19', '7 027.51'],
+                    ['Содержание жилого помещения', '-', 'м²', '61.90', '2 591.72', '-', '2 591.72'],
+                    ['Итого за содержание', '', '', '', '2 937.91', '-', '2 739.22'],
+                    ['Домофон', '-', '-', '-', '69.00', '-', '69.00'],
+                    ['Взнос на капитальный ремонт', '-', 'м²', '61.90', '524.29', '-', '524.29'],
+                    ['ВСЕГО К ОПЛАТЕ', '', '', '', '11 552.56', '-2.19', '10 360.02']
+                ];
+                
+                doc.autoTable({
+                    startY: y,
+                    head: [servicesData[0]],
+                    body: servicesData.slice(1),
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2 },
+                    headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle: 'bold' },
+                    columnStyles: {
+                        0: { cellWidth: 50 },
+                        1: { cellWidth: 20, halign: 'right' },
+                        2: { cellWidth: 15 },
+                        3: { cellWidth: 20, halign: 'right' },
+                        4: { cellWidth: 25, halign: 'right' },
+                        5: { cellWidth: 25, halign: 'right' },
+                        6: { cellWidth: 25, halign: 'right', fontStyle: 'bold' }
+                    },
+                    didParseCell: function(data) {
+                        if (data.row.index === servicesData.length - 2) {
+                            data.cell.styles.fillColor = [255, 243, 205];
+                        }
+                        if (data.row.index === servicesData.length - 1) {
+                            data.cell.styles.fillColor = [255, 243, 205];
+                            data.cell.styles.fontStyle = 'bold';
+                            data.cell.styles.fontSize = 10;
+                        }
+                    }
+                });
+                
+                y = doc.lastAutoTable.finalY + 10;
+                
+                // Льготы
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Льготы: как льгота 1 139.95 руб.; как малообеспеченным 6.00 руб.; как ЕДВ 630.00 руб.', 20, y);
+                y += 8;
+                
+                // Таблица счётчиков
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Показания приборов учёта (ИПУ)', 20, y);
+                y += 5;
+                
+                const metersData = [
+                    ['Услуга', '№ прибора', 'Пред. показания', 'Дата', 'Тек. показания', 'Дата', 'Расход'],
+                    ['Гор. Вода', '82373415', '98.00', '14.04.2023', '98.00', '01.10.2023', '0.00'],
+                    ['Гор. Вода', '82373357', '703.00', '02.09.2023', '703.00', '01.10.2023', '0.00'],
+                    ['Хол. вода', '01465369', '65.00', '01.05.2023', '65.00', '01.10.2023', '0.00'],
+                    ['Хол. вода', '01465372', '65.00', '01.05.2023', '65.00', '01.10.2023', '0.00'],
+                    ['Электроснабжение', '020019949128', '1806.60', '01.05.2023', '1806.60', '01.10.2023', '1926.92']
+                ];
+                
+                doc.autoTable({
+                    startY: y,
+                    head: [metersData[0]],
+                    body: metersData.slice(1),
+                    theme: 'grid',
+                    styles: { fontSize: 7, cellPadding: 1.5 },
+                    headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle: 'bold' },
+                    columnStyles: {
+                        0: { cellWidth: 35 },
+                        1: { cellWidth: 30 },
+                        2: { cellWidth: 25, halign: 'right' },
+                        3: { cellWidth: 25 },
+                        4: { cellWidth: 25, halign: 'right' },
+                        5: { cellWidth: 25 },
+                        6: { cellWidth: 20, halign: 'right' }
+                    }
+                });
+                
+                y = doc.lastAutoTable.finalY + 10;
+                
+                // Итоговая сумма
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('ВСЕГО К ОПЛАТЕ: 10 360.02 ₽', 105, y, { align: 'center' });
+                y += 5;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Срок оплаты: до 28.10.2025', 105, y, { align: 'center' });
+                
+                // Сохранение
+                doc.save('kvitanciya_sentyabr_2025.pdf');
+                console.log('✅ PDF квитанция сгенерирована');
+                alert('✅ Квитанция скачана!');
+                
+            } catch (error) {
+                console.error('❌ Ошибка генерации PDF:', error);
+                alert('Ошибка генерации PDF: ' + error.message);
+            }
         }
 
         // ===== ИНИЦИАЛИЗАЦИЯ =====

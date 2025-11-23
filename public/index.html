@@ -479,6 +479,99 @@
             color: #c62828;
             margin-bottom: 5px;
         }
+        
+        /* Стили для истории и заявок */
+        .request-section {
+            display: block;
+        }
+        .request-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            border-left: 4px solid #2E7D32;
+            margin-bottom: 15px;
+        }
+        .request-item.status-created {
+            border-left-color: #3498db;
+        }
+        .request-item.status-in_progress {
+            border-left-color: #f39c12;
+        }
+        .request-item.status-completed {
+            border-left-color: #27ae60;
+        }
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        .request-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .request-status {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .request-status.created {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .request-status.in_progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .request-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .request-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .request-photos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .request-photo {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        .history-chart-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 150px;
+            margin-top: 20px;
+        }
+        .history-bar {
+            flex: 1;
+            background: #2E7D32;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            min-height: 10px;
+        }
+        .history-bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -825,6 +918,16 @@
 
     <!-- Заявки -->
     <div id="requests" class="section">
+        <!-- Табы: Новая заявка / Мои заявки -->
+        <div class="card" style="margin-bottom: 15px;">
+            <nav class="tabs" style="margin-bottom: 0;">
+                <button class="tab-btn active" onclick="showRequestSection('new', event)">📝 Новая заявка</button>
+                <button class="tab-btn" onclick="showRequestSection('list', event)">📋 Мои заявки</button>
+            </nav>
+        </div>
+        
+        <!-- Секция: Новая заявка -->
+        <div id="newRequestSection" class="request-section">
         <div class="card">
             <h2>📝 Новая заявка</h2>
             
@@ -950,6 +1053,30 @@
             
             <button class="btn" onclick="submitRequest()" style="margin-top: 20px;">Отправить заявку</button>
         </div>
+        </div>
+        
+        <!-- Секция: Список заявок -->
+        <div id="listRequestSection" class="request-section" style="display: none;">
+        <div class="card">
+            <h2>📋 Мои заявки</h2>
+            
+            <!-- Фильтр по статусу -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Фильтр по статусу:</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="status-filter-btn" onclick="filterRequests('all', this)" style="padding: 10px 15px; border: 2px solid #2E7D32; background: #f0f8f0; color: #2E7D32; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Все</button>
+                    <button class="status-filter-btn" onclick="filterRequests('created', this)" style="padding: 10px 15px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Создана</button>
+                    <button class="status-filter-btn" onclick="filterRequests('in_progress', this)" style="padding: 10px 15px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Выполняется</button>
+                    <button class="status-filter-btn" onclick="filterRequests('completed', this)" style="padding: 10px 15px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Завершена</button>
+                </div>
+            </div>
+            
+            <!-- Список заявок -->
+            <div id="requestsList" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Заполнится через JavaScript -->
+            </div>
+        </div>
+        </div>
     </div>
 
     <!-- Уведомления -->
@@ -971,6 +1098,7 @@
             <nav class="tabs">
                 <button class="tab-btn active" onclick="showTab('payments', event)">💰 Оплата</button>
                 <button class="tab-btn" onclick="showTab('meters', event)">📊 Счётчики</button>
+                <button class="tab-btn" onclick="showTab('history', event)">📈 История</button>
                 <button class="tab-btn" onclick="showTab('photos', event)">📸 Фото</button>
                 <button class="tab-btn" onclick="showTab('videos', event)">🎥 Видео</button>
             </nav>
@@ -1009,7 +1137,54 @@
                     </div>
                 </div>
                 
+                <!-- Напоминание о передаче показаний -->
+                <div style="background: #fff3cd; padding: 15px; border-radius: 12px; margin-top: 15px; border-left: 4px solid #ffc107;">
+                    <div style="font-weight: 600; color: #856404; margin-bottom: 5px;">⏰ Напоминание</div>
+                    <div style="font-size: 14px; color: #856404;">Передать показания необходимо до 25 числа каждого месяца</div>
+                    <div id="reminderDays" style="font-size: 12px; color: #856404; margin-top: 5px;"></div>
+                </div>
+                
                 <button class="btn" onclick="submitCounters()" style="margin-top: 20px;">📤 Отправить показания</button>
+            </div>
+            
+            <!-- Вкладка: История показаний -->
+            <div id="historyTab" class="tab-content">
+                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📈 История показаний</h3>
+                <p style="color: #666; margin-bottom: 15px;">Динамика потребления коммунальных услуг</p>
+                
+                <!-- Фильтр по периоду -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Период:</label>
+                    <select id="historyPeriod" onchange="renderHistory()" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                        <option value="3">Последние 3 месяца</option>
+                        <option value="6">Последние 6 месяцев</option>
+                        <option value="12">Последний год</option>
+                    </select>
+                </div>
+                
+                <!-- График динамики -->
+                <div id="historyChart" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; min-height: 200px;">
+                    <div style="text-align: center; color: #999; padding: 40px;">График динамики потребления</div>
+                </div>
+                
+                <!-- Таблица истории -->
+                <div style="overflow-x: auto;">
+                    <table class="receipt-table" style="font-size: 12px;">
+                        <thead>
+                            <tr>
+                                <th>Период</th>
+                                <th>ХВС (м³)</th>
+                                <th>ГВС (м³)</th>
+                                <th>Газ (м³)</th>
+                                <th>Электричество (кВт⋅ч)</th>
+                                <th>Изменение</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Заполнится через JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- Вкладка: Фото -->
@@ -2036,9 +2211,342 @@
             const electricity = document.getElementById('electricity')?.value;
             const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
             
-            console.log('📊 Показания:', { coldWater, hotWater, gas, electricity, photos: photos.length });
+            if (!coldWater && !hotWater && !gas && !electricity) {
+                alert('Пожалуйста, введите показания хотя бы одного счётчика');
+                return;
+            }
             
-            alert('Показания отправлены!\nХВС: ' + (coldWater || 'не указано') + '\nГВС: ' + (hotWater || 'не указано') + '\nГаз: ' + (gas || 'не указано') + '\nЭлектричество: ' + (electricity || 'не указано') + '\nФото: ' + photos.length);
+            // Сохранить в историю
+            const history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
+            const currentDate = new Date();
+            const month = currentDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+            
+            history.push({
+                id: Date.now(),
+                date: currentDate.toISOString(),
+                month: month,
+                coldWater: coldWater ? parseFloat(coldWater) : null,
+                hotWater: hotWater ? parseFloat(hotWater) : null,
+                gas: gas ? parseFloat(gas) : null,
+                electricity: electricity ? parseFloat(electricity) : null,
+                photos: photos.length
+            });
+            
+            // Оставить только последние 12 месяцев
+            const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const last12Months = sortedHistory.slice(0, 12);
+            localStorage.setItem('countersHistory', JSON.stringify(last12Months));
+            
+            console.log('📊 Показания:', { coldWater, hotWater, gas, electricity, photos: photos.length });
+            console.log('✅ Показания сохранены в историю');
+            
+            // Очистить поля
+            document.getElementById('coldWater').value = '';
+            document.getElementById('hotWater').value = '';
+            document.getElementById('gas').value = '';
+            document.getElementById('electricity').value = '';
+            
+            alert('✅ Показания отправлены и сохранены!\nХВС: ' + (coldWater || 'не указано') + '\nГВС: ' + (hotWater || 'не указано') + '\nГаз: ' + (gas || 'не указано') + '\nЭлектричество: ' + (electricity || 'не указано') + '\nФото: ' + photos.length);
+            
+            // Обновить историю если открыта вкладка
+            if (document.getElementById('historyTab')?.style.display !== 'none') {
+                renderHistory();
+            }
+        }
+        
+        // ===== ИСТОРИЯ ПОКАЗАНИЙ =====
+        function renderHistory() {
+            console.log('📈 Рендеринг истории показаний');
+            const history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
+            const period = parseInt(document.getElementById('historyPeriod')?.value || '3');
+            
+            // Отсортировать по дате (новые первые)
+            const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const filteredHistory = sortedHistory.slice(0, period);
+            
+            // Рендеринг таблицы
+            const tableBody = document.getElementById('historyTableBody');
+            if (tableBody) {
+                if (filteredHistory.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Нет данных за выбранный период</td></tr>';
+                } else {
+                    tableBody.innerHTML = filteredHistory.map((item, index) => {
+                        const prevItem = filteredHistory[index + 1];
+                        const coldDiff = prevItem && item.coldWater && prevItem.coldWater ? (item.coldWater - prevItem.coldWater).toFixed(2) : '-';
+                        const hotDiff = prevItem && item.hotWater && prevItem.hotWater ? (item.hotWater - prevItem.hotWater).toFixed(2) : '-';
+                        const gasDiff = prevItem && item.gas && prevItem.gas ? (item.gas - prevItem.gas).toFixed(2) : '-';
+                        const elecDiff = prevItem && item.electricity && prevItem.electricity ? (item.electricity - prevItem.electricity).toFixed(2) : '-';
+                        
+                        return `
+                            <tr>
+                                <td>${item.month}</td>
+                                <td class="amount">${item.coldWater || '-'}</td>
+                                <td class="amount">${item.hotWater || '-'}</td>
+                                <td class="amount">${item.gas || '-'}</td>
+                                <td class="amount">${item.electricity || '-'}</td>
+                                <td style="font-size: 11px; color: #666;">
+                                    ${coldDiff !== '-' ? 'ХВС: ' + coldDiff + ' м³' : ''}
+                                    ${hotDiff !== '-' ? 'ГВС: ' + hotDiff + ' м³' : ''}
+                                    ${elecDiff !== '-' ? 'Эл: ' + elecDiff + ' кВт⋅ч' : ''}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+            
+            // Рендеринг графика
+            renderHistoryChart(filteredHistory);
+        }
+        
+        function renderHistoryChart(history) {
+            const chartContainer = document.getElementById('historyChart');
+            if (!chartContainer || history.length === 0) return;
+            
+            const maxValue = Math.max(...history.map(h => Math.max(
+                h.coldWater || 0,
+                h.hotWater || 0,
+                h.gas || 0,
+                h.electricity || 0
+            )));
+            
+            chartContainer.innerHTML = `
+                <div style="margin-bottom: 10px; font-weight: 600; color: #2E7D32;">Динамика потребления</div>
+                <div class="history-chart-bar">
+                    ${history.slice().reverse().map(item => {
+                        const coldHeight = item.coldWater ? (item.coldWater / maxValue * 100) : 0;
+                        const hotHeight = item.hotWater ? (item.hotWater / maxValue * 100) : 0;
+                        const elecHeight = item.electricity ? (item.electricity / maxValue * 100) : 0;
+                        
+                        return `
+                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="display: flex; align-items: flex-end; gap: 2px; height: 120px; width: 100%;">
+                                    <div class="history-bar" style="height: ${coldHeight}%; background: #3498db;" title="ХВС: ${item.coldWater || 0}"></div>
+                                    <div class="history-bar" style="height: ${hotHeight}%; background: #e74c3c;" title="ГВС: ${item.hotWater || 0}"></div>
+                                    <div class="history-bar" style="height: ${elecHeight}%; background: #f39c12;" title="Эл: ${item.electricity || 0}"></div>
+                                </div>
+                                <div class="history-bar-label">${new Date(item.date).toLocaleDateString('ru-RU', { month: 'short' })}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center; font-size: 12px;">
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #3498db; border-radius: 2px;"></div> ХВС</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #e74c3c; border-radius: 2px;"></div> ГВС</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #f39c12; border-radius: 2px;"></div> Электричество</div>
+                </div>
+            `;
+        }
+        
+        // ===== НАПОМИНАНИЯ =====
+        function updateReminder() {
+            const reminderDays = document.getElementById('reminderDays');
+            if (!reminderDays) return;
+            
+            const today = new Date();
+            const deadline = new Date(today.getFullYear(), today.getMonth(), 25);
+            
+            if (today.getDate() > 25) {
+                deadline.setMonth(deadline.getMonth() + 1);
+            }
+            
+            const diffTime = deadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 0) {
+                reminderDays.textContent = `Осталось дней до передачи показаний: ${diffDays}`;
+            } else if (diffDays === 0) {
+                reminderDays.textContent = '⚠️ Сегодня последний день для передачи показаний!';
+                reminderDays.style.color = '#c62828';
+                reminderDays.style.fontWeight = '600';
+            } else {
+                reminderDays.textContent = '⚠️ Срок передачи показаний истёк!';
+                reminderDays.style.color = '#c62828';
+                reminderDays.style.fontWeight = '600';
+            }
+        }
+        
+        // ===== УПРАВЛЕНИЕ ЗАЯВКАМИ =====
+        function showRequestSection(section, event) {
+            console.log('📋 Переключение секции заявок:', section);
+            
+            // Скрыть все секции
+            document.querySelectorAll('.request-section').forEach(s => s.style.display = 'none');
+            
+            // Убрать активный класс у кнопок
+            document.querySelectorAll('.tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Показать выбранную секцию
+            if (section === 'new') {
+                document.getElementById('newRequestSection').style.display = 'block';
+            } else {
+                document.getElementById('listRequestSection').style.display = 'block';
+                renderRequestsList();
+            }
+            
+            // Активировать кнопку
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+        
+        function submitRequest() {
+            console.log('📤 Отправка заявки');
+            
+            if (!selectedCategory) {
+                alert('Пожалуйста, выберите категорию заявки');
+                return;
+            }
+            
+            const description = document.getElementById('problemDescription')?.value;
+            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const audio = JSON.parse(localStorage.getItem('audio') || '[]');
+            
+            const categoryNames = {
+                'repair': 'ремонт',
+                'cleaning': 'уборка',
+                'other': 'другое'
+            };
+            
+            // Сохранить заявку
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const newRequest = {
+                id: Date.now(),
+                category: selectedCategory,
+                categoryName: categoryNames[selectedCategory],
+                description: description || '',
+                photos: photos,
+                videos: videos,
+                audio: audio,
+                status: 'created',
+                statusName: 'Создана',
+                date: new Date().toISOString(),
+                dateFormatted: new Date().toLocaleString('ru-RU'),
+                dispatcherPhotos: [] // Фотоотчёты от диспетчера
+            };
+            
+            requests.unshift(newRequest); // Добавить в начало
+            localStorage.setItem('requests', JSON.stringify(requests));
+            
+            // Очистить форму
+            selectedCategory = null;
+            document.getElementById('problemDescription').value = '';
+            localStorage.removeItem('photos');
+            localStorage.removeItem('videos');
+            localStorage.removeItem('audio');
+            renderPhotos();
+            renderVideos();
+            renderAudioList();
+            
+            // Сбросить категорию
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.style.border = '2px solid #ccc';
+                btn.style.color = '#666';
+                btn.style.background = 'white';
+            });
+            const repairBtn = document.getElementById('categoryRepair');
+            if (repairBtn) {
+                selectCategory('repair', repairBtn);
+            }
+            
+            console.log('📝 Данные заявки:', newRequest);
+            
+            alert('✅ Заявка отправлена!\nКатегория: ' + categoryNames[selectedCategory] + '\nОписание: ' + (description || 'не указано') + '\nФото: ' + photos.length + '\nВидео: ' + videos.length + '\nАудио: ' + audio.length);
+        }
+        
+        function renderRequestsList(filterStatus = 'all') {
+            console.log('📋 Рендеринг списка заявок, фильтр:', filterStatus);
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const filteredRequests = filterStatus === 'all' ? requests : requests.filter(r => r.status === filterStatus);
+            const container = document.getElementById('requestsList');
+            
+            if (!container) return;
+            
+            if (filteredRequests.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">Нет заявок</div>';
+                return;
+            }
+            
+            container.innerHTML = filteredRequests.map(request => {
+                const statusClass = request.status === 'created' ? 'created' : 
+                                   request.status === 'in_progress' ? 'in_progress' : 'completed';
+                const statusName = request.status === 'created' ? 'Создана' :
+                                  request.status === 'in_progress' ? 'Выполняется' : 'Завершена';
+                
+                return `
+                    <div class="request-item status-${request.status}" onclick="showRequestDetails(${request.id})">
+                        <div class="request-header">
+                            <div style="flex: 1;">
+                                <div class="request-title">${request.categoryName.charAt(0).toUpperCase() + request.categoryName.slice(1)} - Заявка №${request.id}</div>
+                                <div class="request-info">${request.dateFormatted}</div>
+                                ${request.description ? `<div class="request-info" style="margin-top: 5px;">${request.description.substring(0, 100)}${request.description.length > 100 ? '...' : ''}</div>` : ''}
+                            </div>
+                            <span class="request-status ${statusClass}">${statusName}</span>
+                        </div>
+                        ${request.photos && request.photos.length > 0 ? `
+                            <div class="request-photos">
+                                ${request.photos.slice(0, 3).map(photo => `
+                                    <img src="${photo.data || photo.url}" class="request-photo" onclick="event.stopPropagation(); showFullPhoto('${photo.data || photo.url}')">
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                                <div style="font-weight: 600; color: #2E7D32; margin-bottom: 5px;">📸 Фотоотчёт от диспетчера:</div>
+                                <div class="request-photos">
+                                    ${request.dispatcherPhotos.slice(0, 3).map(photo => `
+                                        <img src="${photo}" class="request-photo" onclick="event.stopPropagation(); showFullPhoto('${photo}')">
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function filterRequests(status, button) {
+            console.log('🔍 Фильтрация заявок по статусу:', status);
+            
+            // Убрать активный класс у всех кнопок
+            document.querySelectorAll('.status-filter-btn').forEach(btn => {
+                btn.style.border = '2px solid #ccc';
+                btn.style.background = 'white';
+                btn.style.color = '#666';
+            });
+            
+            // Добавить активный класс к выбранной кнопке
+            button.style.border = '2px solid #2E7D32';
+            button.style.background = '#f0f8f0';
+            button.style.color = '#2E7D32';
+            
+            renderRequestsList(status);
+        }
+        
+        function showRequestDetails(id) {
+            console.log('🔍 Просмотр деталей заявки:', id);
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const request = requests.find(r => r.id === id);
+            
+            if (!request) {
+                alert('Заявка не найдена');
+                return;
+            }
+            
+            const details = `
+Заявка №${request.id}
+Категория: ${request.categoryName}
+Статус: ${request.statusName}
+Дата создания: ${request.dateFormatted}
+Описание: ${request.description || 'не указано'}
+Фото: ${request.photos.length}
+Видео: ${request.videos.length}
+Аудио: ${request.audio.length}
+${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФотоотчёты от диспетчера: ${request.dispatcherPhotos.length}` : ''}
+            `;
+            
+            alert(details);
         }
         
         // ===== ГЕНЕРАЦИЯ PDF КВИТАНЦИИ =====
@@ -2211,6 +2719,14 @@
             // Загрузить сохранённые видео и аудио при загрузке страницы
             renderVideos();
             renderAudioList();
+            
+            // Обновить напоминание о передаче показаний
+            updateReminder();
+            
+            // Загрузить историю показаний если открыта вкладка
+            if (document.getElementById('historyTab')) {
+                renderHistory();
+            }
             
             const audioBtn = document.getElementById('audioBtn');
             if (audioBtn) {

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК Зелёная Долина v5.2</title>
+    <title>УК Зелёная Долина v6.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#27ae60">
@@ -40,6 +40,52 @@
         .header .version {
             font-size: 14px;
             opacity: 0.9;
+        }
+        .btn {
+            width: 100%;
+            padding: 18px 24px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:active {
+            background: #229954;
+        }
+        .btn-camera {
+            background: #3498db;
+            margin-bottom: 10px;
+        }
+        .btn-camera:active {
+            background: #2980b9;
+        }
+        .btn-video {
+            background: #9b59b6;
+            margin-bottom: 10px;
+        }
+        .btn-video:active {
+            background: #8e44ad;
+        }
+        .btn-pay {
+            background: #27ae60;
+        }
+        .btn-pay:active {
+            background: #229954;
+        }
+        .btn-download {
+            background: #95a5a6;
+        }
+        .btn-download:active {
+            background: #7f8c8d;
         }
         .section {
             display: none;
@@ -100,36 +146,14 @@
         .input-group input,
         .input-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 20px;
         }
         .input-group textarea {
             min-height: 100px;
             resize: vertical;
-        }
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn:active {
-            background: #229954;
-        }
-        .btn-camera {
-            background: #3498db;
-            margin-bottom: 10px;
-        }
-        .btn-camera:active {
-            background: #2980b9;
         }
         .btn-audio {
             background: #e74c3c;
@@ -249,6 +273,64 @@
             color: #666;
             font-size: 14px;
         }
+        .payment-header {
+            text-align: center;
+        }
+        .total-amount {
+            margin-top: 20px;
+        }
+        .amount-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 8px;
+        }
+        .amount-label {
+            font-size: 16px;
+            color: #666;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .service-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .service-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        .service-name {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .service-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 8px;
+        }
+        .service-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        .service-status.paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        .service-status.unpaid {
+            background: #f8d7da;
+            color: #721c24;
+        }
         .nav {
             position: fixed;
             bottom: 0;
@@ -259,28 +341,28 @@
             grid-template-columns: repeat(6, 1fr);
             box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
         }
-        .nav-item {
-            padding: 12px 5px;
-            text-align: center;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 11px;
-            color: #666;
-        }
         .nav-item.active {
             color: #27ae60;
         }
         .nav-icon {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 4px;
+        }
+        .nav-item {
+            padding: 14px 5px;
+            text-align: center;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🏡 УК Зелёная Долина</h1>
-        <div class="version">v5.2.0</div>
+        <div class="version">v6.0.0</div>
     </div>
 
     <!-- Главная -->
@@ -322,14 +404,75 @@
 
     <!-- Платежи -->
     <div id="payments" class="section">
-        <div class="card">
-            <h2>💳 Платежи</h2>
-            <div class="stat-item">
-                <div class="stat-value">5 234 ₽</div>
-                <div class="stat-label">К оплате за январь</div>
+        <!-- Заголовок с общей суммой -->
+        <div class="card payment-header">
+            <h2>💳 Платежи и квитанции</h2>
+            <div class="total-amount">
+                <div class="amount-value">7 834 ₽</div>
+                <div class="amount-label">К оплате за январь</div>
             </div>
-            <button class="btn">Оплатить</button>
         </div>
+
+        <!-- Карточки услуг в сетке 2x4 -->
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">⚡</div>
+                <div class="service-name">Электроснабжение</div>
+                <div class="service-amount">1 324 ₽</div>
+                <div class="service-status paid">Оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">💧</div>
+                <div class="service-name">Холодная вода</div>
+                <div class="service-amount">523 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🔥</div>
+                <div class="service-name">Горячая вода</div>
+                <div class="service-amount">942 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">⛽</div>
+                <div class="service-name">Газ</div>
+                <div class="service-amount">580 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🏠</div>
+                <div class="service-name">Содержание</div>
+                <div class="service-amount">1 580 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <div class="service-name">Капремонт</div>
+                <div class="service-amount">600 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🗑️</div>
+                <div class="service-name">Мусор</div>
+                <div class="service-amount">420 ₽</div>
+                <div class="service-status paid">Оплачено</div>
+            </div>
+        </div>
+
+        <!-- Большие кнопки действий -->
+        <button class="btn btn-pay" onclick="alert('Переход на страницу оплаты')">
+            💰 Оплатить онлайн
+        </button>
+        
+        <button class="btn btn-download" onclick="alert('Скачивание PDF...')">
+            📥 Скачать квитанцию PDF
+        </button>
     </div>
 
     <!-- Заявки -->
@@ -384,22 +527,22 @@
         <div class="card">
             <h2>🔢 Передать показания</h2>
             <div class="input-group">
-                <label>Холодная вода (м³)</label>
+                <label>💧 Холодная вода (м³)</label>
                 <input type="number" placeholder="Текущие показания">
             </div>
             <div class="input-group">
-                <label>Горячая вода (м³)</label>
-            </div>
-            <div class="input-group">
-                <label>Газ (м³)</label>
-                <input type="number" placeholder="Текущие показания">
+                <label>🔥 Горячая вода (м³)</label>
                 <input type="number" placeholder="Текущие показания">
             </div>
             <div class="input-group">
-                <label>Электричество (кВт⋅ч)</label>
+                <label>⛽ Газ (м³)</label>
                 <input type="number" placeholder="Текущие показания">
             </div>
-            <button class="btn">Отправить показания</button>
+            <div class="input-group">
+                <label>⚡ Электричество (кВт⋅ч)</label>
+                <input type="number" placeholder="Текущие показания">
+            </div>
+            <button class="btn">📤 Отправить показания</button>
         </div>
     </div>
 

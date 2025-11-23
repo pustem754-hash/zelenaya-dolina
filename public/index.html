@@ -964,7 +964,14 @@
                 <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фото проблемы</h3>
                 <p style="color: #666; margin-bottom: 15px;">Сфотографируйте проблему для наглядности</p>
                 
-                <button class="btn btn-camera" id="photoBtn">📸 Сделать фото</button>
+                <!-- Скрытый input для камеры -->
+                <input type="file" id="photoCameraInput" accept="image/*" capture="environment" style="display: none;">
+                <input type="file" id="photoGalleryInput" accept="image/*" style="display: none;">
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-camera" id="photoBtn" style="flex: 1;">📷 Камера</button>
+                    <button class="btn btn-camera" id="photoGalleryBtn" style="flex: 1;">🖼️ Галерея</button>
+                </div>
                 <div id="photosContainer" class="photos-gallery" style="margin-top: 15px;"></div>
             </div>
             
@@ -1192,20 +1199,38 @@
                 <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фотофиксация счётчиков</h3>
                 <p style="color: #666; margin-bottom: 15px;">Сфотографируйте показания счётчиков для подтверждения</p>
                 
-                <button id="counterPhotoBtn" style="
-                    width: 100%;
-                    padding: 18px;
-                    font-size: 18px;
-                    background: #27ae60;
-                    color: white;
-                    border: none;
-                    border-radius: 12px;
-                    cursor: pointer;
-                    font-weight: 600;
-                    margin-bottom: 20px;
-                ">
-                    📸 Сделать фото счётчика
-                </button>
+                <!-- Скрытый input для камеры -->
+                <input type="file" id="counterPhotoCameraInput" accept="image/*" capture="environment" style="display: none;">
+                <input type="file" id="counterPhotoGalleryInput" accept="image/*" style="display: none;">
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button id="counterPhotoBtn" style="
+                        flex: 1;
+                        padding: 18px;
+                        font-size: 18px;
+                        background: #27ae60;
+                        color: white;
+                        border: none;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        font-weight: 600;
+                    ">
+                        📷 Камера
+                    </button>
+                    <button id="counterPhotoGalleryBtn" style="
+                        flex: 1;
+                        padding: 18px;
+                        font-size: 18px;
+                        background: #3498db;
+                        color: white;
+                        border: none;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        font-weight: 600;
+                    ">
+                        🖼️ Галерея
+                    </button>
+                </div>
                 
                 <div id="counterPhotosContainer" style="
                     display: grid;
@@ -1358,47 +1383,107 @@
         function initPhotoGallery() {
             console.log('📸 Инициализация фото галереи');
             
+            // Кнопки для заявок
             const photoBtn = document.getElementById('photoBtn');
             if (photoBtn) {
                 photoBtn.addEventListener('click', function() {
-                    console.log('📸 Кнопка "Сделать фото" нажата');
-                    openPhotoInput();
+                    console.log('📸 Кнопка "Камера" нажата');
+                    const input = document.getElementById('photoCameraInput');
+                    if (input) {
+                        input.click();
+                    }
                 });
             }
             
+            const photoGalleryBtn = document.getElementById('photoGalleryBtn');
+            if (photoGalleryBtn) {
+                photoGalleryBtn.addEventListener('click', function() {
+                    console.log('🖼️ Кнопка "Галерея" нажата');
+                    const input = document.getElementById('photoGalleryInput');
+                    if (input) {
+                        input.click();
+                    }
+                });
+            }
+            
+            // Input для камеры заявок
+            const photoCameraInput = document.getElementById('photoCameraInput');
+            if (photoCameraInput) {
+                photoCameraInput.addEventListener('change', function(e) {
+                    console.log('📸 Файл выбран из камеры:', e.target.files[0]?.name);
+                    const file = e.target.files[0];
+                    if (file) {
+                        handlePhotoFile(file, 'request');
+                    }
+                    // Очистить input для возможности повторного выбора того же файла
+                    e.target.value = '';
+                });
+            }
+            
+            // Input для галереи заявок
+            const photoGalleryInput = document.getElementById('photoGalleryInput');
+            if (photoGalleryInput) {
+                photoGalleryInput.addEventListener('change', function(e) {
+                    console.log('🖼️ Файл выбран из галереи:', e.target.files[0]?.name);
+                    const file = e.target.files[0];
+                    if (file) {
+                        handlePhotoFile(file, 'request');
+                    }
+                    e.target.value = '';
+                });
+            }
+            
+            // Кнопки для счётчиков
             const counterPhotoBtn = document.getElementById('counterPhotoBtn');
             if (counterPhotoBtn) {
                 counterPhotoBtn.addEventListener('click', function() {
-                    console.log('📸 Кнопка "Сфотографировать счётчики" нажата');
-                    openPhotoInput('counter');
+                    console.log('📸 Кнопка "Камера счётчика" нажата');
+                    const input = document.getElementById('counterPhotoCameraInput');
+                    if (input) {
+                        input.click();
+                    }
+                });
+            }
+            
+            const counterPhotoGalleryBtn = document.getElementById('counterPhotoGalleryBtn');
+            if (counterPhotoGalleryBtn) {
+                counterPhotoGalleryBtn.addEventListener('click', function() {
+                    console.log('🖼️ Кнопка "Галерея счётчика" нажата');
+                    const input = document.getElementById('counterPhotoGalleryInput');
+                    if (input) {
+                        input.click();
+                    }
+                });
+            }
+            
+            // Input для камеры счётчиков
+            const counterPhotoCameraInput = document.getElementById('counterPhotoCameraInput');
+            if (counterPhotoCameraInput) {
+                counterPhotoCameraInput.addEventListener('change', function(e) {
+                    console.log('📸 Файл выбран из камеры счётчика:', e.target.files[0]?.name);
+                    const file = e.target.files[0];
+                    if (file) {
+                        handlePhotoFile(file, 'counter');
+                    }
+                    e.target.value = '';
+                });
+            }
+            
+            // Input для галереи счётчиков
+            const counterPhotoGalleryInput = document.getElementById('counterPhotoGalleryInput');
+            if (counterPhotoGalleryInput) {
+                counterPhotoGalleryInput.addEventListener('change', function(e) {
+                    console.log('🖼️ Файл выбран из галереи счётчика:', e.target.files[0]?.name);
+                    const file = e.target.files[0];
+                    if (file) {
+                        handlePhotoFile(file, 'counter');
+                    }
+                    e.target.value = '';
                 });
             }
             
             renderPhotos();
             renderCounterPhotos();
-        }
-
-        function openPhotoInput(type = 'request') {
-            console.log('📸 Открытие фото input, тип:', type);
-            
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
-            input.setAttribute('capture', 'environment'); // ⚠️ КРИТИЧНО для iOS Safari
-            
-            input.onchange = function(e) {
-                console.log('📸 Файл выбран:', e.target.files[0]?.name);
-                const file = e.target.files[0];
-                if (!file) {
-                    console.log('❌ Файл не выбран');
-                    return;
-                }
-                
-                handlePhotoFile(file, type);
-            };
-            
-            console.log('📸 Запуск input.click()');
-            input.click();
         }
 
         function handlePhotoFile(file, type = 'request') {

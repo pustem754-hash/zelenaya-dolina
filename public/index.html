@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК Зелёная Долина v5.2</title>
+    <title>УК Зелёная Долина v6.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#27ae60">
@@ -275,12 +275,114 @@
             font-size: 24px;
             margin-bottom: 4px;
         }
+        
+        /* Улучшенные большие кнопки */
+        .btn {
+            padding: 18px 24px !important;
+            font-size: 20px !important;
+            min-height: 60px !important;
+            font-weight: 600;
+            border-radius: 16px;
+        }
+        
+        .btn-camera {
+            background: #3498db !important;
+        }
+        
+        .btn-pay {
+            background: #27ae60 !important;
+        }
+        
+        .btn-download {
+            background: #95a5a6 !important;
+        }
+        
+        /* Карточки услуг */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .service-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        
+        .service-name {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .service-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 8px;
+        }
+        
+        .service-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .service-status.paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .service-status.unpaid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .payment-header .total-amount {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .amount-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .amount-label {
+            font-size: 16px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Увеличенная навигация */
+        .nav-icon {
+            font-size: 28px !important;
+        }
+        
+        .nav-item {
+            font-size: 12px !important;
+            padding: 14px 5px !important;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🏡 УК Зелёная Долина</h1>
-        <div class="version">v5.2.0</div>
+        <div class="version">v6.0.0</div>
     </div>
 
     <!-- Главная -->
@@ -322,14 +424,67 @@
 
     <!-- Платежи -->
     <div id="payments" class="section">
-        <div class="card">
-            <h2>💳 Платежи</h2>
-            <div class="stat-item">
-                <div class="stat-value">5 234 ₽</div>
-                <div class="stat-label">К оплате за январь</div>
+        <div class="card payment-header">
+            <h2>💳 Платежи и квитанции</h2>
+            <div class="total-amount">
+                <div class="amount-value">7 834 ₽</div>
+                <div class="amount-label">К оплате за январь</div>
             </div>
-            <button class="btn">Оплатить</button>
         </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">⚡</div>
+                <div class="service-name">Электроснабжение</div>
+                <div class="service-amount">1 324 ₽</div>
+                <div class="service-status paid">Оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">💧</div>
+                <div class="service-name">Холодная вода</div>
+                <div class="service-amount">523 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🔥</div>
+                <div class="service-name">Горячая вода</div>
+                <div class="service-amount">942 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">⛽</div>
+                <div class="service-name">Газ</div>
+                <div class="service-amount">580 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🏠</div>
+                <div class="service-name">Содержание</div>
+                <div class="service-amount">1 580 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <div class="service-name">Капремонт</div>
+                <div class="service-amount">600 ₽</div>
+                <div class="service-status unpaid">Не оплачено</div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🗑️</div>
+                <div class="service-name">Мусор</div>
+                <div class="service-amount">420 ₽</div>
+                <div class="service-status paid">Оплачено</div>
+            </div>
+        </div>
+
+        <button class="btn btn-pay" onclick="alert('Переход на оплату')">💰 Оплатить онлайн</button>
+        <button class="btn btn-download" onclick="alert('Скачивание PDF')">📥 Скачать квитанцию PDF</button>
     </div>
 
     <!-- Заявки -->
@@ -384,19 +539,19 @@
         <div class="card">
             <h2>🔢 Передать показания</h2>
             <div class="input-group">
-                <label>Холодная вода (м³)</label>
+                <label>💧 Холодная вода (м³)</label>
                 <input type="number" placeholder="Текущие показания">
             </div>
             <div class="input-group">
-                <label>Горячая вода (м³)</label>
-            </div>
-            <div class="input-group">
-                <label>Газ (м³)</label>
-                <input type="number" placeholder="Текущие показания">
+                <label>🔥 Горячая вода (м³)</label>
                 <input type="number" placeholder="Текущие показания">
             </div>
             <div class="input-group">
-                <label>Электричество (кВт⋅ч)</label>
+                <label>⛽ Газ (м³)</label>
+                <input type="number" placeholder="Текущие показания" style="font-size: 20px; padding: 16px;">
+            </div>
+            <div class="input-group">
+                <label>⚡ Электричество (кВт⋅ч)</label>
                 <input type="number" placeholder="Текущие показания">
             </div>
             <button class="btn">Отправить показания</button>

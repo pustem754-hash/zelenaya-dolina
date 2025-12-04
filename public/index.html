@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК Зелёная Долина v6.0</title>
+    <title>УК Зелёная Долина v6.1 - Обновлённая версия</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -572,38 +572,158 @@
             font-size: 10px;
             color: #666;
         }
+        
+        /* Стили для главной страницы */
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+        }
+        
+        .quick-action-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .quick-action-btn:hover {
+            border-color: #2E7D32;
+            background: #f0f9f0;
+            transform: scale(1.05);
+        }
+        
+        .quick-action-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .notification-card {
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .notification-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(4px);
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🏡 УК Зелёная Долина</h1>
-        <div class="version">v6.0.0</div>
+        <div class="version">v6.1.0 - Обновлённый главный экран</div>
     </div>
 
     <!-- Главная -->
     <div id="home" class="section active">
+        <!-- Приветствие -->
+        <div class="card" style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; text-align: center;">
+            <h2 style="color: white; font-size: 24px; margin-bottom: 10px;">👋 Добро пожаловать!</h2>
+            <p style="font-size: 16px; opacity: 0.95; margin: 0;">УК "Зелёная долина"</p>
+        </div>
+
+        <!-- Ключевая информация -->
         <div class="card">
-            <h2>📊 Статистика</h2>
+            <h2>📊 Ключевая информация</h2>
             <div class="stat-grid">
-                <div class="stat-item">
+                <div class="stat-item" onclick="showSection('payments')" style="cursor: pointer; transition: transform 0.2s; border-left: 4px solid #2E7D32;">
                     <div class="stat-value">5 234 ₽</div>
                     <div class="stat-label">К оплате</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">Срок: 10 мая</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">2</div>
-                    <div class="stat-label">Активные заявки</div>
-                </div>
-                <div class="stat-item">
+                <div class="stat-item" onclick="showSection('requests')" style="cursor: pointer; transition: transform 0.2s; border-left: 4px solid #3498db;">
                     <div class="stat-value">3</div>
-                    <div class="stat-label">Уведомления</div>
+                    <div class="stat-label">Активные заявки</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">В обработке</div>
+                </div>
+                <div class="stat-item" onclick="showSection('notifications')" style="cursor: pointer; transition: transform 0.2s; border-left: 4px solid #f39c12;">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Новые уведомления</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">Непрочитанные</div>
                 </div>
             </div>
         </div>
+
+        <!-- Быстрые действия -->
         <div class="card">
-            <h2>📞 Контакты УК</h2>
-            <p>📱 Диспетчер: 8 960 072 03 21</p>
-            <p>✉️ Email: uk.gdom@yandex.ru</p>
-            <p>🏢 Адрес: ул. Шоссейная 4А, пом. 15</p>
+            <h2>⚡ Быстрые действия</h2>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <button onclick="showSection('counters')" class="quick-action-btn">
+                    <span style="font-size: 32px;">💧</span>
+                    <span style="font-size: 14px; font-weight: 600; color: #333;">Передать показания</span>
+                </button>
+                <button onclick="showSection('payments')" class="quick-action-btn">
+                    <span style="font-size: 32px;">🔋</span>
+                    <span style="font-size: 14px; font-weight: 600; color: #333;">Оплатить сейчас</span>
+                </button>
+                <button onclick="showSection('requests')" class="quick-action-btn">
+                    <span style="font-size: 32px;">📢</span>
+                    <span style="font-size: 14px; font-weight: 600; color: #333;">Создать заявку</span>
+                </button>
+                <button onclick="downloadCurrentReceipt()" class="quick-action-btn">
+                    <span style="font-size: 32px;">📄</span>
+                    <span style="font-size: 14px; font-weight: 600; color: #333;">Скачать квитанцию</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Последние уведомления -->
+        <div class="card">
+            <h2>🔔 Последние уведомления</h2>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div onclick="showSection('notifications')" class="notification-card" style="background: #fff3cd; border-left: 4px solid #f39c12;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="font-size: 20px;">⚡</span>
+                            <strong style="font-size: 15px; color: #333;">Плановая проверка электрощитовой</strong>
+                        </div>
+                        <span style="background: #2E7D32; color: white; font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: bold;">Новое</span>
+                    </div>
+                    <p style="font-size: 13px; color: #666; margin: 0 0 4px 28px;">Дома: 1, 2, 3. Время: 9:00-18:00</p>
+                    <p style="font-size: 12px; color: #999; margin: 0 0 0 28px;">📅 25 апреля</p>
+                </div>
+                
+                <div onclick="showSection('notifications')" class="notification-card" style="background: #d1ecf1; border-left: 4px solid #3498db;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="font-size: 20px;">🚿</span>
+                            <strong style="font-size: 15px; color: #333;">Отключение горячей воды</strong>
+                        </div>
+                        <span style="background: #2E7D32; color: white; font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: bold;">Новое</span>
+                    </div>
+                    <p style="font-size: 13px; color: #666; margin: 0 0 4px 28px;">Причина: Профилактические работы. Время: 10:00-16:00</p>
+                    <p style="font-size: 12px; color: #999; margin: 0 0 0 28px;">📅 28 апреля</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 12px;">
+                <button onclick="showSection('notifications')" style="background: none; border: none; color: #2E7D32; font-weight: 600; font-size: 14px; cursor: pointer; padding: 8px;">
+                    Показать все уведомления →
+                </button>
+            </div>
+        </div>
+
+        <!-- Контакты диспетчерской -->
+        <div class="card">
+            <h2>📞 Диспетчерская служба</h2>
+            <div style="text-align: center; padding: 10px 0;">
+                <p style="color: #666; margin-bottom: 12px;">Круглосуточная поддержка жильцов</p>
+                <a href="tel:+79600720321" style="display: inline-flex; align-items: center; gap: 8px; font-size: 22px; font-weight: bold; color: #2E7D32; text-decoration: none; padding: 12px 20px; background: #f0f9f0; border-radius: 12px; transition: all 0.2s;">
+                    <span>📞</span>
+                    <span>8 (960) 072-03-21</span>
+                </a>
+                <p style="font-size: 13px; color: #999; margin-top: 10px;">Режим работы: 24/7</p>
+            </div>
+            <div style="border-top: 1px solid #e0e0e0; margin-top: 15px; padding-top: 15px;">
+                <p style="font-size: 14px; color: #666; margin: 5px 0;">✉️ Email: uk.gdom@yandex.ru</p>
+                <p style="font-size: 14px; color: #666; margin: 5px 0;">🏢 Адрес: ул. Шоссейная 4А, пом. 15</p>
+            </div>
         </div>
     </div>
 
@@ -2836,6 +2956,16 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             
             console.log('✅ Приложение инициализировано');
         });
+
+        // ===== СКАЧИВАНИЕ КВИТАНЦИИ =====
+        function downloadCurrentReceipt() {
+            console.log('📄 Скачивание квитанции');
+            alert('📄 Функция скачивания квитанции\n\nКвитанция будет загружена в формате PDF.');
+            
+            // В реальном приложении здесь будет генерация PDF
+            // Для демонстрации перейдём в раздел платежей
+            showSection('payments');
+        }
     </script>
 </body>
 </html>

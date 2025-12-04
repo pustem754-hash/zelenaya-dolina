@@ -593,7 +593,7 @@
         </div>
         
         <!-- Форма выбора дома и квартиры -->
-        <div id="userFormCard" class="card" style="margin-bottom: 20px;">
+        <div id="userFormCard" class="card" style="margin-bottom: 20px; display: block;">
             <h2>👤 Выберите ваш дом и квартиру</h2>
             
             <div class="input-group">
@@ -1406,7 +1406,7 @@
     </nav>
 
     <script>
-        console.log('🚀 Инициализация приложения УК Зелёная Долина v6.0');
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.1.0');
         
         let mediaRecorder;
         let audioChunks = [];
@@ -2908,6 +2908,203 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 console.error('❌ Ошибка генерации PDF:', error);
                 alert('Ошибка генерации PDF: ' + error.message);
             }
+        }
+
+        // ===== ДАННЫЕ ЖИЛЫХ КОМПЛЕКСОВ =====
+        const complexes = {
+            mayak: [
+                { 
+                    address: "ул. Рогачёва, д. 25, корп. 1", 
+                    apartments: 105, 
+                    storages: 21,
+                    fullAddress: "г. Зеленодольск, ул. Рогачёва, д. 25, корп. 1"
+                },
+                { 
+                    address: "ул. Рогачёва, д. 25, корп. 2", 
+                    apartments: 70, 
+                    storages: 14,
+                    fullAddress: "г. Зеленодольск, ул. Рогачёва, д. 25, корп. 2"
+                }
+            ],
+            zelenaya: [
+                { 
+                    address: "мкр. Зелёная Долина, д. 1", 
+                    apartments: 67, 
+                    storages: 64,
+                    fullAddress: "г. Зеленодольск, мкр. Зелёная Долина, д. 1"
+                },
+                { 
+                    address: "мкр. Зелёная Долина, д. 3", 
+                    apartments: 220, 
+                    storages: 181,
+                    fullAddress: "г. Зеленодольск, мкр. Зелёная Долина, д. 3"
+                },
+                { 
+                    address: "мкр. Зелёная Долина, д. 5, с. Айша", 
+                    apartments: 141, 
+                    storages: 102,
+                    fullAddress: "Зеленодольский р-н, с. Айша, мкр. Зелёная Долина, д. 5"
+                },
+                { 
+                    address: "мкр. Зелёная Долина, д. 7, с. Айша", 
+                    apartments: 61, 
+                    storages: 48,
+                    fullAddress: "Зеленодольский р-н, с. Айша, мкр. Зелёная Долина, д. 7"
+                }
+            ]
+        };
+        
+        // ===== УПРАВЛЕНИЕ ПРОФИЛЕМ ПОЛЬЗОВАТЕЛЯ =====
+        function loadHouses() {
+            const complex = document.getElementById('complexSelect').value;
+            const houseSelect = document.getElementById('houseSelect');
+            const houseGroup = document.getElementById('houseGroup');
+            
+            if (!complex) {
+                houseGroup.style.display = 'none';
+                document.getElementById('apartmentGroup').style.display = 'none';
+                document.getElementById('storageGroup').style.display = 'none';
+                return;
+            }
+            
+            houseGroup.style.display = 'block';
+            houseSelect.innerHTML = '<option value="">-- Выберите дом --</option>';
+            
+            complexes[complex].forEach((house, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${house.address} (${house.apartments} кв, ${house.storages} кл)`;
+                houseSelect.appendChild(option);
+            });
+            
+            document.getElementById('apartmentGroup').style.display = 'none';
+            document.getElementById('storageGroup').style.display = 'none';
+        }
+        
+        function loadApartmentInfo() {
+            const complex = document.getElementById('complexSelect').value;
+            const houseIndex = document.getElementById('houseSelect').value;
+            
+            if (!complex || houseIndex === '') {
+                document.getElementById('apartmentGroup').style.display = 'none';
+                document.getElementById('storageGroup').style.display = 'none';
+                return;
+            }
+            
+            const house = complexes[complex][houseIndex];
+            
+            document.getElementById('apartmentGroup').style.display = 'block';
+            document.getElementById('storageGroup').style.display = 'block';
+            document.getElementById('apartmentInput').max = house.apartments;
+            document.getElementById('apartmentInput').min = 1;
+            document.getElementById('apartmentHint').textContent = 
+                `В этом доме квартиры от 1 до ${house.apartments}`;
+        }
+        
+        function toggleStorage() {
+            const checked = document.getElementById('hasStorageCheck').checked;
+            const storageInput = document.getElementById('storageInput');
+            storageInput.style.display = checked ? 'block' : 'none';
+            if (!checked) {
+                storageInput.value = '';
+            }
+        }
+        
+        function saveUserData() {
+            const complex = document.getElementById('complexSelect').value;
+            const houseIndex = document.getElementById('houseSelect').value;
+            const apartment = document.getElementById('apartmentInput').value;
+            const hasStorage = document.getElementById('hasStorageCheck').checked;
+            const storage = hasStorage ? document.getElementById('storageInput').value : null;
+            
+            if (!complex || houseIndex === '' || !apartment) {
+                alert('❌ Заполните все обязательные поля!');
+                return;
+            }
+            
+            const house = complexes[complex][houseIndex];
+            
+            if (parseInt(apartment) < 1 || parseInt(apartment) > house.apartments) {
+                alert(`❌ Квартира должна быть от 1 до ${house.apartments}`);
+                return;
+            }
+            
+            if (hasStorage && !storage) {
+                alert('❌ Укажите номер кладовой');
+                return;
+            }
+            
+            const userData = {
+                complex: complex === 'mayak' ? 'ЖК «Маяк»' : 'ЖК «Зелёная Долина»',
+                complexKey: complex,
+                house: house.address,
+                houseIndex: parseInt(houseIndex),
+                apartment: apartment,
+                storage: storage,
+                fullAddress: house.fullAddress,
+                savedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('userData', JSON.stringify(userData));
+            console.log('✅ Данные пользователя сохранены:', userData);
+            alert('✅ Данные успешно сохранены!');
+            
+            displayUserInfo(userData);
+            hideUserForm();
+        }
+        
+        function displayUserInfo(data) {
+            const userInfoCard = document.getElementById('userInfoCard');
+            const userComplex = document.getElementById('userComplex');
+            const userHouse = document.getElementById('userHouse');
+            const userApartment = document.getElementById('userApartment');
+            const userStorage = document.getElementById('userStorage');
+            
+            if (userInfoCard && userComplex && userHouse && userApartment) {
+                userComplex.textContent = data.complex;
+                userHouse.textContent = data.house;
+                userApartment.textContent = `кв. ${data.apartment}`;
+                
+                if (data.storage) {
+                    userStorage.textContent = `кл. ${data.storage}`;
+                    userStorage.style.display = 'inline';
+                } else {
+                    userStorage.style.display = 'none';
+                }
+                
+                userInfoCard.style.display = 'block';
+            }
+        }
+        
+        function showUserForm() {
+            document.getElementById('userInfoCard').style.display = 'none';
+            document.getElementById('userFormCard').style.display = 'block';
+            
+            // Загрузить сохранённые данные в форму
+            const saved = localStorage.getItem('userData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    document.getElementById('complexSelect').value = data.complexKey;
+                    loadHouses();
+                    setTimeout(() => {
+                        document.getElementById('houseSelect').value = data.houseIndex;
+                        loadApartmentInfo();
+                        document.getElementById('apartmentInput').value = data.apartment;
+                        if (data.storage) {
+                            document.getElementById('hasStorageCheck').checked = true;
+                            document.getElementById('storageInput').value = data.storage;
+                            toggleStorage();
+                        }
+                    }, 100);
+                } catch (e) {
+                    console.error('Ошибка загрузки данных в форму:', e);
+                }
+            }
+        }
+        
+        function hideUserForm() {
+            document.getElementById('userFormCard').style.display = 'none';
         }
 
         // ===== ИНТЕГРАЦИЯ ВСЕХ СИСТЕМ =====

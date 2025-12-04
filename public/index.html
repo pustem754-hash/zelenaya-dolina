@@ -582,28 +582,106 @@
 
     <!-- Главная -->
     <div id="home" class="section active">
+        <!-- Информация о пользователе -->
+        <div class="card" style="background: linear-gradient(135deg, #2E7D32 0%, #27ae60 100%); color: white; margin-bottom: 20px;">
+            <h2 style="color: white; margin-bottom: 10px;">👤 МИННУЛЛИНА Н. М.</h2>
+            <p style="color: rgba(255,255,255,0.9); margin-bottom: 5px;">🏠 Квартира 142, ул. ЧИСТОПОЛЬСКАЯ, д. 5</p>
+            <p style="color: rgba(255,255,255,0.9); font-size: 14px;">📱 +7 (XXX) XXX-XX-XX</p>
+        </div>
+        
+        <!-- Статистика платежей -->
+        <div class="card" style="border-left: 4px solid #2E7D32;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">💳 К оплате</h2>
+                <span id="paymentStatus" style="padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #fff3cd; color: #856404;">Ожидает оплаты</span>
+            </div>
+            <div class="stat-value" style="font-size: 36px; color: #2E7D32; margin-bottom: 10px;">10 360.02 ₽</div>
+            <p style="color: #666; margin-bottom: 15px;">Срок оплаты: до 28.10.2025</p>
+            <button class="btn btn-pay" onclick="showSection('payments')" style="margin-top: 0;">💳 Оплатить онлайн</button>
+        </div>
+        
+        <!-- Быстрые действия - интеграция всех систем -->
         <div class="card">
-            <h2>📊 Статистика</h2>
-            <div class="stat-grid">
-                <div class="stat-item">
-                    <div class="stat-value">5 234 ₽</div>
-                    <div class="stat-label">К оплате</div>
+            <h2 style="margin-bottom: 15px;">⚡ Быстрые действия</h2>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <!-- PAL Gate - Шлагбаум -->
+                <div class="quick-action-card" onclick="openGate()" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
+                    <div style="font-size: 32px; margin-bottom: 8px;" id="gateIcon">🔒</div>
+                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Шлагбаум</div>
+                    <div style="font-size: 12px; color: #666;" id="gateStatus">Закрыт</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">2</div>
-                    <div class="stat-label">Активные заявки</div>
+                
+                <!-- Телеком Летай - Камеры -->
+                <div class="quick-action-card" onclick="showSection('cameras')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">📹</div>
+                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Камеры</div>
+                    <div style="font-size: 12px; color: #666;" id="camerasStatus">8/10 онлайн</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">3</div>
-                    <div class="stat-label">Уведомления</div>
+                
+                <!-- ЕРЦ Форма 4.0 - Счетчики -->
+                <div class="quick-action-card" onclick="showSection('counters')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🔢</div>
+                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Счетчики</div>
+                    <div style="font-size: 12px; color: #666;" id="metersStatus">Передано</div>
+                </div>
+                
+                <!-- VSK Desk - Заявки -->
+                <div class="quick-action-card" onclick="showSection('requests')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">📝</div>
+                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Заявки</div>
+                    <div style="font-size: 12px; color: #666;" id="requestsStatus">3 активных</div>
                 </div>
             </div>
         </div>
+        
+        <!-- Активные заявки из VSK Desk -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">📝 Активные заявки (VSK Desk)</h2>
+                <span style="background: #2E7D32; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;" id="activeRequestsCount">3</span>
+            </div>
+            <div id="recentRequestsList">
+                <!-- Заполнится через JavaScript -->
+            </div>
+            <button class="btn" onclick="showSection('requests')" style="margin-top: 15px;">Все заявки →</button>
+        </div>
+        
+        <!-- Уведомления из всех систем -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">🔔 Уведомления</h2>
+                <span style="background: #e74c3c; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;" id="unreadNotificationsCount">3</span>
+            </div>
+            <div id="notificationsList">
+                <!-- Заполнится через JavaScript -->
+            </div>
+            <button class="btn" onclick="showSection('notifications')" style="margin-top: 15px;">Все уведомления →</button>
+        </div>
+        
+        <!-- Контакты УК -->
         <div class="card">
             <h2>📞 Контакты УК</h2>
             <p>📱 Диспетчер: 8 960 072 03 21</p>
             <p>✉️ Email: uk.gdom@yandex.ru</p>
             <p>🏢 Адрес: ул. Шоссейная 4А, пом. 15</p>
+        </div>
+    </div>
+    
+    <!-- Секция камер (Телеком Летай) -->
+    <div id="cameras" class="section">
+        <div class="card">
+            <h2>📹 Видеонаблюдение (Телеком Летай)</h2>
+            <div class="stat-item">
+                <div class="stat-value" id="camerasOnline">8</div>
+                <div class="stat-label">Онлайн камер</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="camerasTotal">10</div>
+                <div class="stat-label">Всего камер</div>
+            </div>
+            <div id="camerasList" style="margin-top: 20px;">
+                <!-- Список камер заполнится через JavaScript -->
+            </div>
         </div>
     </div>
 
@@ -2788,6 +2866,401 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             }
         }
 
+        // ===== ИНТЕГРАЦИЯ ВСЕХ СИСТЕМ =====
+        
+        // Данные главного экрана (имитация API)
+        let mainScreenData = {
+            payment: {
+                amount: 10360.02,
+                dueDate: '2025-10-28',
+                status: 'pending'
+            },
+            vskRequests: {
+                active: 3,
+                recent: [
+                    {
+                        id: 'vsk-001',
+                        type: 'plumbing',
+                        title: 'Протечка в ванной',
+                        status: 'in_progress',
+                        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        id: 'vsk-002',
+                        type: 'electric',
+                        title: 'Не работает розетка',
+                        status: 'new',
+                        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        id: 'vsk-003',
+                        type: 'cleaning',
+                        title: 'Уборка подъезда',
+                        status: 'completed',
+                        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+                    }
+                ]
+            },
+            notifications: {
+                unread: 3,
+                items: [
+                    {
+                        id: 'notif-001',
+                        type: 'payment',
+                        title: 'Новая квитанция',
+                        message: 'Квитанция за сентябрь 2025 готова к оплате',
+                        timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+                        isRead: false
+                    },
+                    {
+                        id: 'notif-002',
+                        type: 'request',
+                        title: 'Заявка в работе',
+                        message: 'Заявка "Протечка в ванной" принята в работу',
+                        timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+                        isRead: false
+                    },
+                    {
+                        id: 'notif-003',
+                        type: 'gate',
+                        title: 'Шлагбаум открыт',
+                        message: 'Шлагбаум был открыт 10 минут назад',
+                        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+                        isRead: false
+                    },
+                    {
+                        id: 'notif-004',
+                        type: 'camera',
+                        title: 'Активность на камере',
+                        message: 'Обнаружено движение на камере у входа',
+                        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+                        isRead: true
+                    }
+                ]
+            },
+            gateStatus: {
+                isOpen: false,
+                lastOpened: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+                canOpen: true
+            },
+            cameras: {
+                online: 8,
+                total: 10,
+                recentActivity: true
+            },
+            meters: {
+                lastSubmitted: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                nextDeadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+                needsSubmission: false
+            },
+            user: {
+                name: 'МИННУЛЛИНА Н. М.',
+                apartment: '142',
+                phone: '+7 (XXX) XXX-XX-XX',
+                hasStorage: false
+            }
+        };
+        
+        // Загрузка данных главного экрана (имитация API)
+        async function loadMainScreenData() {
+            console.log('📊 Загрузка данных главного экрана');
+            try {
+                // TODO: Заменить на реальный API вызов
+                // const response = await fetch('/api/main-screen');
+                // const data = await response.json();
+                
+                // Пока используем mock данные
+                renderMainScreen(mainScreenData);
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+            }
+        }
+        
+        // Рендеринг главного экрана
+        function renderMainScreen(data) {
+            // Обновление статуса платежа
+            const paymentStatus = document.getElementById('paymentStatus');
+            if (paymentStatus) {
+                if (data.payment.status === 'paid') {
+                    paymentStatus.textContent = 'Оплачено';
+                    paymentStatus.style.background = '#d4edda';
+                    paymentStatus.style.color = '#155724';
+                } else if (data.payment.status === 'overdue') {
+                    paymentStatus.textContent = 'Просрочено';
+                    paymentStatus.style.background = '#f8d7da';
+                    paymentStatus.style.color = '#721c24';
+                } else {
+                    paymentStatus.textContent = 'Ожидает оплаты';
+                    paymentStatus.style.background = '#fff3cd';
+                    paymentStatus.style.color = '#856404';
+                }
+            }
+            
+            // Обновление статуса шлагбаума
+            const gateIcon = document.getElementById('gateIcon');
+            const gateStatus = document.getElementById('gateStatus');
+            if (gateIcon && gateStatus) {
+                gateIcon.textContent = data.gateStatus.isOpen ? '🚪' : '🔒';
+                gateStatus.textContent = data.gateStatus.isOpen 
+                    ? 'Открыт' 
+                    : data.gateStatus.canOpen 
+                        ? 'Нажмите для открытия' 
+                        : 'Нет доступа';
+            }
+            
+            // Обновление статуса камер
+            const camerasStatus = document.getElementById('camerasStatus');
+            if (camerasStatus) {
+                camerasStatus.textContent = `${data.cameras.online}/${data.cameras.total} онлайн${data.cameras.recentActivity ? ' • Активность' : ''}`;
+            }
+            
+            // Обновление статуса счетчиков
+            const metersStatus = document.getElementById('metersStatus');
+            if (metersStatus) {
+                if (data.meters.needsSubmission) {
+                    metersStatus.textContent = '⚠️ Требуется передача';
+                    metersStatus.style.color = '#c62828';
+                } else {
+                    const lastDate = new Date(data.meters.lastSubmitted).toLocaleDateString('ru-RU');
+                    metersStatus.textContent = `Передано ${lastDate}`;
+                    metersStatus.style.color = '#666';
+                }
+            }
+            
+            // Обновление статуса заявок
+            const requestsStatus = document.getElementById('requestsStatus');
+            const activeRequestsCount = document.getElementById('activeRequestsCount');
+            if (requestsStatus) {
+                requestsStatus.textContent = `${data.vskRequests.active} активных`;
+            }
+            if (activeRequestsCount) {
+                activeRequestsCount.textContent = data.vskRequests.active;
+            }
+            
+            // Рендеринг списка заявок
+            renderRecentRequests(data.vskRequests.recent);
+            
+            // Обновление уведомлений
+            const unreadNotificationsCount = document.getElementById('unreadNotificationsCount');
+            if (unreadNotificationsCount) {
+                unreadNotificationsCount.textContent = data.notifications.unread;
+            }
+            
+            // Рендеринг списка уведомлений
+            renderNotifications(data.notifications.items);
+        }
+        
+        // Рендеринг последних заявок
+        function renderRecentRequests(requests) {
+            const container = document.getElementById('recentRequestsList');
+            if (!container) return;
+            
+            if (requests.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Нет активных заявок</p>';
+                return;
+            }
+            
+            container.innerHTML = requests.slice(0, 3).map(request => {
+                const statusClass = request.status === 'new' ? 'created' : 
+                                   request.status === 'in_progress' ? 'in_progress' : 'completed';
+                const statusName = request.status === 'new' ? 'Новая' :
+                                  request.status === 'in_progress' ? 'В работе' : 'Завершена';
+                const typeIcon = request.type === 'plumbing' ? '🔧' :
+                               request.type === 'electric' ? '⚡' :
+                               request.type === 'cleaning' ? '🧹' : '📝';
+                
+                return `
+                    <div class="request-item status-${request.status}" onclick="showRequestDetails('${request.id}')" style="cursor: pointer;">
+                        <div class="request-header">
+                            <div style="flex: 1;">
+                                <div class="request-title">${typeIcon} ${request.title}</div>
+                                <div class="request-info">${new Date(request.createdAt).toLocaleDateString('ru-RU')}</div>
+                            </div>
+                            <span class="request-status ${statusClass}">${statusName}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Рендеринг уведомлений
+        function renderNotifications(notifications) {
+            const container = document.getElementById('notificationsList');
+            if (!container) return;
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Нет уведомлений</p>';
+                return;
+            }
+            
+            const typeIcons = {
+                'payment': '💳',
+                'request': '📝',
+                'gate': '🚪',
+                'camera': '📹',
+                'general': '🔔'
+            };
+            
+            container.innerHTML = notifications.slice(0, 5).map(notif => {
+                return `
+                    <div class="request-item ${!notif.isRead ? 'status-created' : ''}" onclick="markNotificationRead('${notif.id}')" style="cursor: pointer;">
+                        <div class="request-header">
+                            <div style="flex: 1;">
+                                <div class="request-title">${typeIcons[notif.type] || '🔔'} ${notif.title}</div>
+                                <div class="request-info">${notif.message}</div>
+                                <div style="font-size: 11px; color: #999; margin-top: 5px;">
+                                    ${new Date(notif.timestamp).toLocaleString('ru-RU')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Открытие шлагбаума через PAL Gate (SMS команда)
+        async function openGate() {
+            console.log('🚪 Открытие шлагбаума через PAL Gate');
+            
+            const gateStatus = mainScreenData.gateStatus;
+            if (!gateStatus.canOpen) {
+                alert('У вас нет прав на открытие шлагбаума');
+                return;
+            }
+            
+            if (!confirm('Открыть шлагбаум через SMS команду?')) {
+                return;
+            }
+            
+            try {
+                // TODO: Заменить на реальный API вызов
+                // const response = await fetch('/api/gate/open', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ phone: mainScreenData.user.phone })
+                // });
+                
+                // Имитация успешного открытия
+                mainScreenData.gateStatus.isOpen = true;
+                mainScreenData.gateStatus.lastOpened = new Date().toISOString();
+                
+                // Добавить уведомление
+                mainScreenData.notifications.items.unshift({
+                    id: 'gate-' + Date.now(),
+                    type: 'gate',
+                    title: 'Шлагбаум открыт',
+                    message: 'Шлагбаум успешно открыт через SMS команду',
+                    timestamp: new Date().toISOString(),
+                    isRead: false
+                });
+                mainScreenData.notifications.unread++;
+                
+                renderMainScreen(mainScreenData);
+                alert('✅ Шлагбаум открыт!');
+                
+                // Автоматически закрыть через 30 секунд (имитация)
+                setTimeout(() => {
+                    mainScreenData.gateStatus.isOpen = false;
+                    renderMainScreen(mainScreenData);
+                }, 30000);
+                
+            } catch (error) {
+                console.error('❌ Ошибка открытия шлагбаума:', error);
+                alert('Ошибка открытия шлагбаума. Попробуйте позже.');
+            }
+        }
+        
+        // Отметить уведомление как прочитанное
+        function markNotificationRead(id) {
+            const notification = mainScreenData.notifications.items.find(n => n.id === id);
+            if (notification && !notification.isRead) {
+                notification.isRead = true;
+                mainScreenData.notifications.unread--;
+                renderMainScreen(mainScreenData);
+            }
+        }
+        
+        // Показать детали заявки
+        function showRequestDetails(id) {
+            const request = mainScreenData.vskRequests.recent.find(r => r.id === id);
+            if (!request) {
+                // Попробовать найти в localStorage
+                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                const localRequest = requests.find(r => r.id === id);
+                if (localRequest) {
+                    showRequestDetailsLocal(localRequest);
+                    return;
+                }
+                alert('Заявка не найдена');
+                return;
+            }
+            
+            const details = `
+Заявка ${id}
+Тип: ${request.type}
+Название: ${request.title}
+Статус: ${request.status === 'new' ? 'Новая' : request.status === 'in_progress' ? 'В работе' : 'Завершена'}
+Создана: ${new Date(request.createdAt).toLocaleString('ru-RU')}
+            `;
+            
+            alert(details);
+        }
+        
+        function showRequestDetailsLocal(request) {
+            const details = `
+Заявка №${request.id}
+Категория: ${request.categoryName}
+Статус: ${request.statusName}
+Дата создания: ${request.dateFormatted}
+Описание: ${request.description || 'не указано'}
+Фото: ${request.photos.length}
+Видео: ${request.videos.length}
+Аудио: ${request.audio.length}
+            `;
+            
+            alert(details);
+        }
+        
+        // Рендеринг камер
+        function renderCameras() {
+            const container = document.getElementById('camerasList');
+            if (!container) return;
+            
+            const cameras = [
+                { id: 'cam-001', name: 'Вход в подъезд 1', isOnline: true },
+                { id: 'cam-002', name: 'Вход в подъезд 2', isOnline: true },
+                { id: 'cam-003', name: 'Двор (север)', isOnline: true },
+                { id: 'cam-004', name: 'Двор (юг)', isOnline: true },
+                { id: 'cam-005', name: 'Парковка', isOnline: true },
+                { id: 'cam-006', name: 'Детская площадка', isOnline: true },
+                { id: 'cam-007', name: 'Мусорная площадка', isOnline: true },
+                { id: 'cam-008', name: 'Вход в подъезд 3', isOnline: true },
+                { id: 'cam-009', name: 'Вход в подъезд 4', isOnline: false },
+                { id: 'cam-010', name: 'Вход в подъезд 5', isOnline: false }
+            ];
+            
+            container.innerHTML = cameras.map(camera => `
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; color: #333; margin-bottom: 5px;">${camera.name}</div>
+                        <div style="font-size: 12px; color: #666;">
+                            ${camera.isOnline ? '🟢 Онлайн' : '🔴 Офлайн'}
+                        </div>
+                    </div>
+                    ${camera.isOnline ? `
+                        <button onclick="openCamera('${camera.id}')" style="background: #2E7D32; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                            Смотреть
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function openCamera(cameraId) {
+            // TODO: Открыть поток камеры Телеком Летай
+            alert(`Открытие камеры ${cameraId}\nИнтеграция с Телеком Летай`);
+        }
+
         // ===== ИНИЦИАЛИЗАЦИЯ =====
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ DOM загружен, инициализация приложения');
@@ -2813,6 +3286,20 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 renderHistory();
             }
             
+            // Загрузить данные главного экрана
+            loadMainScreenData();
+            
+            // Рендеринг камер при открытии секции
+            const camerasSection = document.getElementById('cameras');
+            if (camerasSection) {
+                const observer = new MutationObserver(function(mutations) {
+                    if (camerasSection.classList.contains('active')) {
+                        renderCameras();
+                    }
+                });
+                observer.observe(camerasSection, { attributes: true, attributeFilter: ['class'] });
+            }
+            
             const audioBtn = document.getElementById('audioBtn');
             if (audioBtn) {
                 audioBtn.addEventListener('click', toggleAudio);
@@ -2833,6 +3320,13 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             if (repairBtn) {
                 selectCategory('repair', repairBtn);
             }
+            
+            // Автообновление данных каждые 30 секунд
+            setInterval(() => {
+                if (document.getElementById('home')?.classList.contains('active')) {
+                    loadMainScreenData();
+                }
+            }, 30000);
             
             console.log('✅ Приложение инициализировано');
         });

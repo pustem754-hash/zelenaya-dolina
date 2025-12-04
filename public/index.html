@@ -583,52 +583,6 @@
 
     <!-- Главная -->
     <div id="home" class="section active">
-        <!-- Информация о пользователе -->
-        <div id="userInfoCard" class="card" style="background: linear-gradient(135deg, #2E7D32 0%, #27ae60 100%); color: white; margin-bottom: 20px; display: none;">
-            <h2 style="color: white; margin-bottom: 10px;">👤 Ваши данные</h2>
-            <p style="color: rgba(255,255,255,0.9); margin-bottom: 5px;" id="userComplex"></p>
-            <p style="color: rgba(255,255,255,0.9); margin-bottom: 5px;" id="userHouse"></p>
-            <p style="color: rgba(255,255,255,0.9); margin-bottom: 5px;">🏠 <span id="userApartment"></span> <span id="userStorage" style="display: none;"></span></p>
-            <button class="btn" onclick="showUserForm()" style="background: rgba(255,255,255,0.2); margin-top: 10px;">✏️ Изменить данные</button>
-        </div>
-        
-        <!-- Форма выбора дома и квартиры -->
-        <div id="userFormCard" class="card" style="margin-bottom: 20px; display: block;">
-            <h2>👤 Выберите ваш дом и квартиру</h2>
-            
-            <div class="input-group">
-                <label>Жилой комплекс:</label>
-                <select id="complexSelect" onchange="loadHouses()" style="width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px;">
-                    <option value="">-- Выберите ЖК --</option>
-                    <option value="mayak">🏢 ЖК «Маяк»</option>
-                    <option value="zelenaya">🌳 ЖК «Зелёная Долина»</option>
-                </select>
-            </div>
-            
-            <div class="input-group" id="houseGroup" style="display: none;">
-                <label>Дом:</label>
-                <select id="houseSelect" onchange="loadApartmentInfo()" style="width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px;">
-                    <option value="">-- Сначала выберите ЖК --</option>
-                </select>
-            </div>
-            
-            <div class="input-group" id="apartmentGroup" style="display: none;">
-                <label>Номер квартиры:</label>
-                <input type="number" id="apartmentInput" min="1" placeholder="Введите номер" style="width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px;">
-                <small id="apartmentHint" style="color: #666; font-size: 14px; margin-top: 5px; display: block;"></small>
-            </div>
-            
-            <div class="input-group" id="storageGroup" style="display: none;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" id="hasStorageCheck" onchange="toggleStorage()" style="width: 24px; height: 24px; cursor: pointer;">
-                    <span style="font-size: 18px;">У меня есть кладовая (ПС-пом.)</span>
-                </label>
-                <input type="text" id="storageInput" placeholder="Номер кладовой" style="display: none; width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 18px; margin-top: 10px;">
-            </div>
-            
-            <button class="btn" onclick="saveUserData()" style="margin-top: 15px;">💾 Сохранить мои данные</button>
-        </div>
-        
         <!-- Статистика платежей -->
         <div class="card" style="border-left: 4px solid #2E7D32;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -696,6 +650,59 @@
                 <!-- Заполнится через JavaScript -->
             </div>
             <button class="btn" onclick="showSection('notifications')" style="margin-top: 15px;">Все уведомления →</button>
+        </div>
+        
+        <!-- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -->
+        <div class="card">
+            <h2>👤 Ваш профиль</h2>
+            
+            <!-- Форма выбора дома и квартиры -->
+            <div id="userFormCard">
+                <p style="color: #666; margin-bottom: 15px;">Выберите ваш дом и квартиру для персонализации данных</p>
+                
+                <div class="input-group">
+                    <label>Жилой комплекс:</label>
+                    <select id="complexSelect" onchange="loadHouses()" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                        <option value="">-- Выберите ЖК --</option>
+                        <option value="mayak">🏢 ЖК «Маяк»</option>
+                        <option value="zelenaya">🌳 ЖК «Зелёная Долина»</option>
+                    </select>
+                </div>
+                
+                <div class="input-group" id="houseGroup" style="display: none;">
+                    <label>Дом:</label>
+                    <select id="houseSelect" onchange="loadApartmentInfo()" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                        <option value="">-- Выберите дом --</option>
+                    </select>
+                </div>
+                
+                <div class="input-group" id="apartmentGroup" style="display: none;">
+                    <label>Номер квартиры:</label>
+                    <input type="number" id="apartmentInput" min="1" placeholder="Введите номер квартиры" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                    <small id="apartmentHint" style="display: block; color: #666; margin-top: 5px; font-size: 14px;"></small>
+                </div>
+                
+                <div class="input-group" id="storageGroup" style="display: none;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 10px;">
+                        <input type="checkbox" id="hasStorageCheck" onchange="toggleStorage()" style="width: 20px; height: 20px; cursor: pointer;">
+                        <span>У меня есть кладовая (ПС-пом.)</span>
+                    </label>
+                    <input type="text" id="storageInput" placeholder="Номер кладовой" style="display: none; width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                
+                <button class="btn" onclick="saveUserData()" style="margin-top: 15px;">💾 Сохранить мои данные</button>
+            </div>
+            
+            <!-- Сохранённые данные пользователя -->
+            <div id="userInfoCard" style="display: none;">
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                    <p style="margin-bottom: 8px;"><strong>ЖК:</strong> <span id="userComplex"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>Дом:</strong> <span id="userHouse"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>Квартира:</strong> <span id="userApartment"></span></p>
+                    <p id="userStorageInfo" style="display: none; margin-bottom: 0;"><strong>Кладовая:</strong> <span id="userStorage"></span></p>
+                </div>
+                <button class="btn" onclick="showUserForm()" style="background: #3498db;">✏️ Изменить данные</button>
+            </div>
         </div>
         
         <!-- Контакты УК -->
@@ -3017,8 +3024,18 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             const hasStorage = document.getElementById('hasStorageCheck').checked;
             const storage = hasStorage ? document.getElementById('storageInput').value : null;
             
-            if (!complex || houseIndex === '' || !apartment) {
-                alert('❌ Заполните все обязательные поля!');
+            if (!complex) {
+                alert('❌ Выберите жилой комплекс!');
+                return;
+            }
+            
+            if (houseIndex === '') {
+                alert('❌ Выберите дом!');
+                return;
+            }
+            
+            if (!apartment) {
+                alert('❌ Введите номер квартиры!');
                 return;
             }
             
@@ -3026,11 +3043,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             
             if (parseInt(apartment) < 1 || parseInt(apartment) > house.apartments) {
                 alert(`❌ Квартира должна быть от 1 до ${house.apartments}`);
-                return;
-            }
-            
-            if (hasStorage && !storage) {
-                alert('❌ Укажите номер кладовой');
                 return;
             }
             
@@ -3050,7 +3062,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             alert('✅ Данные успешно сохранены!');
             
             displayUserInfo(userData);
-            hideUserForm();
         }
         
         function displayUserInfo(data) {
@@ -3059,6 +3070,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             const userHouse = document.getElementById('userHouse');
             const userApartment = document.getElementById('userApartment');
             const userStorage = document.getElementById('userStorage');
+            const userStorageInfo = document.getElementById('userStorageInfo');
             
             if (userInfoCard && userComplex && userHouse && userApartment) {
                 userComplex.textContent = data.complex;
@@ -3067,11 +3079,12 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 
                 if (data.storage) {
                     userStorage.textContent = `кл. ${data.storage}`;
-                    userStorage.style.display = 'inline';
+                    if (userStorageInfo) userStorageInfo.style.display = 'block';
                 } else {
-                    userStorage.style.display = 'none';
+                    if (userStorageInfo) userStorageInfo.style.display = 'none';
                 }
                 
+                document.getElementById('userFormCard').style.display = 'none';
                 userInfoCard.style.display = 'block';
             }
         }
@@ -3562,20 +3575,21 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 selectCategory('repair', repairBtn);
             }
             
-            // Загрузить данные пользователя при старте
-            const savedUserData = localStorage.getItem('userData');
-            if (savedUserData) {
-                try {
-                    const userData = JSON.parse(savedUserData);
-                    displayUserInfo(userData);
-                    hideUserForm();
-                } catch (e) {
-                    console.error('Ошибка загрузки данных пользователя:', e);
-                    showUserForm();
+            // Проверка сохранённых данных при загрузке
+            (function checkUserData() {
+                const saved = localStorage.getItem('userData');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        displayUserInfo(data);
+                    } catch (e) {
+                        console.error('Ошибка загрузки данных пользователя:', e);
+                        document.getElementById('userFormCard').style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('userFormCard').style.display = 'block';
                 }
-            } else {
-                showUserForm();
-            }
+            })();
             
             // Автообновление данных каждые 30 секунд
             setInterval(() => {

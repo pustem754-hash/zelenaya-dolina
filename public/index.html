@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.1.3</title>
+    <title>УК «Зелёная долина» v6.2.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -671,7 +671,7 @@
     <div class="header">
         <h1>🏡 УК «Зелёная долина»</h1>
         <p style="font-size: 14px; margin-top: 5px; opacity: 0.9;">Жилищная компания</p>
-        <div class="version">v6.1.3</div>
+        <div class="version">v6.2.0</div>
     </div>
 
     <!-- Главная -->
@@ -684,7 +684,7 @@
             </div>
             <div class="stat-value" style="font-size: 36px; color: #2E7D32; margin-bottom: 10px;">10 360.02 ₽</div>
             <p style="color: #666; margin-bottom: 15px;">Срок оплаты: до 28.10.2025</p>
-            <button class="btn btn-pay" onclick="showSection('payments')" style="margin-top: 0;">💳 Оплатить онлайн</button>
+            <button class="btn btn-pay" onclick="handlePaymentClick()" style="margin-top: 0;">💳 Оплатить онлайн</button>
         </div>
         
         <!-- Быстрые действия - интеграция всех систем -->
@@ -699,14 +699,14 @@
                 </div>
                 
                 <!-- Телеком Летай - Камеры -->
-                <div class="quick-action-card" onclick="showSection('cameras')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
+                <div class="quick-action-card" onclick="openCamerasPage()" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
                     <div style="font-size: 32px; margin-bottom: 8px;">📹</div>
                     <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Камеры</div>
                     <div style="font-size: 12px; color: #666;" id="camerasStatus">8/10 онлайн</div>
                 </div>
                 
                 <!-- ЕРЦ Форма 4.0 - Счетчики -->
-                <div class="quick-action-card" onclick="showSection('counters')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
+                <div class="quick-action-card" onclick="window.location.href='meters.html'" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
                     <div style="font-size: 32px; margin-bottom: 8px;">🔢</div>
                     <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Счетчики</div>
                     <div style="font-size: 12px; color: #666;" id="metersStatus">Передано</div>
@@ -1132,7 +1132,7 @@
             
             <!-- Кнопки действий -->
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-pay" onclick="alert('Переход на оплату')" style="flex: 1;">💳 Оплатить онлайн</button>
+                <button class="btn btn-pay" onclick="handlePaymentClick()" style="flex: 1;">💳 Оплатить онлайн</button>
                 <button class="btn btn-download" onclick="generateReceiptPDF()" style="flex: 1;">📥 Скачать PDF</button>
             </div>
         </div>
@@ -1143,7 +1143,7 @@
         <!-- Табы: Новая заявка / Мои заявки -->
         <div class="card" style="margin-bottom: 15px;">
             <nav class="tabs" style="margin-bottom: 0;">
-                <button class="tab-btn active" onclick="showRequestSection('new', event)">📝 Новая заявка</button>
+                <button class="tab-btn active" onclick="window.location.href='create-request.html'">📝 Новая заявка</button>
                 <button class="tab-btn" onclick="showRequestSection('list', event)">📋 Мои заявки</button>
             </nav>
         </div>
@@ -1418,7 +1418,7 @@
                     <div style="font-size: 14px; color: #e74c3c; font-weight: 500;">⏰ Срок оплаты: до 28.10.2025</div>
                 </div>
                 
-                <button class="btn" style="background: #27ae60; margin-bottom: 10px;" onclick="showSection('payments')">
+                <button class="btn" style="background: #27ae60; margin-bottom: 10px;" onclick="window.location.href='payments.html'">
                     💳 Оплатить онлайн
                 </button>
                 <button class="btn" style="background: #3498db;" onclick="generateReceiptPDF()">
@@ -1543,7 +1543,7 @@
             <div class="nav-icon">🏢</div>
             <div>Квартиры</div>
         </button>
-        <button class="nav-item" onclick="showSection('payments')">
+        <button class="nav-item" onclick="window.location.href='payments.html'">
             <div class="nav-icon">💳</div>
             <div>Платежи</div>
         </button>
@@ -1555,14 +1555,377 @@
             <div class="nav-icon">🔔</div>
             <div>Уведомления</div>
         </button>
-        <button class="nav-item" onclick="showSection('counters')">
+        <button class="nav-item" onclick="window.location.href='meters.html'">
             <div class="nav-icon">🔢</div>
             <div>Счётчики</div>
         </button>
     </nav>
 
     <script>
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.1.3');
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.2.0');
+        
+        // ========== ПРОВЕРКА АВТОРИЗАЦИИ ==========
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            
+            if (!session || Date.now() > session.loginTime + session.expiresIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Проверка при загрузке страницы
+        if (!checkAuth()) {
+            // Редирект произойдёт в checkAuth()
+        }
+        
+        // ========== ФУНКЦИИ ДЛЯ КНОПОК ==========
+        // Оплата онлайн
+        function handlePaymentClick() {
+            if (!checkAuth()) return;
+            
+            const amount = 10360.02;
+            showPaymentModal({
+                amount: amount,
+                methods: ['card', 'sbp', 'bankTransfer'],
+                onSelect: (method) => {
+                    if (method === 'card') {
+                        initiateCardPayment(amount);
+                    } else if (method === 'sbp') {
+                        showSBPQRCode(amount);
+                    } else {
+                        showBankDetails(amount);
+                    }
+                }
+            });
+        }
+        
+        function showPaymentModal(options) {
+            const modal = document.createElement('div');
+            modal.id = 'paymentModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 400px; width: 90%;">
+                    <h2 style="color: #2E7D32; margin-bottom: 20px; text-align: center;">💳 Оплата</h2>
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Сумма к оплате:</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #2E7D32;">${options.amount.toFixed(2)} ₽</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn" onclick="closePaymentModal(); options.onSelect('card')" style="background: #2E7D32; color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
+                            💳 Банковская карта
+                        </button>
+                        <button class="btn" onclick="closePaymentModal(); options.onSelect('sbp')" style="background: #3498db; color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
+                            📱 СБП (Система быстрых платежей)
+                        </button>
+                        <button class="btn" onclick="closePaymentModal(); options.onSelect('bankTransfer')" style="background: #95a5a6; color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
+                            🏦 Банковский перевод
+                        </button>
+                        <button class="btn" onclick="closePaymentModal()" style="background: #e0e0e0; color: #333; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            window.closePaymentModal = function() {
+                modal.remove();
+            };
+            
+            window.options = options;
+        }
+        
+        function initiateCardPayment(amount) {
+            showLoader('Переход к оплате картой...');
+            
+            setTimeout(() => {
+                hideLoader();
+                // Mock: симуляция успешной оплаты
+                markPaymentAsPaid();
+                showSuccessNotification(`Платёж на сумму ${amount.toFixed(2)} ₽ успешно проведён!`);
+            }, 2000);
+        }
+        
+        function showSBPQRCode(amount) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 300px; width: 90%; text-align: center;">
+                    <h2 style="color: #2E7D32; margin-bottom: 20px;">📱 СБП</h2>
+                    <div style="background: #f0f0f0; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="font-size: 48px;">📱</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 10px;">QR-код для оплаты</div>
+                    </div>
+                    <div style="font-size: 24px; font-weight: bold; color: #2E7D32; margin-bottom: 20px;">
+                        ${amount.toFixed(2)} ₽
+                    </div>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                        Отсканируйте QR-код в приложении банка для оплаты
+                    </p>
+                    <button class="btn" onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: #2E7D32; color: white; padding: 12px 24px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; width: 100%;">
+                        Закрыть
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function showBankDetails(amount) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 400px; width: 90%;">
+                    <h2 style="color: #2E7D32; margin-bottom: 20px; text-align: center;">🏦 Банковский перевод</h2>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Получатель:</div>
+                            <div style="font-weight: 600;">ООО "УК Зелёная Долина"</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">ИНН:</div>
+                            <div style="font-weight: 600;">1234567890</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Расчётный счёт:</div>
+                            <div style="font-weight: 600;">40702810123456789012</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Банк:</div>
+                            <div style="font-weight: 600;">ПАО "Сбербанк"</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">БИК:</div>
+                            <div style="font-weight: 600;">044525225</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Сумма:</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #2E7D32;">${amount.toFixed(2)} ₽</div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: #2E7D32; color: white; padding: 12px 24px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; width: 100%;">
+                        Закрыть
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function markPaymentAsPaid() {
+            // Сохранить информацию об оплате
+            const payment = {
+                date: new Date().toISOString(),
+                amount: 10360.02,
+                status: 'paid'
+            };
+            
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            payments.push(payment);
+            localStorage.setItem('payments', JSON.stringify(payments));
+        }
+        
+        // Шлагбаум
+        async function openGate() {
+            if (!checkAuth()) return;
+            
+            const button = event?.target || document.querySelector('.gate-button');
+            if (button) {
+                button.disabled = true;
+                button.textContent = 'Открываю...';
+            }
+            
+            showLoader('Открытие шлагбаума...');
+            
+            try {
+                // Mock API call to PalGate
+                await mockAPICall('/api/gate/open', {
+                    userId: getCurrentUserId(),
+                    gateId: 'main-gate-1'
+                });
+                
+                hideLoader();
+                showSuccessNotification('Шлагбаум открыт');
+                
+                if (button) {
+                    button.textContent = 'Открыт ✓';
+                    setTimeout(() => {
+                        button.disabled = false;
+                        button.textContent = 'Нажмите для открытия';
+                    }, 5000);
+                }
+            } catch (error) {
+                hideLoader();
+                showError('Ошибка открытия шлагбаума');
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = 'Нажмите для открытия';
+                }
+            }
+        }
+        
+        function mockAPICall(endpoint, data) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log(`API call to ${endpoint}:`, data);
+                    resolve({ success: true });
+                }, 1500);
+            });
+        }
+        
+        function getCurrentUserId() {
+            const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+            return session.userId || 'guest';
+        }
+        
+        // Камеры
+        function openCamerasPage() {
+            if (!checkAuth()) return;
+            window.location.href = 'cameras.html';
+        }
+        
+        // Лоадер
+        function showLoader(message = 'Загрузка...') {
+            const loader = document.createElement('div');
+            loader.id = 'globalLoader';
+            loader.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                backdrop-filter: blur(4px);
+            `;
+            loader.innerHTML = `
+                <div style="text-align: center; color: white;">
+                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                    <p style="font-size: 16px; font-weight: 500; margin: 0;">${message}</p>
+                </div>
+            `;
+            document.body.appendChild(loader);
+        }
+        
+        function hideLoader() {
+            const loader = document.getElementById('globalLoader');
+            if (loader) loader.remove();
+        }
+        
+        // Уведомления (toast)
+        function showNotification(message, type = 'info', duration = 3000) {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.style.cssText = `
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                background: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                z-index: 10000;
+                opacity: 0;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+            `;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            const colors = {
+                success: '#4CAF50',
+                error: '#F44336',
+                warning: '#FF9800',
+                info: '#2196F3'
+            };
+            
+            toast.innerHTML = `
+                <span style="font-size: 20px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: ${colors[type]}; color: white; flex-shrink: 0;">${icons[type]}</span>
+                <span style="font-size: 14px; color: #2E2E2E;">${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.style.cssText += 'opacity: 1; transform: translateX(0);', 10);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(400px)';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        function showSuccessNotification(message) {
+            showNotification(message, 'success');
+        }
+        
+        function showError(message) {
+            showNotification(message, 'error', 4000);
+        }
+        
+        function showWarning(message) {
+            showNotification(message, 'warning', 4000);
+        }
+        
+        // Добавить CSS для анимации спиннера
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
         
         // ========== АУДИО ПЕРЕМЕННЫЕ ==========
         let mediaRecorder = null;

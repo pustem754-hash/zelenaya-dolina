@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Счётчики - УК «Зелёная долина»</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px 20px 100px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .next-deadline {
+            background: #fff3cd;
+            color: #856404;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+        
+        .meter-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .meter-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .meter-icon {
+            font-size: 32px;
+            margin-right: 12px;
+        }
+        
+        .meter-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .previous-reading {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .meter-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 20px;
+            margin-bottom: 12px;
+            transition: border-color 0.3s;
+        }
+        
+        .meter-input:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        
+        .btn-photo {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .btn-submit-large {
+            width: 100%;
+            padding: 18px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .history-chart {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .history-table {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='index.html'">←</button>
+    
+    <div class="header">
+        <h1>📊 Показания счётчиков</h1>
+    </div>
+    
+    <div class="next-deadline">
+        Следующая передача показаний: <strong>до 30.11.2025</strong>
+    </div>
+    
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+    
+    <!-- Форма ввода -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">Передать показания</h2>
+        
+        <!-- Холодная вода -->
+        <div class="meter-card">
+            <div class="meter-header">
+                <div class="meter-icon">💧</div>
+                <div class="meter-title">Холодная вода (ХВС)</div>
+            </div>
+            <div class="meter-body">
+                <div class="previous-reading">
+                    Предыдущее: <strong>1234.56 м³</strong> (05.11.2025)
+                </div>
+                <input 
+                    type="number" 
+                    class="meter-input" 
+                    id="coldWater"
+                    placeholder="Введите показания"
+                    step="0.01"
+                    min="1234.56"
+                >
+                <button class="btn-photo" onclick="takeMeterPhoto('coldWater')">
+                    📷 Сфотографировать
+                </button>
+            </div>
+        </div>
+        
+        <!-- Горячая вода -->
+        <div class="meter-card">
+            <div class="meter-header">
+                <div class="meter-icon">🔥</div>
+                <div class="meter-title">Горячая вода (ГВС)</div>
+            </div>
+            <div class="meter-body">
+                <div class="previous-reading">
+                    Предыдущее: <strong>987.32 м³</strong> (05.11.2025)
+                </div>
+                <input 
+                    type="number" 
+                    class="meter-input" 
+                    id="hotWater"
+                    placeholder="Введите показания"
+                    step="0.01"
+                    min="987.32"
+                >
+                <button class="btn-photo" onclick="takeMeterPhoto('hotWater')">
+                    📷 Сфотографировать
+                </button>
+            </div>
+        </div>
+        
+        <!-- Электричество -->
+        <div class="meter-card">
+            <div class="meter-header">
+                <div class="meter-icon">⚡</div>
+                <div class="meter-title">Электроэнергия</div>
+            </div>
+            <div class="meter-body">
+                <div class="previous-reading">
+                    Предыдущее: <strong>45678 кВт⋅ч</strong> (05.11.2025)
+                </div>
+                <input 
+                    type="number" 
+                    class="meter-input" 
+                    id="electricity"
+                    placeholder="Введите показания"
+                    min="45678"
+                >
+                <button class="btn-photo" onclick="takeMeterPhoto('electricity')">
+                    📷 Сфотографировать
+                </button>
+            </div>
+        </div>
+        
+        <button class="btn-submit-large" onclick="submitMeterReadings()">
+            Отправить показания
+        </button>
+    </div>
+    
+    <!-- История показаний -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">История показаний</h2>
+        
+        <div class="history-chart" id="meterChart">
+            <div style="text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📈</div>
+                <div>График потребления</div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">(В production: интеграция с библиотекой графиков)</div>
+            </div>
+        </div>
+        
+        <div class="history-table">
+            <table id="meterHistoryTable">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>ХВС (м³)</th>
+                        <th>ГВС (м³)</th>
+                        <th>Электричество (кВт⋅ч)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Заполняется через JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        // Проверка авторизации
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            if (!session || Date.now() > session.loginTime + session.expiresIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        if (!checkAuth()) {
+            // Редирект произойдёт в checkAuth()
+        }
+        
+        const previousReadings = {
+            coldWater: 1234.56,
+            hotWater: 987.32,
+            electricity: 45678
+        };
+        
+        const meterHistory = [
+            { date: '2025-10-05', coldWater: 1234.56, hotWater: 987.32, electricity: 45678 },
+            { date: '2025-09-05', coldWater: 1219.23, hotWater: 978.65, electricity: 45433 },
+            { date: '2025-08-05', coldWater: 1203.90, hotWater: 970.12, electricity: 45188 },
+            { date: '2025-07-05', coldWater: 1188.67, hotWater: 961.45, electricity: 44943 }
+        ];
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+        
+        function submitMeterReadings() {
+            hideMessages();
+            
+            const readings = {
+                coldWater: parseFloat(document.getElementById('coldWater').value),
+                hotWater: parseFloat(document.getElementById('hotWater').value),
+                electricity: parseFloat(document.getElementById('electricity').value)
+            };
+            
+            // Валидация
+            if (!readings.coldWater || readings.coldWater < previousReadings.coldWater) {
+                showError('Показания ХВС должны быть больше предыдущих (' + previousReadings.coldWater + ')');
+                return;
+            }
+            
+            if (!readings.hotWater || readings.hotWater < previousReadings.hotWater) {
+                showError('Показания ГВС должны быть больше предыдущих (' + previousReadings.hotWater + ')');
+                return;
+            }
+            
+            if (!readings.electricity || readings.electricity < previousReadings.electricity) {
+                showError('Показания электроэнергии должны быть больше предыдущих (' + previousReadings.electricity + ')');
+                return;
+            }
+            
+            // Показать лоадер
+            const loader = document.createElement('div');
+            loader.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            `;
+            loader.innerHTML = `
+                <div style="text-align: center; color: white;">
+                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                    <p style="font-size: 16px; font-weight: 500; margin: 0;">Отправка показаний...</p>
+                </div>
+            `;
+            document.body.appendChild(loader);
+            
+            setTimeout(() => {
+                loader.remove();
+                showSuccess('Показания успешно переданы!');
+                
+                // Сохранить в localStorage
+                const newReading = {
+                    date: new Date().toISOString().split('T')[0],
+                    coldWater: readings.coldWater,
+                    hotWater: readings.hotWater,
+                    electricity: readings.electricity
+                };
+                
+                const history = JSON.parse(localStorage.getItem('meterHistory') || '[]');
+                history.unshift(newReading);
+                localStorage.setItem('meterHistory', JSON.stringify(history));
+                
+                // Обновить предыдущие показания
+                previousReadings.coldWater = readings.coldWater;
+                previousReadings.hotWater = readings.hotWater;
+                previousReadings.electricity = readings.electricity;
+                
+                // Очистить форму
+                document.getElementById('coldWater').value = '';
+                document.getElementById('hotWater').value = '';
+                document.getElementById('electricity').value = '';
+                
+                // Обновить таблицу истории
+                renderHistory();
+            }, 1500);
+        }
+        
+        function takeMeterPhoto(meterType) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.setAttribute('capture', 'environment');
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        saveMeterPhoto(meterType, event.target.result);
+                        showSuccess('Фото счётчика сохранено');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        }
+        
+        function saveMeterPhoto(meterType, dataUrl) {
+            const photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+            photos.push({
+                meterType: meterType,
+                data: dataUrl,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('meterPhotos', JSON.stringify(photos));
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU');
+        }
+        
+        function renderHistory() {
+            const tbody = document.querySelector('#meterHistoryTable tbody');
+            tbody.innerHTML = '';
+            
+            const history = JSON.parse(localStorage.getItem('meterHistory') || '[]');
+            const allHistory = [...history, ...meterHistory].slice(0, 10);
+            
+            allHistory.forEach(reading => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(reading.date)}</td>
+                    <td>${reading.coldWater.toFixed(2)}</td>
+                    <td>${reading.hotWater.toFixed(2)}</td>
+                    <td>${reading.electricity}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Добавить CSS для анимации спиннера
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Загрузка истории при инициализации
+        window.addEventListener('DOMContentLoaded', renderHistory);
+    </script>
+</body>
+</html>
+

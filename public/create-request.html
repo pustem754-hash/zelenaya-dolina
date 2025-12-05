@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новая заявка - УК «Зелёная долина»</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px 20px 100px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        .urgency-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .urgency-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .urgency-btn:hover {
+            border-color: #2E7D32;
+        }
+        
+        .urgency-btn.active {
+            background: #2E7D32;
+            color: white;
+            border-color: #2E7D32;
+        }
+        
+        .media-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .media-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .media-btn:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .media-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .media-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .media-item img, .media-item video {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+        
+        .media-item audio {
+            width: 100%;
+        }
+        
+        .media-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .btn-submit-large {
+            width: 100%;
+            padding: 18px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='index.html'">←</button>
+    
+    <div class="header">
+        <h1>📝 Новая заявка</h1>
+    </div>
+    
+    <form id="requestForm" class="card">
+        <div id="errorMessage" class="error-message"></div>
+        
+        <!-- Категория -->
+        <div class="form-group">
+            <label for="requestCategory">Категория проблемы</label>
+            <select id="requestCategory" required>
+                <option value="">Выберите категорию</option>
+                <option value="plumbing">💧 Сантехника</option>
+                <option value="electricity">⚡ Электрика</option>
+                <option value="heating">🔥 Отопление</option>
+                <option value="doors">🚪 Двери/замки</option>
+                <option value="cleaning">🧹 Уборка</option>
+                <option value="other">❓ Другое</option>
+            </select>
+        </div>
+        
+        <!-- Заголовок -->
+        <div class="form-group">
+            <label for="requestTitle">Краткое описание</label>
+            <input 
+                type="text" 
+                id="requestTitle" 
+                placeholder="Например: Протечка в ванной"
+                maxlength="100"
+                required
+            >
+        </div>
+        
+        <!-- Описание -->
+        <div class="form-group">
+            <label for="requestDescription">Подробное описание</label>
+            <textarea 
+                id="requestDescription" 
+                rows="5"
+                placeholder="Опишите проблему подробно..."
+                maxlength="1000"
+                required
+            ></textarea>
+            <div class="char-counter">
+                <span id="charCount">0</span> / 1000
+            </div>
+        </div>
+        
+        <!-- Срочность -->
+        <div class="form-group">
+            <label>Срочность</label>
+            <div class="urgency-buttons">
+                <button type="button" class="urgency-btn" data-urgency="low">
+                    🟢 Низкая
+                </button>
+                <button type="button" class="urgency-btn active" data-urgency="medium">
+                    🟡 Средняя
+                </button>
+                <button type="button" class="urgency-btn" data-urgency="high">
+                    🔴 Высокая
+                </button>
+            </div>
+        </div>
+        
+        <!-- Медиафайлы -->
+        <div class="form-group">
+            <label>Прикрепить файлы (фото, видео, аудио)</label>
+            <div class="media-buttons">
+                <button type="button" class="media-btn" onclick="takePhoto()">
+                    📷 Фото
+                </button>
+                <button type="button" class="media-btn" onclick="recordVideo()">
+                    🎥 Видео
+                </button>
+                <button type="button" class="media-btn" onclick="recordAudio()">
+                    🎤 Аудио
+                </button>
+            </div>
+            <div id="mediaPreview" class="media-preview">
+                <!-- Превью загруженных файлов -->
+            </div>
+        </div>
+        
+        <!-- Кнопка отправки -->
+        <button type="submit" class="btn-submit-large">
+            Отправить заявку
+        </button>
+    </form>
+    
+    <script>
+        // Проверка авторизации
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            if (!session || Date.now() > session.loginTime + session.expiresIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        if (!checkAuth()) {
+            // Редирект произойдёт в checkAuth()
+        }
+        
+        let attachedMedia = [];
+        let selectedUrgency = 'medium';
+        
+        // Счётчик символов
+        document.getElementById('requestDescription').addEventListener('input', (e) => {
+            document.getElementById('charCount').textContent = e.target.value.length;
+        });
+        
+        // Кнопки срочности
+        document.querySelectorAll('.urgency-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.urgency-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedUrgency = btn.dataset.urgency;
+            });
+        });
+        
+        // Обработка формы
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                category: document.getElementById('requestCategory').value,
+                title: document.getElementById('requestTitle').value,
+                description: document.getElementById('requestDescription').value,
+                urgency: selectedUrgency,
+                media: attachedMedia,
+                timestamp: new Date().toISOString(),
+                status: 'new'
+            };
+            
+            // Валидация
+            if (!formData.category) {
+                showError('Выберите категорию');
+                return;
+            }
+            
+            if (formData.title.length < 10) {
+                showError('Описание должно быть не менее 10 символов');
+                return;
+            }
+            
+            // Показать лоадер
+            const loader = document.createElement('div');
+            loader.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            `;
+            loader.innerHTML = `
+                <div style="text-align: center; color: white;">
+                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                    <p style="font-size: 16px; font-weight: 500; margin: 0;">Создание заявки...</p>
+                </div>
+            `;
+            document.body.appendChild(loader);
+            
+            try {
+                // Mock API call
+                await mockAPICall('/api/requests/create', formData);
+                
+                setTimeout(() => {
+                    loader.remove();
+                    showSuccessNotification('Заявка создана успешно!');
+                    
+                    // Сохранить локально
+                    const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                    requests.push({
+                        ...formData,
+                        id: Date.now().toString()
+                    });
+                    localStorage.setItem('requests', JSON.stringify(requests));
+                    
+                    // Редирект к списку заявок
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }, 1500);
+                
+            } catch (error) {
+                loader.remove();
+                showError('Ошибка создания заявки');
+            }
+        });
+        
+        function mockAPICall(endpoint, data) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log(`API call to ${endpoint}:`, data);
+                    resolve({ success: true });
+                }, 1000);
+            });
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+        
+        function showSuccessNotification(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                background: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                z-index: 10000;
+                opacity: 0;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+            `;
+            toast.innerHTML = `
+                <span style="font-size: 20px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #4CAF50; color: white; flex-shrink: 0;">✓</span>
+                <span style="font-size: 14px; color: #2E2E2E;">${message}</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.style.cssText += 'opacity: 1; transform: translateX(0);', 10);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(400px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        function takePhoto() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.setAttribute('capture', 'environment');
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        attachedMedia.push({
+                            type: 'photo',
+                            data: event.target.result
+                        });
+                        renderMediaPreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        }
+        
+        function recordVideo() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'video/*';
+            input.setAttribute('capture', 'environment');
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        attachedMedia.push({
+                            type: 'video',
+                            data: event.target.result
+                        });
+                        renderMediaPreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        }
+        
+        function recordAudio() {
+            alert('Функция записи аудио будет доступна в следующей версии');
+        }
+        
+        function renderMediaPreview() {
+            const preview = document.getElementById('mediaPreview');
+            preview.innerHTML = '';
+            
+            attachedMedia.forEach((media, index) => {
+                const item = document.createElement('div');
+                item.className = 'media-item';
+                
+                if (media.type === 'photo') {
+                    item.innerHTML = `
+                        <img src="${media.data}" alt="Фото">
+                        <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                    `;
+                } else if (media.type === 'video') {
+                    item.innerHTML = `
+                        <video src="${media.data}" controls></video>
+                        <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                    `;
+                }
+                
+                preview.appendChild(item);
+            });
+        }
+        
+        function removeMedia(index) {
+            attachedMedia.splice(index, 1);
+            renderMediaPreview();
+        }
+        
+        function getAttachedMedia() {
+            return attachedMedia;
+        }
+        
+        // Добавить CSS для анимации спиннера
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+

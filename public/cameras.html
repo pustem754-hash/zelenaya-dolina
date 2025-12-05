@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Камеры - УК «Зелёная долина»</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px 20px 100px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .cameras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .camera-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .camera-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .camera-preview {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .camera-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .camera-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .camera-status.online {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .camera-status.offline {
+            background: #F44336;
+            color: white;
+        }
+        
+        .camera-info {
+            padding: 16px;
+        }
+        
+        .camera-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .camera-location {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        
+        .modal-content video,
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 12px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+        
+        .camera-placeholder {
+            font-size: 48px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='index.html'">←</button>
+    
+    <div class="header">
+        <h1>📹 Видеонаблюдение</h1>
+        <div style="font-size: 14px; opacity: 0.9;">8 из 10 камер онлайн</div>
+    </div>
+    
+    <div class="cameras-grid" id="camerasGrid">
+        <!-- Камеры загружаются через JS -->
+    </div>
+    
+    <!-- Модальное окно для просмотра видео -->
+    <div id="cameraModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCameraModal()">✕</button>
+            <div id="modalVideo"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Проверка авторизации
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            if (!session || Date.now() > session.loginTime + session.expiresIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        if (!checkAuth()) {
+            // Редирект произойдёт в checkAuth()
+        }
+        
+        // Данные камер (mock)
+        const cameras = [
+            { id: 1, name: 'Подъезд 1', location: 'Вход в подъезд №1', status: 'online', snapshot: null },
+            { id: 2, name: 'Парковка', location: 'Парковочная зона', status: 'online', snapshot: null },
+            { id: 3, name: 'Детская площадка', location: 'Игровая зона', status: 'offline', snapshot: null },
+            { id: 4, name: 'Въезд в ЖК', location: 'Главный въезд', status: 'online', snapshot: null },
+            { id: 5, name: 'Подъезд 2', location: 'Вход в подъезд №2', status: 'online', snapshot: null },
+            { id: 6, name: 'Подъезд 3', location: 'Вход в подъезд №3', status: 'online', snapshot: null },
+            { id: 7, name: 'Мусорная площадка', location: 'Зона сбора мусора', status: 'online', snapshot: null },
+            { id: 8, name: 'Спортивная площадка', location: 'Зона отдыха', status: 'online', snapshot: null },
+            { id: 9, name: 'Подъезд 4', location: 'Вход в подъезд №4', status: 'offline', snapshot: null },
+            { id: 10, name: 'Парковка (задняя)', location: 'Задняя парковка', status: 'online', snapshot: null }
+        ];
+        
+        function loadCameras() {
+            const grid = document.getElementById('camerasGrid');
+            grid.innerHTML = '';
+            
+            cameras.forEach(camera => {
+                const card = document.createElement('div');
+                card.className = 'camera-card';
+                card.onclick = () => openCameraStream(camera.id);
+                
+                card.innerHTML = `
+                    <div class="camera-preview">
+                        ${camera.status === 'online' 
+                            ? '<div class="camera-placeholder">📹</div>' 
+                            : '<div class="camera-placeholder" style="opacity: 0.3;">📹</div>'}
+                        <div class="camera-status ${camera.status}">
+                            ${camera.status === 'online' ? 'Онлайн' : 'Офлайн'}
+                        </div>
+                    </div>
+                    <div class="camera-info">
+                        <div class="camera-name">${camera.name}</div>
+                        <div class="camera-location">${camera.location}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function openCameraStream(cameraId) {
+            const camera = cameras.find(c => c.id === cameraId);
+            if (!camera) return;
+            
+            if (camera.status === 'offline') {
+                alert('Камера временно недоступна');
+                return;
+            }
+            
+            const modal = document.getElementById('cameraModal');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            // Mock: показать видео или заглушку
+            modalVideo.innerHTML = `
+                <div style="background: #1a1a1a; padding: 40px; border-radius: 12px; text-align: center; color: white; min-width: 400px; min-height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                    <div style="font-size: 64px; margin-bottom: 20px;">📹</div>
+                    <div style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">${camera.name}</div>
+                    <div style="font-size: 14px; color: #999; margin-bottom: 20px;">${camera.location}</div>
+                    <div style="font-size: 14px; color: #666;">
+                        В production: интеграция с API Телеком Летай<br>
+                        Прямая трансляция с камеры ${cameraId}
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+        
+        function closeCameraModal() {
+            const modal = document.getElementById('cameraModal');
+            modal.classList.remove('show');
+        }
+        
+        // Закрытие модального окна по клику вне его
+        document.getElementById('cameraModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCameraModal();
+            }
+        });
+        
+        // Загрузка камер при инициализации
+        window.addEventListener('DOMContentLoaded', loadCameras);
+    </script>
+</body>
+</html>
+

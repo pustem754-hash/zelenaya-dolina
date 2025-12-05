@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Платежи - УК «Зелёная долина»</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px 20px 100px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .total-card {
+            background: linear-gradient(135deg, #2E7D32 0%, #27ae60 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .total-amount {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .deadline {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #2E7D32;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .service-item:last-child {
+            border-bottom: none;
+        }
+        
+        .service-icon {
+            font-size: 32px;
+            margin-right: 16px;
+            width: 48px;
+            text-align: center;
+        }
+        
+        .service-info {
+            flex: 1;
+        }
+        
+        .service-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .service-consumption {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .service-amount {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2E7D32;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #2E7D32;
+            color: white;
+            border-color: #2E7D32;
+        }
+        
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .history-date {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .history-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .history-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .history-status.paid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .btn-download {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .toggle-switch input[type="checkbox"] {
+            width: 50px;
+            height: 28px;
+            appearance: none;
+            background: #ccc;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch input[type="checkbox"]:checked {
+            background: #2E7D32;
+        }
+        
+        .toggle-switch input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch input[type="checkbox"]:checked::before {
+            transform: translateX(22px);
+        }
+        
+        .label-text {
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='index.html'">←</button>
+    
+    <div class="header">
+        <h1>💳 Платежи и начисления</h1>
+    </div>
+    
+    <!-- Итоговая сумма -->
+    <div class="total-card">
+        <div class="total-amount">10 360.02 ₽</div>
+        <div class="deadline">Срок оплаты: до 28.10.2025</div>
+        <button class="btn-primary" onclick="handlePaymentClick()">
+            Оплатить онлайн
+        </button>
+    </div>
+    
+    <!-- Детализация по услугам -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">Детализация начислений</h2>
+        
+        <div class="service-item">
+            <div class="service-icon">💧</div>
+            <div class="service-info">
+                <div class="service-name">Холодное водоснабжение</div>
+                <div class="service-consumption">15.3 м³ × 45.20 ₽</div>
+            </div>
+            <div class="service-amount">691.56 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🔥</div>
+            <div class="service-info">
+                <div class="service-name">Горячее водоснабжение</div>
+                <div class="service-consumption">8.7 м³ × 178.40 ₽</div>
+            </div>
+            <div class="service-amount">1 552.08 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">⚡</div>
+            <div class="service-info">
+                <div class="service-name">Электроэнергия</div>
+                <div class="service-consumption">245 кВт⋅ч × 5.38 ₽</div>
+            </div>
+            <div class="service-amount">1 318.10 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🔥</div>
+            <div class="service-info">
+                <div class="service-name">Отопление</div>
+                <div class="service-consumption">65 м² × 45.80 ₽</div>
+            </div>
+            <div class="service-amount">2 977.00 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🏢</div>
+            <div class="service-info">
+                <div class="service-name">Содержание жилья</div>
+                <div class="service-consumption">65 м² × 28.50 ₽</div>
+            </div>
+            <div class="service-amount">1 852.50 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🗑️</div>
+            <div class="service-info">
+                <div class="service-name">Вывоз мусора</div>
+                <div class="service-consumption">3 чел. × 120.00 ₽</div>
+            </div>
+            <div class="service-amount">360.00 ₽</div>
+        </div>
+    </div>
+    
+    <!-- История платежей -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">История платежей</h2>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-period="all" onclick="filterPayments('all')">Все</button>
+            <button class="filter-btn" data-period="6m" onclick="filterPayments('6m')">6 месяцев</button>
+            <button class="filter-btn" data-period="1y" onclick="filterPayments('1y')">Год</button>
+        </div>
+        
+        <div class="history-list" id="paymentHistoryList">
+            <!-- Заполняется через JS -->
+        </div>
+    </div>
+    
+    <!-- Настройка автоплатежей -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">⚙️ Автоплатёж</h2>
+        <label class="toggle-switch">
+            <input type="checkbox" id="autopayToggle" onchange="toggleAutopay()">
+            <span class="label-text">Автоматическая оплата до 25 числа каждого месяца</span>
+        </label>
+    </div>
+    
+    <script>
+        // Проверка авторизации
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            if (!session || Date.now() > session.loginTime + session.expiresIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        if (!checkAuth()) {
+            // Редирект произойдёт в checkAuth()
+        }
+        
+        const paymentHistory = [
+            { date: '2025-09-25', amount: 9845.30, status: 'paid', receipt: 'receipt-sep-2025.pdf' },
+            { date: '2025-08-27', amount: 9123.15, status: 'paid', receipt: 'receipt-aug-2025.pdf' },
+            { date: '2025-07-24', amount: 10205.80, status: 'paid', receipt: 'receipt-jul-2025.pdf' },
+            { date: '2025-06-28', amount: 8967.40, status: 'paid', receipt: 'receipt-jun-2025.pdf' },
+            { date: '2025-05-26', amount: 9534.20, status: 'paid', receipt: 'receipt-may-2025.pdf' }
+        ];
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+        
+        function renderPaymentHistory(period = 'all') {
+            const list = document.getElementById('paymentHistoryList');
+            list.innerHTML = '';
+            
+            let filtered = paymentHistory;
+            
+            if (period === '6m') {
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                filtered = paymentHistory.filter(p => new Date(p.date) >= sixMonthsAgo);
+            } else if (period === '1y') {
+                const oneYearAgo = new Date();
+                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                filtered = paymentHistory.filter(p => new Date(p.date) >= oneYearAgo);
+            }
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Нет платежей за выбранный период</p>';
+                return;
+            }
+            
+            filtered.forEach(payment => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="history-date">${formatDate(payment.date)}</div>
+                        <div class="history-amount">${payment.amount.toFixed(2)} ₽</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="history-status paid">✓ Оплачено</div>
+                        <button class="btn-download" onclick="downloadReceipt('${payment.receipt}')">
+                            📄 Квитанция
+                        </button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        function filterPayments(period) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderPaymentHistory(period);
+        }
+        
+        function downloadReceipt(filename) {
+            alert(`Скачивание квитанции: ${filename}\n(В production: генерация реального PDF)`);
+        }
+        
+        function handlePaymentClick() {
+            window.location.href = 'index.html';
+        }
+        
+        function toggleAutopay() {
+            const toggle = document.getElementById('autopayToggle');
+            if (toggle.checked) {
+                alert('Автоплатёж включён. Платежи будут списываться автоматически до 25 числа каждого месяца.');
+            } else {
+                alert('Автоплатёж отключён.');
+            }
+            localStorage.setItem('autopayEnabled', toggle.checked);
+        }
+        
+        // Загрузка состояния автоплатежа
+        window.addEventListener('DOMContentLoaded', () => {
+            const autopayEnabled = localStorage.getItem('autopayEnabled') === 'true';
+            document.getElementById('autopayToggle').checked = autopayEnabled;
+            renderPaymentHistory('all');
+        });
+    </script>
+</body>
+</html>
+

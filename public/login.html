@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - УК «Зелёная долина»</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            color: #2E7D32;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .phone-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        
+        .phone-input:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            font-weight: 600;
+            transition: border-color 0.3s;
+        }
+        
+        .code-input:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-primary:hover {
+            background: #27ae60;
+        }
+        
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #2E7D32;
+            border: 2px solid #2E7D32;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #2E7D32;
+            color: white;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .code-section {
+            display: none;
+        }
+        
+        .code-section.show {
+            display: block;
+        }
+        
+        .timer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .resend-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .resend-link a {
+            color: #2E7D32;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .resend-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .resend-link a.disabled {
+            color: #999;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🏠 УК «Зелёная долина»</h1>
+            <p>Вход в личный кабинет</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        
+        <!-- Форма ввода телефона -->
+        <div id="phoneSection">
+            <div class="form-group">
+                <label for="phoneInput">Номер телефона</label>
+                <input 
+                    type="tel" 
+                    id="phoneInput" 
+                    class="phone-input" 
+                    placeholder="+7 (___) ___-__-__"
+                    maxlength="18"
+                >
+            </div>
+            <button class="btn-primary" onclick="sendSMSCode()">
+                Получить код
+            </button>
+        </div>
+        
+        <!-- Форма ввода кода -->
+        <div id="codeSection" class="code-section">
+            <div class="form-group">
+                <label for="codeInput">SMS-код</label>
+                <input 
+                    type="text" 
+                    id="codeInput" 
+                    class="code-input" 
+                    placeholder="0000"
+                    maxlength="4"
+                    pattern="[0-9]{4}"
+                >
+            </div>
+            <div class="timer" id="timer">Код действителен: <span id="timerValue">05:00</span></div>
+            <button class="btn-primary" onclick="verifyCode()">
+                Войти
+            </button>
+            <div class="resend-link">
+                <a href="#" id="resendLink" onclick="resendCode(); return false;">Отправить код повторно</a>
+            </div>
+            <button class="btn-secondary" onclick="backToPhone()">
+                ← Изменить номер телефона
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // База номеров телефонов УК (для прототипа)
+        const validPhones = [
+            '+7 (999) 123-45-67',
+            '+7 (999) 234-56-78',
+            '+7 (999) 345-67-89',
+            '+7 (999) 456-78-90',
+            '+7 (999) 567-89-01'
+        ];
+        
+        let countdownTimer = null;
+        let timeLeft = 300; // 5 минут в секундах
+        
+        // Маска для телефона
+        document.getElementById('phoneInput').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('8')) {
+                value = '7' + value.slice(1);
+            }
+            if (value.startsWith('7')) {
+                value = value.slice(0, 11);
+                let formatted = '+7';
+                if (value.length > 1) {
+                    formatted += ' (' + value.slice(1, 4);
+                }
+                if (value.length >= 4) {
+                    formatted += ') ' + value.slice(4, 7);
+                }
+                if (value.length >= 7) {
+                    formatted += '-' + value.slice(7, 9);
+                }
+                if (value.length >= 9) {
+                    formatted += '-' + value.slice(9, 11);
+                }
+                e.target.value = formatted;
+            } else if (value.length > 0) {
+                e.target.value = '+7 (' + value.slice(0, 3);
+                if (value.length > 3) {
+                    e.target.value += ') ' + value.slice(3, 6);
+                }
+                if (value.length > 6) {
+                    e.target.value += '-' + value.slice(6, 8);
+                }
+                if (value.length > 8) {
+                    e.target.value += '-' + value.slice(8, 10);
+                }
+            }
+        });
+        
+        // Ввод только цифр для кода
+        document.getElementById('codeInput').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+        
+        // Enter для отправки
+        document.getElementById('phoneInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendSMSCode();
+            }
+        });
+        
+        document.getElementById('codeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCode();
+            }
+        });
+        
+        function validatePhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            return cleaned.length === 11 && cleaned.startsWith('7');
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+        
+        function sendSMSCode() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.trim();
+            
+            hideMessages();
+            
+            if (!validatePhone(phone)) {
+                showError('Неверный формат номера телефона');
+                return;
+            }
+            
+            // Проверка номера в базе (для прототипа)
+            const formattedPhone = phoneInput.value;
+            if (!validPhones.includes(formattedPhone)) {
+                showError('Номер телефона не найден в базе УК. Обратитесь в управляющую компанию.');
+                return;
+            }
+            
+            // Генерация SMS-кода (mock)
+            const code = Math.floor(1000 + Math.random() * 9000);
+            console.log(`📱 SMS код для ${formattedPhone}: ${code}`);
+            
+            // Сохранение ожидаемого кода
+            localStorage.setItem('expectedCode', code.toString());
+            localStorage.setItem('phoneForAuth', formattedPhone);
+            
+            // Показать форму ввода кода
+            document.getElementById('phoneSection').style.display = 'none';
+            document.getElementById('codeSection').classList.add('show');
+            document.getElementById('codeInput').focus();
+            
+            // Запустить таймер
+            startTimer();
+            
+            showSuccess('SMS-код отправлен на номер ' + formattedPhone);
+        }
+        
+        function startTimer() {
+            timeLeft = 300;
+            updateTimer();
+            
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+            
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    document.getElementById('resendLink').classList.remove('disabled');
+                }
+            }, 1000);
+        }
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerValue').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function resendCode() {
+            if (timeLeft > 0) {
+                return;
+            }
+            
+            const phone = localStorage.getItem('phoneForAuth');
+            if (phone) {
+                document.getElementById('phoneInput').value = phone;
+                sendSMSCode();
+            }
+        }
+        
+        function backToPhone() {
+            document.getElementById('phoneSection').style.display = 'block';
+            document.getElementById('codeSection').classList.remove('show');
+            document.getElementById('codeInput').value = '';
+            hideMessages();
+            
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+        }
+        
+        function verifyCode() {
+            const codeInput = document.getElementById('codeInput');
+            const code = codeInput.value.trim();
+            
+            hideMessages();
+            
+            if (code.length !== 4) {
+                showError('Введите 4-значный код');
+                return;
+            }
+            
+            const expectedCode = localStorage.getItem('expectedCode');
+            const phone = localStorage.getItem('phoneForAuth');
+            
+            if (!expectedCode || !phone) {
+                showError('Сессия истекла. Пожалуйста, запросите код заново.');
+                return;
+            }
+            
+            if (code === expectedCode) {
+                // Создание сессии
+                const session = {
+                    phone: phone,
+                    userId: generateUserId(phone),
+                    loginTime: Date.now(),
+                    expiresIn: 24 * 60 * 60 * 1000 // 24 часа
+                };
+                
+                localStorage.setItem('userSession', JSON.stringify(session));
+                
+                showSuccess('Вход выполнен успешно!');
+                
+                // Редирект на главную страницу
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                showError('Неверный код. Попробуйте ещё раз.');
+                codeInput.value = '';
+                codeInput.focus();
+            }
+        }
+        
+        function generateUserId(phone) {
+            // Генерация ID пользователя на основе телефона
+            return 'user_' + phone.replace(/\D/g, '').slice(-10);
+        }
+        
+        // Проверка авторизации при загрузке
+        window.addEventListener('load', function() {
+            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
+            if (session && Date.now() < session.loginTime + session.expiresIn) {
+                // Пользователь уже авторизован, редирект на главную
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

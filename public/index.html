@@ -421,6 +421,35 @@
         .tab-content {
             display: none;
         }
+        /* Стили для вкладок счётчиков */
+        .meters-tab {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .meters-tab:hover {
+            background: #e8f5e9;
+            border-color: #27ae60;
+        }
+        .meters-tab.active {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        .meters-tab-content {
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s;
@@ -1358,148 +1387,98 @@
     <!-- Счётчики -->
     <div id="counters" class="section">
         <div class="card">
-            <h2>🔢 Передать показания</h2>
+            <h2>📊 Передать показания</h2>
             
-            <!-- Табы -->
-            <nav class="tabs">
-                <button class="tab-btn active" onclick="showTab('payments', event)">💰 Оплата</button>
-                <button class="tab-btn" onclick="showTab('meters', event)">📊 Счётчики</button>
-                <button class="tab-btn" onclick="showTab('history', event)">📈 История</button>
-                <button class="tab-btn" onclick="showTab('photos', event)">📸 Фото</button>
-                <button class="tab-btn" onclick="showTab('videos', event)">🎥 Видео</button>
-            </nav>
-            
-            <!-- Вкладка: Оплата -->
-            <div id="paymentsTab" class="tab-content active">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">💰 Оплата услуг</h3>
-                <div class="stat-item">
-                    <div class="stat-value">5 234 ₽</div>
-                    <div class="stat-label">К оплате за январь</div>
-                </div>
-                <button class="btn" onclick="alert('Переход на страницу оплаты')">💳 Оплатить онлайн</button>
+            <!-- ВКЛАДКИ (TABS) -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px;">
+                <button class="meters-tab active" onclick="showMetersTab('payment')" data-tab="payment">
+                    💰 Оплата
+                </button>
+                <button class="meters-tab" onclick="showMetersTab('meters')" data-tab="meters">
+                    🔢 Счётчики
+                </button>
+                <button class="meters-tab" onclick="showMetersTab('history')" data-tab="history">
+                    📜 История
+                </button>
+                <button class="meters-tab" onclick="showMetersTab('photo')" data-tab="photo">
+                    📸 Фото
+                </button>
+                <button class="meters-tab" onclick="showMetersTab('video')" data-tab="video">
+                    🎥 Видео
+                </button>
             </div>
             
-            <!-- Вкладка: Счётчики -->
-            <div id="metersTab" class="tab-content">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📊 Показания счётчиков</h3>
-                
-                <!-- Форма ввода показаний -->
-                <div class="meter-form">
-                    <div class="input-group">
-                        <label>💧 Холодная вода (м³)</label>
-                        <input type="number" id="coldWater" placeholder="Текущие показания">
-                    </div>
-                    <div class="input-group">
-                        <label>🔥 Горячая вода (м³)</label>
-                        <input type="number" id="hotWater" placeholder="Текущие показания">
-                    </div>
-                    <div class="input-group">
-                        <label>⛽ Газ (м³)</label>
-                        <input type="number" id="gas" placeholder="Текущие показания">
-                    </div>
-                    <div class="input-group">
-                        <label>⚡ Электричество (кВт⋅ч)</label>
-                        <input type="number" id="electricity" placeholder="Текущие показания">
-                    </div>
+            <!-- КОНТЕНТ ВКЛАДОК -->
+            
+            <!-- 💰 ВКЛАДКА ОПЛАТА -->
+            <div id="paymentTab" class="meters-tab-content">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Всего к оплате:</div>
+                    <div style="font-size: 32px; font-weight: bold; color: #27ae60; margin-bottom: 5px;">10 360.02 ₽</div>
+                    <div style="font-size: 14px; color: #e74c3c; font-weight: 500;">⏰ Срок оплаты: до 28.10.2025</div>
                 </div>
                 
-                <!-- Напоминание о передаче показаний -->
-                <div style="background: #fff3cd; padding: 15px; border-radius: 12px; margin-top: 15px; border-left: 4px solid #ffc107;">
-                    <div style="font-weight: 600; color: #856404; margin-bottom: 5px;">⏰ Напоминание</div>
-                    <div style="font-size: 14px; color: #856404;">Передать показания необходимо до 25 числа каждого месяца</div>
-                    <div id="reminderDays" style="font-size: 12px; color: #856404; margin-top: 5px;"></div>
-                </div>
-                
-                <button class="btn" onclick="submitCounters()" style="margin-top: 20px;">📤 Отправить показания</button>
+                <button class="btn" style="background: #27ae60; margin-bottom: 10px;" onclick="showSection('payments')">
+                    💳 Оплатить онлайн
+                </button>
+                <button class="btn" style="background: #3498db;" onclick="generateReceiptPDF()">
+                    📄 Скачать квитанцию PDF
+                </button>
             </div>
             
-            <!-- Вкладка: История показаний -->
-            <div id="historyTab" class="tab-content">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📈 История показаний</h3>
-                <p style="color: #666; margin-bottom: 15px;">Динамика потребления коммунальных услуг</p>
+            <!-- 🔢 ВКЛАДКА СЧЁТЧИКИ -->
+            <div id="metersTab" class="meters-tab-content" style="display: none;">
+                <p style="color: #666; margin-bottom: 15px;">Передайте показания счётчиков до 25.10.2025</p>
                 
-                <!-- Фильтр по периоду -->
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Период:</label>
-                    <select id="historyPeriod" onchange="renderHistory()" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
-                        <option value="3">Последние 3 месяца</option>
-                        <option value="6">Последние 6 месяцев</option>
-                        <option value="12">Последний год</option>
-                    </select>
+                <div class="input-group">
+                    <label>Холодная вода (м³)</label>
+                    <input type="number" step="0.01" placeholder="Введите показания" id="coldWaterInput">
+                </div>
+                <div class="input-group">
+                    <label>Горячая вода (м³)</label>
+                    <input type="number" step="0.01" placeholder="Введите показания" id="hotWaterInput">
+                </div>
+                <div class="input-group">
+                    <label>Электричество (кВт⋅ч)</label>
+                    <input type="number" step="0.01" placeholder="Введите показания" id="electricityInput">
                 </div>
                 
-                <!-- График динамики -->
-                <div id="historyChart" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; min-height: 200px;">
-                    <div style="text-align: center; color: #999; padding: 40px;">График динамики потребления</div>
-                </div>
+                <button class="btn" onclick="submitMeterReadings()">
+                    📊 Отправить показания
+                </button>
+            </div>
+            
+            <!-- 📜 ВКЛАДКА ИСТОРИЯ -->
+            <div id="historyTab" class="meters-tab-content" style="display: none;">
+                <h3 style="color: #27ae60; margin-bottom: 15px;">История передачи показаний</h3>
                 
-                <!-- Таблица истории -->
-                <div style="overflow-x: auto;">
-                    <table class="receipt-table" style="font-size: 12px;">
-                        <thead>
-                            <tr>
-                                <th>Период</th>
-                                <th>ХВС (м³)</th>
-                                <th>ГВС (м³)</th>
-                                <th>Газ (м³)</th>
-                                <th>Электричество (кВт⋅ч)</th>
-                                <th>Изменение</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody">
-                            <!-- Заполнится через JavaScript -->
-                        </tbody>
-                    </table>
+                <div id="metersHistory">
+                    <!-- Заполнится через JavaScript -->
                 </div>
             </div>
             
-            <!-- Вкладка: Фото -->
-            <div id="photosTab" class="tab-content">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фотофиксация счётчиков</h3>
-                <p style="color: #666; margin-bottom: 15px;">Сфотографируйте показания счётчиков для подтверждения</p>
+            <!-- 📸 ВКЛАДКА ФОТО -->
+            <div id="photoTab" class="meters-tab-content" style="display: none;">
+                <h3 style="color: #27ae60; margin-bottom: 15px;">📸 Фото счётчиков</h3>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Сфотографируйте показания счётчиков для подтверждения</p>
                 
-                <!-- Скрытый input для камеры -->
-                <input type="file" id="counterPhotoCameraInput" accept="image/*" capture="environment" style="display: none;">
-                <input type="file" id="counterPhotoGalleryInput" accept="image/*" style="display: none;">
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button id="counterPhotoBtn" style="
-                        flex: 1;
-                        padding: 18px;
-                        font-size: 18px;
-                        background: #27ae60;
-                        color: white;
-                        border: none;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        font-weight: 600;
-                    ">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-camera" onclick="document.getElementById('meterPhotoCameraInput').click()" style="flex: 1;">
                         📷 Камера
                     </button>
-                    <button id="counterPhotoGalleryBtn" style="
-                        flex: 1;
-                        padding: 18px;
-                        font-size: 18px;
-                        background: #3498db;
-                        color: white;
-                        border: none;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        font-weight: 600;
-                    ">
+                    <button class="btn btn-camera" onclick="document.getElementById('meterPhotoGalleryInput').click()" style="flex: 1;">
                         🖼️ Галерея
                     </button>
                 </div>
                 
-                <div id="counterPhotosContainer" style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                    gap: 15px;
-                "></div>
+                <input type="file" id="meterPhotoCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleMeterPhoto(event)">
+                <input type="file" id="meterPhotoGalleryInput" accept="image/*" style="display:none" onchange="handleMeterPhoto(event)">
+                
+                <div id="metersPhotoGallery" class="photos-gallery"></div>
             </div>
             
-            <!-- Вкладка: Видео -->
-            <div id="videosTab" class="tab-content">
+            <!-- 🎥 ВКЛАДКА ВИДЕО -->
+            <div id="videoTab" class="meters-tab-content" style="display: none;">
                 <h3 style="color: #27ae60; margin-bottom: 15px;">🎥 Видео счётчиков</h3>
                 <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Запишите видео показаний счётчиков для подтверждения</p>
                 
@@ -1607,6 +1586,49 @@
         }
         
         // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====
+        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК СЧЁТЧИКОВ ==========
+        function showMetersTab(tabName) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.meters-tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Убрать активный класс со всех кнопок
+            document.querySelectorAll('.meters-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            const tabMap = {
+                'payment': 'paymentTab',
+                'meters': 'metersTab',
+                'history': 'historyTab',
+                'photo': 'photoTab',
+                'video': 'videoTab'
+            };
+            
+            const tabId = tabMap[tabName];
+            const tab = document.getElementById(tabId);
+            if (tab) {
+                tab.style.display = 'block';
+            }
+            
+            // Добавить активный класс к кнопке
+            const activeBtn = document.querySelector(`.meters-tab[data-tab="${tabName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // Загрузить данные при переключении
+            if (tabName === 'history') {
+                loadMetersHistory();
+            } else if (tabName === 'photo') {
+                loadMeterPhotos();
+            } else if (tabName === 'video') {
+                loadMeterVideosFromStorage();
+            }
+        }
+        
         function showTab(tabName, event) {
             console.log('📑 Переключение вкладки:', tabName);
             
@@ -2669,6 +2691,160 @@
             alert('Заявка отправлена!\nКатегория: ' + categoryNames[selectedCategory] + '\nОписание: ' + (description || 'не указано') + '\nФото: ' + photos.length + '\nВидео: ' + videos.length + '\nАудио: ' + audio.length);
         }
 
+        // ========== ФУНКЦИИ ДЛЯ СЧЁТЧИКОВ ==========
+        function submitMeterReadings() {
+            const coldWater = document.getElementById('coldWaterInput').value;
+            const hotWater = document.getElementById('hotWaterInput').value;
+            const electricity = document.getElementById('electricityInput').value;
+            
+            if (!coldWater || !hotWater || !electricity) {
+                alert('❌ Заполните все показания!');
+                return;
+            }
+            
+            // Сохранить в историю
+            const reading = {
+                date: new Date().toISOString(),
+                coldWater: parseFloat(coldWater),
+                hotWater: parseFloat(hotWater),
+                electricity: parseFloat(electricity)
+            };
+            
+            let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
+            history.unshift(reading); // Добавить в начало
+            localStorage.setItem('metersHistory', JSON.stringify(history));
+            
+            alert('✅ Показания успешно отправлены!');
+            
+            // Очистить поля
+            document.getElementById('coldWaterInput').value = '';
+            document.getElementById('hotWaterInput').value = '';
+            document.getElementById('electricityInput').value = '';
+            
+            // Обновить историю
+            loadMetersHistory();
+        }
+        
+        function loadMetersHistory() {
+            const history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
+            const historyContainer = document.getElementById('metersHistory');
+            
+            if (!historyContainer) return;
+            
+            if (history.length === 0) {
+                historyContainer.innerHTML = '<p style="text-align: center; color: #666;">История показаний пуста</p>';
+                return;
+            }
+            
+            historyContainer.innerHTML = '';
+            
+            history.slice(0, 10).forEach(reading => {
+                const date = new Date(reading.date);
+                const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                                   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+                const month = monthNames[date.getMonth()];
+                const year = date.getFullYear();
+                const day = date.getDate().toString().padStart(2, '0');
+                const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
+                
+                const item = document.createElement('div');
+                item.style.cssText = 'background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 10px;';
+                item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="color: #27ae60;">${month} ${year}</strong>
+                        <span style="font-size: 12px; color: #666;">${day}.${monthNum}.${year}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                        <div>Хол. вода: <strong>${reading.coldWater} м³</strong></div>
+                        <div>Гор. вода: <strong>${reading.hotWater} м³</strong></div>
+                        <div style="grid-column: 1 / -1;">Электричество: <strong>${reading.electricity} кВт⋅ч</strong></div>
+                    </div>
+                `;
+                historyContainer.appendChild(item);
+            });
+        }
+        
+        // ========== ФОТО СЧЁТЧИКОВ ==========
+        function handleMeterPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    const maxSize = 1024;
+                    if (width > height && width > maxSize) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else if (height > maxSize) {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    let photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+                    photos.push(compressedDataUrl);
+                    localStorage.setItem('meterPhotos', JSON.stringify(photos));
+                    
+                    loadMeterPhotos();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+        
+        function loadMeterPhotos() {
+            const photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+            const gallery = document.getElementById('metersPhotoGallery');
+            if (!gallery) return;
+            
+            gallery.innerHTML = '';
+            photos.forEach((photo, index) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.style.cssText = 'position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);';
+                
+                const img = document.createElement('img');
+                img.src = photo;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; cursor: pointer;';
+                img.onclick = () => showFullPhoto(photo);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-delete-photo';
+                deleteBtn.textContent = '✕';
+                deleteBtn.style.cssText = 'position: absolute; top: 5px; right: 5px; background: rgba(231, 76, 60, 0.9); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10;';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteMeterPhoto(index);
+                };
+                
+                photoItem.appendChild(img);
+                photoItem.appendChild(deleteBtn);
+                gallery.appendChild(photoItem);
+            });
+        }
+        
+        function deleteMeterPhoto(index) {
+            if (!confirm('❌ Удалить это фото счётчика?')) return;
+            
+            let photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+            photos.splice(index, 1);
+            localStorage.setItem('meterPhotos', JSON.stringify(photos));
+            loadMeterPhotos();
+        }
+        
         function submitCounters() {
             console.log('📤 Отправка показаний счётчиков');
             const coldWater = document.getElementById('coldWater')?.value;

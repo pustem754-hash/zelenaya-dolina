@@ -2495,6 +2495,8 @@
                         // Автостоп на 60 секундах
                         if (elapsed >= 60) {
                             console.log('⏰ Достигнут лимит 60 секунд');
+                            clearInterval(audioTimer);
+                            audioTimer = null;
                             if (mediaRecorder && mediaRecorder.state === 'recording') {
                                 mediaRecorder.stop();
                             }

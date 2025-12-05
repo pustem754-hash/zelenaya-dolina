@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.4.0</title>
+    <title>УК «Зелёная долина» v6.4.4</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -373,26 +373,78 @@
             bottom: 0;
             left: 0;
             right: 0;
+            width: 100%;
             background: white;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-evenly; /* Равномерное распределение */
+            align-items: center;
+            padding: 8px 4px 8px 4px; /* Уменьшен padding для экономии места */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 70px; /* Ограничение высоты */
         }
         .nav-item {
-            padding: 14px 5px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 4px 2px; /* Компактный padding */
+            flex: 1; /* Равномерное распределение ширины */
+            max-width: 80px; /* Ограничение ширины */
+            min-width: 50px; /* Минимальная ширина */
             border: none;
             background: none;
-            cursor: pointer;
             font-size: 12px;
-            color: #666;
         }
         .nav-item.active {
             color: #2E7D32;
         }
+        .nav-item:hover {
+            color: #27ae60;
+            transform: scale(1.05);
+        }
         .nav-icon {
-            font-size: 28px;
-            margin-bottom: 4px;
+            font-size: 24px; /* Уменьшен размер иконки */
+            margin-bottom: 2px; /* Уменьшен отступ */
+        }
+        .nav-label {
+            font-size: 10px; /* Уменьшен размер текста */
+            font-weight: 500;
+            white-space: nowrap; /* Запрет переноса */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Многоточие при обрезке */
+            max-width: 100%;
+        }
+        
+        /* Адаптивность для маленьких экранов */
+        @media (max-width: 380px) {
+            .nav-icon {
+                font-size: 20px;
+            }
+            .nav-label {
+                font-size: 9px;
+            }
+            .nav-item {
+                padding: 2px 1px;
+            }
+        }
+        
+        /* Для очень маленьких экранов — скрыть текст, оставить только иконки */
+        @media (max-width: 340px) {
+            .nav-label {
+                display: none;
+            }
+            .nav-icon {
+                font-size: 26px;
+                margin-bottom: 0;
+            }
+            .nav {
+                padding: 12px 4px;
+            }
         }
         
         /* Табы */
@@ -1562,31 +1614,23 @@
     <nav class="nav">
         <button class="nav-item active" onclick="showSection('home')">
             <div class="nav-icon">🏠</div>
-            <div>Главная</div>
-        </button>
-        <button class="nav-item" onclick="showSection('apartments')">
-            <div class="nav-icon">🏢</div>
-            <div>Квартиры</div>
+            <div class="nav-label">Главная</div>
         </button>
         <button class="nav-item" onclick="window.location.href='payments.html'">
             <div class="nav-icon">💳</div>
-            <div>Платежи</div>
-        </button>
-        <button class="nav-item" onclick="showSection('requests')">
-            <div class="nav-icon">📝</div>
-            <div>Заявки</div>
-        </button>
-        <button class="nav-item" onclick="showSection('notifications')">
-            <div class="nav-icon">🔔</div>
-            <div>Уведомления</div>
+            <div class="nav-label">Платежи</div>
         </button>
         <button class="nav-item" onclick="window.location.href='meters.html'">
-            <div class="nav-icon">🔢</div>
-            <div>Счётчики</div>
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Счётчики</div>
         </button>
-        <button class="nav-item" onclick="handleLogout()" style="background: #e74c3c; color: white;">
-            <div class="nav-icon">🚪</div>
-            <div>Выход</div>
+        <button class="nav-item" onclick="window.location.href='create-request.html'">
+            <div class="nav-icon">📝</div>
+            <div class="nav-label">Заявки</div>
+        </button>
+        <button class="nav-item" onclick="window.location.href='cameras.html'">
+            <div class="nav-icon">📹</div>
+            <div class="nav-label">Камеры</div>
         </button>
     </nav>
 

@@ -501,6 +501,9 @@
         let audioStream = null;
         let isRecording = false; // Защита от дублирования
         const MAX_AUDIO_DURATION = 30000; // 30 секунд
+        
+        // Экспорт для навигации (чтобы navigation.js мог проверить состояние)
+        window.isRecording = false;
         // ===== КОНЕЦ ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ =====
         
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM

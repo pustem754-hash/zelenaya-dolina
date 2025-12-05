@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Платежи - УК «Зелёная долина» v6.3.1</title>
+    <title>Платежи - УК «Зелёная долина» v6.4.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -257,7 +257,7 @@
     
     <!-- Итоговая сумма -->
     <div class="total-card">
-        <div class="total-amount">10 693.65 ₽</div>
+        <div class="total-amount">11 087.06 ₽</div>
         <div class="deadline">Срок оплаты: до 28.10.2025</div>
         <button class="btn-primary" onclick="handlePaymentClick()">
             Оплатить онлайн
@@ -284,6 +284,15 @@
                 <div class="service-consumption">8.7 м³ × 178.40 ₽</div>
             </div>
             <div class="service-amount">1 552.08 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🚰</div>
+            <div class="service-info">
+                <div class="service-name">Водоотведение (канализация)</div>
+                <div class="service-consumption">24.0 м³ × 28.50 ₽</div>
+            </div>
+            <div class="service-amount">684.00 ₽</div>
         </div>
         
         <div class="service-item">
@@ -329,6 +338,125 @@
                 <div class="service-consumption">3 чел. × 120.00 ₽</div>
             </div>
             <div class="service-amount">360.00 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🏗️</div>
+            <div class="service-info">
+                <div class="service-name">Капитальный ремонт</div>
+                <div class="service-consumption">65 м² × 12.50 ₽</div>
+            </div>
+            <div class="service-amount">812.50 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">📞</div>
+            <div class="service-info">
+                <div class="service-name">Домофон</div>
+                <div class="service-consumption">1 квартира × 50.00 ₽</div>
+            </div>
+            <div class="service-amount">50.00 ₽</div>
+        </div>
+    </div>
+    
+    <!-- Информация о составе платежа -->
+    <div class="card" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
+        <h3 style="color: #1976d2; margin-bottom: 16px;">ℹ️ О составе платежа</h3>
+        <div style="font-size: 14px; line-height: 1.6; color: #333;">
+            <p style="margin-bottom: 12px;">
+                <strong>Коммунальные услуги:</strong> вода, электричество, газ, отопление — 
+                рассчитываются по показаниям счётчиков или нормативам.
+            </p>
+            <p style="margin-bottom: 12px;">
+                <strong>Жилищные услуги:</strong> содержание дома, ремонт, вывоз мусора — 
+                рассчитываются по площади или количеству жильцов.
+            </p>
+            <p style="margin-bottom: 12px;">
+                <strong>Общедомовые нужды (ОДН):</strong> расходы на освещение подъездов, 
+                лифты, полив территории — распределяются между всеми жильцами.
+            </p>
+            <p style="margin-bottom: 0;">
+                <strong>Капитальный ремонт:</strong> обязательный взнос на ремонт 
+                крыши, фасада, инженерных систем дома.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Общедомовые нужды (ОДН) -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">📊 Общедомовые нужды (ОДН)</h2>
+        
+        <div class="service-item">
+            <div class="service-icon">💧</div>
+            <div class="service-info">
+                <div class="service-name">ХВС на ОДН</div>
+                <div class="service-consumption">1.2 м³ × 45.20 ₽</div>
+            </div>
+            <div class="service-amount">54.24 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🔥</div>
+            <div class="service-info">
+                <div class="service-name">ГВС на ОДН</div>
+                <div class="service-consumption">0.5 м³ × 178.40 ₽</div>
+            </div>
+            <div class="service-amount">89.20 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">⚡</div>
+            <div class="service-info">
+                <div class="service-name">Электроэнергия на ОДН</div>
+                <div class="service-consumption">12.5 кВт⋅ч × 5.38 ₽</div>
+            </div>
+            <div class="service-amount">67.25 ₽</div>
+        </div>
+        
+        <div class="service-item">
+            <div class="service-icon">🔥</div>
+            <div class="service-info">
+                <div class="service-name">Отопление на ОДН</div>
+                <div class="service-consumption">0.1 Гкал × 2450.00 ₽</div>
+            </div>
+            <div class="service-amount">245.00 ₽</div>
+        </div>
+        
+        <div style="text-align: right; padding: 16px; background: #f8f9fa; border-radius: 12px; margin-top: 12px;">
+            <strong style="font-size: 18px; color: #2E7D32;">Итого ОДН: 455.69 ₽</strong>
+        </div>
+    </div>
+    
+    <!-- Сравнение с прошлым месяцем -->
+    <div class="card">
+        <h2 style="color: #2E7D32; margin-bottom: 20px;">📊 Сравнение с прошлым месяцем</h2>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #f8f9fa; border-radius: 12px; margin-bottom: 16px;">
+            <div>
+                <div style="font-size: 14px; color: #666; margin-bottom: 4px;">Сентябрь 2025</div>
+                <div style="font-size: 24px; font-weight: 600; color: #333;">10 845.30 ₽</div>
+            </div>
+            <div style="font-size: 32px; color: #999;">→</div>
+            <div>
+                <div style="font-size: 14px; color: #666; margin-bottom: 4px;">Октябрь 2025</div>
+                <div style="font-size: 24px; font-weight: 600; color: #2E7D32;">11 087.06 ₽</div>
+            </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: #fff3e0; border-radius: 8px;">
+            <span style="font-size: 20px;">📈</span>
+            <span style="font-size: 14px; color: #e65100;">
+                Увеличение на <strong>241.76 ₽</strong> (+2.2%)
+            </span>
+        </div>
+        
+        <div style="margin-top: 16px; font-size: 13px; color: #666;">
+            <strong>Основные причины изменения:</strong>
+            <ul style="margin: 8px 0 0 20px; line-height: 1.8;">
+                <li>Увеличение расхода электроэнергии (+35 кВт⋅ч)</li>
+                <li>Начало отопительного сезона</li>
+                <li>Рост тарифов на водоснабжение (+2%)</li>
+            </ul>
         </div>
     </div>
     

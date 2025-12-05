@@ -2141,18 +2141,6 @@
                 alert('Ошибка сохранения видео');
             }
         }
-            
-            const counterVideoBtn = document.getElementById('counterVideoBtn');
-            if (counterVideoBtn) {
-                counterVideoBtn.addEventListener('click', function() {
-                    console.log('🎥 Кнопка "Записать видео счётчика" нажата');
-                    toggleCounterVideoRecording();
-                });
-            }
-            
-            renderVideos();
-            renderCounterVideos();
-        }
 
         // ===== ВИДЕО ЗАПИСЬ (СТАРАЯ ФУНКЦИЯ handleVideoRecording() УДАЛЕНА) =====
         // Теперь используется toggleVideoRecording() и handleVideoFile()

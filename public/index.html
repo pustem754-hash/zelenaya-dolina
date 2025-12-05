@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- УК "Зелёная Долина" - Главная страница v6.5.7 -->
+    <!-- УК "Зелёная Долина" - Главная страница v6.5.8 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>УК «Зелёная долина» v6.5.2</title>
@@ -1761,16 +1761,16 @@
            АУДИОЗАПИСЬ v6.5.2 (унифицированный override)
            =========================================== */
         // Дополнительные переменные (уникальные имена, не конфликтуют с let-объявлениями)
-        let recordingTimer = null;
-        let recordingStartTime = 0;
+        let recordingTimerLegacy = null;
+        let recordingStartTimeLegacy = 0;
         audioDuration = 0;
 
         // Переиспользуем существующие mediaStream/mediaRecorder/audioChunks/isRecording
         function cleanupAudioResources() {
             console.log('[Audio] 🧹 Очистка ресурсов (override)...');
-            if (recordingTimer) {
-                clearInterval(recordingTimer);
-                recordingTimer = null;
+            if (recordingTimerLegacy) {
+                clearInterval(recordingTimerLegacy);
+                recordingTimerLegacy = null;
             }
             if (typeof audioTimer !== 'undefined' && audioTimer) {
                 clearInterval(audioTimer);
@@ -1790,7 +1790,7 @@
             if (typeof savedAudioBlob !== 'undefined') savedAudioBlob = null;
             if (typeof audioStartTime !== 'undefined') audioStartTime = null;
             isRecording = false;
-            recordingStartTime = 0;
+            recordingStartTimeLegacy = 0;
             audioDuration = 0;
         }
 
@@ -1810,9 +1810,9 @@
                 mediaRecorder.onstop = () => saveAudioRecording(audioDuration);
                 mediaRecorder.start();
                 isRecording = true;
-                recordingStartTime = Date.now();
-                recordingTimer = setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                recordingStartTimeLegacy = Date.now();
+                recordingTimerLegacy = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - recordingStartTimeLegacy) / 1000);
                     audioDuration = elapsed;
                     const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
                     const s = String(elapsed % 60).padStart(2, '0');
@@ -1838,9 +1838,9 @@
 
         function stopAudioRecording() {
             console.log('[Audio] 🛑 stop record (override)');
-            if (recordingTimer) {
-                clearInterval(recordingTimer);
-                recordingTimer = null;
+            if (recordingTimerLegacy) {
+                clearInterval(recordingTimerLegacy);
+                recordingTimerLegacy = null;
             }
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 isRecording = false;
@@ -2304,16 +2304,14 @@
         `;
         document.head.appendChild(style);
         
-        // ========== АУДИО ПЕРЕМЕННЫЕ v6.5.1 (УНИФИЦИРОВАННЫЕ) ==========
+        // ========== АУДИО ПЕРЕМЕННЫЕ v6.5.8 (унифицировано с create-request) ==========
+        let mediaStream = null;
         let mediaRecorder = null;
         let audioChunks = [];
-        let mediaStream = null; // КРИТИЧНО: глобальная переменная для очистки
-        let savedAudioBlob = null;
-        let audioTimer = null;
-        let audioStartTime = null;
-        let isRecording = false; // КРИТИЧНО: флаг состояния записи
-        let audioDuration = 0; // Длительность записи
-        window.isRecording = false; // Экспорт для навигации
+        let recordingTimer = null;
+        let isRecording = false;
+        let audioDuration = 0;
+        window.isRecording = false;
         
         // ========== ВИДЕО ПЕРЕМЕННЫЕ ==========
         let videoRecorder = null;
@@ -2333,14 +2331,13 @@
             // КРИТИЧНО: Инициализация аудио при открытии раздела "Заявки"
             if (id === 'requests') {
                 console.log('[Audio] 🎯 Секция "Заявки" открыта, инициализация аудио...');
-                // Небольшая задержка, чтобы DOM успел отрендериться
                 setTimeout(() => {
                     if (typeof initializeAudioTab === 'function') {
                         initializeAudioTab();
                     } else {
                         console.error('[Audio] ❌ Функция initializeAudioTab() не найдена');
                     }
-                }, 100);
+                }, 150);
             }
         }
         
@@ -3159,309 +3156,251 @@
             }
         }
 
-        // ========== АУДИО ЗАПИСЬ ==========
+        // ========== АУДИО ЗАПИСЬ (скопировано из create-request) ==========
+        let savedAudioBlob = null;
+        let audioTimer = null;
+        let audioStartTime = null;
         let currentAudioElement = null;
         let currentAudioId = null;
         
-        async function toggleAudio() {
-            const btn = document.getElementById('audioBtn');
-            const player = document.getElementById('audioPlayer');
-            const statusDiv = document.getElementById('audioRecordingStatus');
-            const timerEl = document.getElementById('audioTimer');
-            
-            // Если запись НЕ идёт - НАЧАТЬ ЗАПИСЬ
-            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        function cleanupAudioResources() {
+            console.log('[Audio] 🧹 Очистка ресурсов...');
+            if (recordingTimer) {
+                clearInterval(recordingTimer);
+                recordingTimer = null;
+            }
+            if (audioTimer) {
+                clearInterval(audioTimer);
+                audioTimer = null;
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                try { mediaRecorder.stop(); } catch (e) { console.warn('[Audio] stop error', e); }
+            }
+            mediaRecorder = null;
+            if (mediaStream) {
                 try {
-                    console.log('🎤 Начинаем запись аудио...');
-                    
-                    // Запрос доступа к микрофону с улучшенными настройками
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        audio: {
-                            echoCancellation: true,
-                            noiseSuppression: true,
-                            autoGainControl: true,
-                            sampleRate: 44100
-                        }
-                    });
-                    
-                    console.log('✅ Доступ к микрофону получен');
-                    
-                    // Создаём MediaRecorder с fallback для iOS/Android
-                    let mimeType = 'audio/webm;codecs=opus';
-                    if (!MediaRecorder.isTypeSupported(mimeType)) {
-                        mimeType = 'audio/webm';
-                        if (!MediaRecorder.isTypeSupported(mimeType)) {
-                            mimeType = 'audio/mp4';
-                            if (!MediaRecorder.isTypeSupported(mimeType)) {
-                                mimeType = ''; // Используем формат по умолчанию браузера
-                            }
-                        }
-                    }
-                    console.log('🎤 Используемый mimeType:', mimeType || 'default');
-                    
-                    const options = mimeType ? { mimeType } : {};
-                    mediaRecorder = new MediaRecorder(stream, options);
-                    audioChunks = [];
-                    audioStartTime = Date.now();
-                    
-                    // Обработчик получения данных
-                    mediaRecorder.ondataavailable = (event) => {
-                        console.log('📦 Получены аудио данные:', event.data.size, 'байт');
-                        if (event.data && event.data.size > 0) {
-                            audioChunks.push(event.data);
-                        }
-                    };
-                    
-                    // Обработчик остановки записи
-                    mediaRecorder.onstop = () => {
-                        console.log('⏹️ Запись остановлена. Всего чанков:', audioChunks.length);
-                        
-                        if (audioChunks.length === 0) {
-                            alert('❌ Не удалось записать аудио. Попробуйте ещё раз.');
-                            resetAudioUI();
-                            return;
-                        }
-                        
-                        // Создаём Blob из чанков
-                        savedAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        console.log('💾 Создан Blob:', savedAudioBlob.size, 'байт');
-                        
-                        const audioUrl = URL.createObjectURL(savedAudioBlob);
-                        const audio = document.getElementById('audioPlayback');
-                        audio.src = audioUrl;
-                        
-                        // Расчёт длительности и размера
-                        const duration = Math.round((Date.now() - audioStartTime) / 1000);
-                        const size = (savedAudioBlob.size / 1024).toFixed(1);
-                        document.getElementById('audioInfo').textContent = 
-                            `✅ Записано: ${duration} сек. | Размер: ${size} КБ`;
-                        
-                        // ПЛАВНОЕ переключение: скрываем статус, показываем плеер
-                        statusDiv.style.opacity = '0';
-                        setTimeout(() => {
-                            statusDiv.style.pointerEvents = 'none';
-                            player.style.pointerEvents = 'auto';
-                            player.style.opacity = '1';
-                        }, 300);
-                        
-                        // Сбрасываем кнопку
-                        btn.textContent = '🎤 Записать новое сообщение';
-                        btn.style.background = '#27ae60';
-                        
-                        // Останавливаем таймер
-                        if (audioTimer) {
-                            clearInterval(audioTimer);
-                            audioTimer = null;
-                        }
-                        
-                        // Освобождаем микрофон
-                        stream.getTracks().forEach(track => {
-                            track.stop();
-                            console.log('🎙️ Микрофон освобождён');
-                        });
-                        
-                        console.log('✅ Аудио успешно сохранено');
-                    };
-                    
-                    // Обработчик ошибок
-                    mediaRecorder.onerror = (event) => {
-                        console.error('❌ Ошибка MediaRecorder:', event.error);
-                        alert('❌ Ошибка записи: ' + event.error.message);
-                        resetAudioUI();
-                    };
-                    
-                    // НАЧИНАЕМ ЗАПИСЬ
-                    mediaRecorder.start(100); // Собираем данные каждые 100мс
-                    console.log('🔴 Запись началась');
-                    
-                    // Меняем UI
-                    btn.textContent = '⏹️ Остановить запись';
-                    btn.style.background = '#e74c3c';
-                    
-                    // ПЛАВНОЕ переключение: показываем статус, скрываем плеер
-                    player.style.opacity = '0';
-                    setTimeout(() => {
-                        player.style.pointerEvents = 'none';
-                        statusDiv.style.pointerEvents = 'auto';
-                        statusDiv.style.opacity = '1';
-                    }, 300);
-                    
-                    // Запускаем таймер
-                    timerEl.textContent = '00:00';
-                    audioTimer = setInterval(() => {
-                        const elapsed = Math.round((Date.now() - audioStartTime) / 1000);
-                        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                        const seconds = (elapsed % 60).toString().padStart(2, '0');
-                        timerEl.textContent = `${minutes}:${seconds}`;
-                        
-                        // Автостоп на 60 секундах
-                        if (elapsed >= 60) {
-                            console.log('⏰ Достигнут лимит 60 секунд');
-                            // ОСТАНОВИТЬ ТАЙМЕР ПЕРВЫМ ДЕЛОМ
-                            clearInterval(audioTimer);
-                            audioTimer = null;
-                            // ОСТАНОВИТЬ ЗАПИСЬ
-                            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                                console.log('⏹️ Останавливаем запись из-за лимита времени');
-                                mediaRecorder.stop();
-                            }
-                            // Освободить микрофон
-                            if (stream) {
-                                stream.getTracks().forEach(track => track.stop());
-                            }
-                            // Показать сообщение ПОСЛЕ остановки
-                            setTimeout(() => {
-                                alert('⏰ Достигнут лимит записи (60 секунд)');
-                            }, 100);
-                        }
-                    }, 1000);
-                    
-                } catch (error) {
-                    console.error('❌ Ошибка доступа к микрофону:', error);
-                    alert('❌ Не удалось получить доступ к микрофону.\n\nПроверьте:\n1. Разрешён ли доступ к микрофону в браузере\n2. Подключён ли микрофон\n3. Микрофон не используется другим приложением\n\nОшибка: ' + error.message);
-                    resetAudioUI();
-                }
-            } else {
-                // ОСТАНОВИТЬ ЗАПИСЬ
-                console.log('⏸️ Останавливаем запись...');
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
+                    mediaStream.getTracks().forEach(t => t.stop());
+                } catch (e) { console.warn('[Audio] stream stop error', e); }
             }
-        }
-        
-        // Вспомогательная функция для сброса UI (использует cleanupAudioResources)
-        function resetAudioUI() {
-            cleanupAudioResources();
-            
-            const btn = document.getElementById('audioBtn');
-            const player = document.getElementById('audioPlayer');
-            const statusDiv = document.getElementById('audioRecordingStatus');
-            
-            if (btn) {
-                btn.textContent = '🎤 Начать запись';
-                btn.style.background = '#27ae60';
-            }
-            
-            if (statusDiv) {
-                statusDiv.style.opacity = '0';
-                statusDiv.style.pointerEvents = 'none';
-            }
-            
-            if (player) {
-                player.style.opacity = '0';
-                player.style.pointerEvents = 'none';
-            }
-            
+            mediaStream = null;
+            audioChunks = [];
+            isRecording = false;
+            window.isRecording = false;
+            audioDuration = 0;
+            audioStartTime = null;
             savedAudioBlob = null;
         }
         
-        // Инициализация вкладки аудио
-        function initializeAudioTab() {
-            console.log('[Audio] 🔄 Инициализация вкладки аудио...');
-            
-            // Очистить старые ресурсы
+        async function recordAudio() {
+            console.log('[Audio] 🎤 start record');
             cleanupAudioResources();
-            
-            // Сбросить UI
-            const btn = document.getElementById('audioBtn');
-            const player = document.getElementById('audioPlayer');
-            const statusDiv = document.getElementById('audioRecordingStatus');
-            const audioInfo = document.getElementById('audioInfo');
-            const timerEl = document.getElementById('audioTimer');
-            
-            if (btn) {
-                btn.textContent = '🎤 Начать запись';
-                btn.style.background = '#27ae60';
-            }
-            
-            if (statusDiv) {
-                statusDiv.style.opacity = '0';
-                statusDiv.style.pointerEvents = 'none';
-            }
-            
-            if (player) {
-                player.style.opacity = '0';
-                player.style.pointerEvents = 'none';
-            }
-            
-            if (audioInfo) {
-                audioInfo.textContent = '';
-            }
-            
-            if (timerEl) {
-                timerEl.textContent = '00:00';
-            }
-            
-            console.log('[Audio] ✅ Вкладка аудио инициализирована');
-        }
-        
-        function deleteCurrentAudio() {
-            console.log('[Audio] 🗑️ === УДАЛЕНИЕ АУДИО ===');
-            
-            // Подтверждение удаления
-            if (!confirm('❌ Удалить голосовую запись?')) {
-                console.log('[Audio] ❌ Удаление отменено пользователем');
-                return;
-            }
-            
-            const player = document.getElementById('audioPlayer');
-            const audio = document.getElementById('audioPlayback');
-            const btn = document.getElementById('audioBtn');
-            const statusDiv = document.getElementById('audioRecordingStatus');
-            
             try {
-                // 1. Остановить воспроизведение
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    
-                    // 2. Освободить Blob URL
-                    if (audio.src && audio.src.startsWith('blob:')) {
-                        URL.revokeObjectURL(audio.src);
-                        console.log('[Audio] 🧹 Blob URL освобождён');
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                let mimeType = 'audio/webm;codecs=opus';
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'audio/webm';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'audio/mp4';
+                        if (!MediaRecorder.isTypeSupported(mimeType)) {
+                            mimeType = '';
+                        }
                     }
-                    audio.src = '';
                 }
+                console.log('[Audio] mimeType:', mimeType || 'default');
                 
-                // 3. Очистить все ресурсы
-                cleanupAudioResources();
+                const options = mimeType ? { mimeType } : {};
+                mediaRecorder = new MediaRecorder(mediaStream, options);
+                audioChunks = [];
+                audioStartTime = Date.now();
                 
-                // 4. ПЛАВНО скрыть плеер
-                if (player) {
-                    player.style.opacity = '0';
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const duration = Math.round((Date.now() - audioStartTime) / 1000);
+                    audioDuration = duration;
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    saveAudioRecording(blob, duration);
+                };
+                
+                mediaRecorder.onerror = (event) => {
+                    console.error('[Audio] MediaRecorder error:', event.error);
+                    showNotification('❌ Ошибка записи: ' + event.error.message, 'error');
+                    cleanupAudioResources();
+                };
+                
+                mediaRecorder.start();
+                isRecording = true;
+                window.isRecording = true;
+                
+                const btn = document.getElementById('audioBtn');
+                const controls = document.getElementById('audioControls');
+                const preview = document.getElementById('audioPreview');
+                if (btn) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
+                if (controls) {
+                    controls.style.display = 'block';
                     setTimeout(() => {
-                        player.style.pointerEvents = 'none';
-                    }, 300);
+                        controls.style.opacity = '1';
+                        controls.style.pointerEvents = 'auto';
+                    }, 50);
+                }
+                if (preview) {
+                    preview.style.opacity = '0';
+                    preview.style.pointerEvents = 'none';
                 }
                 
-                // 5. Убедиться, что статус тоже скрыт
-                if (statusDiv) {
-                    statusDiv.style.opacity = '0';
-                    statusDiv.style.pointerEvents = 'none';
-                }
-                
-                // 6. Сбросить кнопку
-                if (btn) {
-                    btn.textContent = '🎤 Начать запись';
-                    btn.style.background = '#27ae60';
-                }
-                
-                // 7. Очистить info
-                const audioInfo = document.getElementById('audioInfo');
-                const timerEl = document.getElementById('audioTimer');
-                if (audioInfo) audioInfo.textContent = '';
-                if (timerEl) timerEl.textContent = '00:00';
-                
-                savedAudioBlob = null;
-                
-                console.log('[Audio] ✅ Аудио успешно удалено');
-                showNotification('✅ Аудио удалено', 'success');
+                const timerEl = document.getElementById('recordingTimer');
+                recordingTimer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - audioStartTime) / 1000);
+                    audioDuration = elapsed;
+                    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                    const s = String(elapsed % 60).padStart(2, '0');
+                    if (timerEl) timerEl.textContent = `${m}:${s}`;
+                    if (elapsed >= 60) {
+                        stopAudioRecording();
+                        showNotification('⏱️ Достигнута максимальная длительность (60 секунд)', 'warning');
+                    }
+                }, 1000);
                 
             } catch (error) {
-                console.error('[Audio] ❌ Ошибка при удалении аудио:', error);
-                showNotification('❌ Ошибка при удалении: ' + error.message, 'error');
+                console.error('[Audio] getUserMedia error:', error);
+                showNotification('❌ Ошибка доступа к микрофону: ' + error.message, 'error');
+                cleanupAudioResources();
             }
+        }
+        
+        function stopAudioRecording() {
+            console.log('[Audio] 🛑 stop record');
+            if (recordingTimer) {
+                clearInterval(recordingTimer);
+                recordingTimer = null;
+            }
+            if (audioTimer) {
+                clearInterval(audioTimer);
+                audioTimer = null;
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                isRecording = false;
+                window.isRecording = false;
+                mediaRecorder.stop();
+            }
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+        }
+        
+        function saveAudioRecording(blob, durationSeconds) {
+            console.log('[Audio] 💾 save recording');
+            const audioUrl = URL.createObjectURL(blob);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64Audio = reader.result;
+                localStorage.setItem('audioData', base64Audio);
+                localStorage.setItem('audioDuration', durationSeconds);
+                
+                const audioPlayer = document.getElementById('audioPlayer');
+                const controls = document.getElementById('audioControls');
+                const preview = document.getElementById('audioPreview');
+                const btn = document.getElementById('audioBtn');
+                
+                if (audioPlayer) audioPlayer.src = audioUrl;
+                
+                if (controls) {
+                    controls.style.opacity = '0';
+                    controls.style.pointerEvents = 'none';
+                    setTimeout(() => { controls.style.display = 'none'; }, 300);
+                }
+                if (preview) {
+                    preview.style.display = 'block';
+                    setTimeout(() => {
+                        preview.style.opacity = '1';
+                        preview.style.pointerEvents = 'auto';
+                    }, 50);
+                }
+                if (btn) {
+                    btn.style.opacity = '0';
+                    btn.style.pointerEvents = 'none';
+                }
+                
+                showNotification('✅ Аудиозапись сохранена', 'success');
+            };
+            reader.readAsDataURL(blob);
+        }
+        
+        function toggleAudio() {
+            console.log('[Audio] toggle, isRecording:', isRecording);
+            if (isRecording) stopAudioRecording();
+            else recordAudio();
+        }
+        
+        function deleteAudio() {
+            console.log('[Audio] 🗑️ delete audio');
+            localStorage.removeItem('audioData');
+            localStorage.removeItem('audioDuration');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioControls = document.getElementById('audioControls');
+            const audioPreview = document.getElementById('audioPreview');
+            const audioBtn = document.getElementById('audioBtn');
+            if (audioPlayer) audioPlayer.src = '';
+            if (audioPreview) {
+                audioPreview.style.opacity = '0';
+                audioPreview.style.pointerEvents = 'none';
+                setTimeout(() => { audioPreview.style.display = 'none'; }, 300);
+            }
+            if (audioControls) {
+                audioControls.style.opacity = '0';
+                audioControls.style.pointerEvents = 'none';
+                audioControls.style.display = 'none';
+            }
+            if (audioBtn) {
+                audioBtn.style.opacity = '1';
+                audioBtn.style.pointerEvents = 'auto';
+            }
+            cleanupAudioResources();
+            showNotification('✅ Аудиозапись удалена', 'success');
+        }
+        
+        function initializeAudioTab() {
+            console.log('[Audio] init audio tab');
+            cleanupAudioResources();
+            const savedAudio = localStorage.getItem('audioData');
+            const audioBtn = document.getElementById('audioBtn');
+            const audioControls = document.getElementById('audioControls');
+            const audioPreview = document.getElementById('audioPreview');
+            const audioPlayer = document.getElementById('audioPlayer');
+            
+            if (savedAudio && audioPlayer) {
+                audioPlayer.src = savedAudio;
+                if (audioBtn) { audioBtn.style.opacity = '0'; audioBtn.style.pointerEvents = 'none'; }
+                if (audioControls) { audioControls.style.display = 'none'; }
+                if (audioPreview) { audioPreview.style.display = 'block'; audioPreview.style.opacity = '1'; audioPreview.style.pointerEvents = 'auto'; }
+            } else {
+                if (audioBtn) { audioBtn.style.opacity = '1'; audioBtn.style.pointerEvents = 'auto'; }
+                if (audioControls) { audioControls.style.display = 'none'; }
+                if (audioPreview) { audioPreview.style.display = 'none'; }
+            }
+            
+            const btn = document.getElementById('audioBtn');
+            if (btn) {
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                newBtn.addEventListener('click', toggleAudio);
+            }
+            const stopBtn = document.getElementById('stopRecordingBtn');
+            if (stopBtn) {
+                const newStop = stopBtn.cloneNode(true);
+                stopBtn.parentNode.replaceChild(newStop, stopBtn);
+                newStop.addEventListener('click', stopAudioRecording);
+            }
+            const deleteBtn = document.getElementById('deleteAudioBtn');
+            if (deleteBtn) {
+                const newDel = deleteBtn.cloneNode(true);
+                deleteBtn.parentNode.replaceChild(newDel, deleteBtn);
+                newDel.addEventListener('click', deleteAudio);
+            }
+            console.log('[Audio] init complete');
         }
         
         function renderAudioList() {

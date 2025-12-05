@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- УК "Зелёная Долина" - Главная страница v6.5.7 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>УК «Зелёная долина» v6.5.2</title>
@@ -1217,6 +1218,43 @@
 
     <!-- Заявки -->
     <div id="requests" class="section">
+        <div class="section-header" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <h2 style="margin:0;">📋 Заявки</h2>
+        </div>
+        <div class="media-section">
+            <h3>📎 Прикрепить медиа</h3>
+            
+            <!-- Аудио -->
+            <div class="audio-container" style="min-height: 200px; position: relative;">
+                <button id="audioBtn" class="media-btn" style="transition: opacity 0.3s;">
+                    <span class="icon">🎤</span> Аудио
+                </button>
+                
+                <!-- Состояние записи -->
+                <div id="audioControls" style="display: none; position: absolute; top: 0; left: 0; right: 0; opacity: 0; transition: opacity 0.3s; pointer-events: none;">
+                    <div class="recording-indicator" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <span class="icon" style="color: #dc3545;">🔴</span>
+                        <span id="recordingTimer" style="font-weight: bold; margin-left: 10px;">00:00</span>
+                    </div>
+                    <button id="stopRecordingBtn" class="media-btn" style="background: #dc3545;">
+                        <span class="icon">⏹</span> Стоп
+                    </button>
+                </div>
+                
+                <!-- Превью записи -->
+                <div id="audioPreview" style="display: none; position: absolute; top: 0; left: 0; right: 0; opacity: 0; transition: opacity 0.3s; pointer-events: none;">
+                    <audio id="audioPlayer" controls style="width: 100%; margin-bottom: 10px; border-radius: 8px;"></audio>
+                    <button id="deleteAudioBtn" class="media-btn" style="background: #dc3545;">
+                        <span class="icon">❌</span> Удалить
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Кнопка отправки -->
+            <button class="submit-btn" onclick="submitRequest()" style="margin-top: 20px;">
+                <span class="icon">📤</span> Отправить заявку
+            </button>
+        </div>
         <!-- Табы: Новая заявка / Мои заявки -->
         <div class="card" style="margin-bottom: 15px;">
             <nav class="tabs" style="margin-bottom: 0;">

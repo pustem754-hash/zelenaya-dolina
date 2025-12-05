@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- УК "Зелёная Долина" - Главная страница v6.6.0 -->
+    <!-- УК "Зелёная Долина" - Главная страница v6.6.1 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.6.0</title>
+    <title>УК «Зелёная долина» v6.6.1</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -1901,28 +1901,50 @@
         }
 
         function initializeAudioTab() {
-            console.log('[Audio] init tab (override)');
+            console.log('[Audio] init audio tab');
             cleanupAudioResources();
             const savedAudio = localStorage.getItem('audioData');
-            const btn = document.getElementById('audioBtn');
-            const controls = document.getElementById('audioControls');
-            const preview = document.getElementById('audioPreview');
+            const audioBtn = document.getElementById('audioBtn');
+            const audioControls = document.getElementById('audioControls');
+            const audioPreview = document.getElementById('audioPreview');
             const audioPlayer = document.getElementById('audioPlayer');
+            
             if (savedAudio && audioPlayer) {
                 audioPlayer.src = savedAudio;
-                if (btn) btn.style.display = 'none';
-                if (preview) preview.style.display = 'block';
-                if (controls) controls.style.display = 'none';
+                if (audioBtn) { audioBtn.style.opacity = '0'; audioBtn.style.pointerEvents = 'none'; }
+                if (audioControls) { audioControls.style.display = 'none'; }
+                if (audioPreview) { audioPreview.style.display = 'block'; audioPreview.style.opacity = '1'; audioPreview.style.pointerEvents = 'auto'; }
             } else {
-                if (btn) btn.style.display = 'block';
-                if (preview) preview.style.display = 'none';
-                if (controls) controls.style.display = 'none';
+                if (audioBtn) { audioBtn.style.opacity = '1'; audioBtn.style.pointerEvents = 'auto'; }
+                if (audioControls) { audioControls.style.display = 'none'; }
+                if (audioPreview) { audioPreview.style.display = 'none'; audioPreview.style.opacity = '0'; audioPreview.style.pointerEvents = 'none'; }
             }
+            
+            const btn = document.getElementById('audioBtn');
+            if (btn && btn.parentNode) {
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                newBtn.addEventListener('click', toggleAudio);
+                console.log('[Audio] ✅ Обработчик audioBtn привязан');
+            }
+            
             const stopBtn = document.getElementById('stopRecordingBtn');
-            const delBtn = document.getElementById('deleteAudioBtn');
-            if (btn) { btn.replaceWith(btn.cloneNode(true)); document.getElementById('audioBtn').addEventListener('click', toggleAudio); }
-            if (stopBtn) { stopBtn.replaceWith(stopBtn.cloneNode(true)); document.getElementById('stopRecordingBtn').addEventListener('click', stopAudioRecording); }
-            if (delBtn) { delBtn.replaceWith(delBtn.cloneNode(true)); document.getElementById('deleteAudioBtn').addEventListener('click', deleteAudio); }
+            if (stopBtn && stopBtn.parentNode) {
+                const newStop = stopBtn.cloneNode(true);
+                stopBtn.parentNode.replaceChild(newStop, stopBtn);
+                newStop.addEventListener('click', stopAudioRecording);
+                console.log('[Audio] ✅ Обработчик stopBtn привязан');
+            }
+            
+            const deleteBtn = document.getElementById('deleteAudioBtn');
+            if (deleteBtn && deleteBtn.parentNode) {
+                const newDel = deleteBtn.cloneNode(true);
+                deleteBtn.parentNode.replaceChild(newDel, deleteBtn);
+                newDel.addEventListener('click', deleteAudio);
+                console.log('[Audio] ✅ Обработчик deleteBtn привязан');
+            }
+            
+            console.log('[Audio] init complete');
         }
 
         // Заглушка для списка аудио (новый UI хранит одну запись)

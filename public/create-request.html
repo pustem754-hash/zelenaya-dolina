@@ -590,14 +590,30 @@
             const photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
             const videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
             
-            if (audioBtn && typeof handleAudioButtonClick === 'function') {
-                // Удалить старый обработчик (если был)
-                audioBtn.removeEventListener('click', handleAudioButtonClick);
-                // Добавить новый
-                audioBtn.addEventListener('click', handleAudioButtonClick);
+            if (!audioBtn) {
+                console.error('[Init] ❌ Кнопка audioRecordBtn не найдена в DOM!');
+                return;
+            }
+            
+            // Удалить все старые обработчики через клонирование элемента
+            const newAudioBtn = audioBtn.cloneNode(true);
+            audioBtn.parentNode.replaceChild(newAudioBtn, audioBtn);
+            
+            // Добавить обработчик на новую кнопку
+            if (typeof handleAudioButtonClick === 'function') {
+                newAudioBtn.addEventListener('click', handleAudioButtonClick);
                 console.log('[Init] ✅ handleAudioButtonClick() привязана к #audioRecordBtn');
             } else {
-                console.error('[Init] ❌ Кнопка audioRecordBtn не найдена или handleAudioButtonClick не определена');
+                console.error('[Init] ❌ handleAudioButtonClick не определена! Используется fallback');
+                // Fallback: прямая привязка
+                newAudioBtn.addEventListener('click', function() {
+                    console.log('[Init] Fallback: прямой вызов recordAudio()');
+                    if (isRecording || window.isRecording) {
+                        stopAudioRecording();
+                    } else {
+                        recordAudio();
+                    }
+                });
             }
             
             if (photoBtn && typeof takePhoto === 'function') {
@@ -916,14 +932,6 @@
                 }
                 
                 const mimeType = selectedMimeType;
-                
-                if (!mimeType) {
-                    showNotification('Браузер не поддерживает запись аудио', 'error');
-                    audioStream.getTracks().forEach(track => track.stop());
-                    audioStream = null;
-                    return;
-                }
-                
                 console.log('[Audio] MIME type:', mimeType);
                 
                 // Создание MediaRecorder
@@ -1092,45 +1100,6 @@
             if (audioBtn) {
                 audioBtn.textContent = '🎤 Аудио';
                 audioBtn.classList.remove('recording');
-            }
-        }
-        
-        // Старая функция stopAudioRecording (удалить, если есть дубликат)
-        function stopAudioRecording_OLD() {
-            console.log('[Audio] Остановка записи...');
-            
-            // КРИТИЧЕСКИ ВАЖНО: Очистить таймер ПЕРВЫМ ДЕЛОМ, чтобы избежать повторных срабатываний
-            if (audioTimer) {
-                clearTimeout(audioTimer);
-                audioTimer = null;
-                console.log('[Audio] Таймер очищен');
-            }
-            
-            // Проверка состояния
-            if (!isRecording) {
-                console.warn('[Audio] Запись не активна');
-                // Всё равно обновить UI на всякий случай
-                updateAudioRecordingUI(false);
-                return;
-            }
-            
-            // Сбросить флаг СРАЗУ
-            isRecording = false;
-            window.isRecording = false; // Экспорт для навигации
-            
-            // Остановить запись (это вызовет обработчик onstop)
-            if (audioRecorder && audioRecorder.state !== 'inactive') {
-                try {
-                    audioRecorder.stop();
-                    console.log('[Audio] MediaRecorder остановлен');
-                } catch (error) {
-                    console.error('[Audio] Ошибка остановки:', error);
-                    // Даже если ошибка, всё равно обновить UI
-                    updateAudioRecordingUI(false);
-                }
-            } else {
-                // Если MediaRecorder уже остановлен, просто обновить UI
-                updateAudioRecordingUI(false);
             }
         }
         

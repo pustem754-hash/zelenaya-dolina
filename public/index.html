@@ -1523,9 +1523,14 @@
     <script>
         console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.1.0');
         
-        let mediaRecorder;
+        // ========== АУДИО ПЕРЕМЕННЫЕ ==========
+        let mediaRecorder = null;
         let audioChunks = [];
         let savedAudioBlob = null;
+        let audioTimer = null;
+        let audioStartTime = null;
+        
+        // ========== ВИДЕО ПЕРЕМЕННЫЕ ==========
         let videoRecorder = null;
         let videoStream = null;
         let videoChunks = [];

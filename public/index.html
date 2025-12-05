@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- УК "Зелёная Долина" - Главная страница v6.7.0 -->
+    <!-- УК "Зелёная Долина" - Главная страница v6.7.1 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.7.0</title>
+    <title>УК «Зелёная долина» v6.7.1</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -740,7 +740,7 @@
     <div class="header">
         <h1>🏡 УК «Зелёная долина»</h1>
         <p style="font-size: 14px; margin-top: 5px; opacity: 0.9;">Жилищная компания</p>
-        <div class="version">v6.7.0</div>
+        <div class="version">v6.7.1</div>
     </div>
 
     <!-- Главная -->
@@ -931,299 +931,56 @@
 
     <!-- Платежи -->
     <div id="payments" class="section">
-        <div class="card">
-            <h2>💳 Квитанция за сентябрь 2025</h2>
+        <div class="section-header">
+            <h2>💳 Платежи</h2>
+        </div>
+
+        <div style="padding: 20px;">
+            <button class="submit-btn" onclick="showSbpBankSelection()" style="width: 100%; margin-bottom: 20px;">
+                <span class="icon">💳</span> Оплатить онлайн (СБП)
+            </button>
             
-            <!-- Шапка квитанции -->
-            <div class="receipt-header">
-                <div class="receipt-qr">
-                    <div style="text-align: center;">QR<br>КОД</div>
+            <div class="placeholder">
+                <span class="icon" style="font-size: 60px;">💰</span>
+                <p style="margin-top: 20px; color: #6c757d;">История платежей пока пуста</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выбора банка -->
+    <div id="sbpBankModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; overflow-y: auto;">
+        <div style="padding: 20px;">
+            <button onclick="closeSbpBankModal()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-size: 16px;">
+                ← Назад
+            </button>
+            
+            <h2 style="text-align: center; margin-bottom: 10px;">💳 Оплата через СБП</h2>
+            <p style="text-align: center; color: #6c757d; margin-bottom: 30px; font-size: 14px;">Выберите ваш банк для оплаты</p>
+            
+            <div id="bankList" style="display: grid; gap: 12px;">
+                <!-- Банки добавляются через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно СБП -->
+    <div id="sbpModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; overflow-y: auto;">
+        <div style="padding: 20px;">
+            <button onclick="closeSbpPayment()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 20px;">
+                <span style="font-size: 18px;">←</span> Назад
+            </button>
+            
+            <h2 style="text-align: center; margin-bottom: 20px;">💳 Оплата через СБП</h2>
+            
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                <div style="width: 200px; height: 200px; background: white; margin: 0 auto 20px; border: 2px solid #dee2e6; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 80px;">📱</span>
                 </div>
-                <div class="receipt-info">
-                    <div class="receipt-info-row">
-                        <span class="receipt-info-label">Адрес доставки:</span><br>
-                        <span class="receipt-info-value">420000, Казань, ул. ЧИСТОПОЛЬСКАЯ, д. 5, кв. 142</span>
-                    </div>
-                    <div class="receipt-info-row">
-                        <span class="receipt-info-label">Лицевой счёт:</span>
-                        <span class="receipt-info-value">№ 8105059550</span>
-                    </div>
-                    <div class="receipt-info-row">
-                        <span class="receipt-info-label">Собственник:</span>
-                        <span class="receipt-info-value">МИННУЛЛИНА Н. М.</span>
-                    </div>
-                    <div class="receipt-info-row">
-                        <span class="receipt-info-label">Площадь:</span>
-                        <span class="receipt-info-value">61.9 кв. м.</span>
-                        <span class="receipt-info-label" style="margin-left: 15px;">Проживающих:</span>
-                        <span class="receipt-info-value">4 чел.</span>
-                    </div>
-                    <div class="receipt-info-row">
-                        <span class="receipt-info-label">УК:</span>
-                        <span class="receipt-info-value">ТУ "Ягодная слобода", 8(843)598-32-30</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Сроки оплаты и передачи показаний -->
-            <div class="receipt-deadline">
-                <div class="receipt-deadline-label">⚠️ НЕОБХОДИМО: Оплатить до 28.10.2025 г.</div>
-                <div style="color: #666; font-size: 14px;">Передать показания приборов учёта до 25.10.2025 г.</div>
-            </div>
-            
-            <!-- Таблица услуг -->
-            <h3 style="margin: 20px 0 10px 0; font-size: 16px; color: #2E7D32;">Коммунальные услуги</h3>
-            <table class="receipt-table">
-                <thead>
-                    <tr>
-                        <th style="width: 25%;">Услуга</th>
-                        <th style="width: 10%;">Тариф</th>
-                        <th style="width: 8%;">Ед.</th>
-                        <th style="width: 10%;">Объём</th>
-                        <th style="width: 12%;">Начислено</th>
-                        <th style="width: 10%;">Перерасчёт</th>
-                        <th style="width: 10%;">Льгота</th>
-                        <th style="width: 15%;">К оплате</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Отопление</td>
-                        <td class="amount">-</td>
-                        <td>Gcal</td>
-                        <td class="amount">0.00</td>
-                        <td class="amount">1 838.65</td>
-                        <td class="amount">-2.19</td>
-                        <td class="amount">0.00</td>
-                        <td class="amount">1 836.46</td>
-                    </tr>
-                    <tr>
-                        <td>Горячее водоснабжение</td>
-                        <td class="amount">-</td>
-                        <td>м³</td>
-                        <td class="amount">6.35</td>
-                        <td class="amount">2 895.24</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">1 619.12</td>
-                    </tr>
-                    <tr class="sub-row">
-                        <td>в т.ч. Подогрев воды</td>
-                        <td class="amount">-</td>
-                        <td>Gcal</td>
-                        <td class="amount">6.35</td>
-                        <td class="amount">34.56</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">219.53</td>
-                    </tr>
-                    <tr class="sub-row">
-                        <td>в т.ч. Холодная вода для ГВС</td>
-                        <td class="amount">-</td>
-                        <td>м³</td>
-                        <td class="amount">33.00</td>
-                        <td class="amount">34.56</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">1 140.48</td>
-                    </tr>
-                    <tr>
-                        <td>Холодное водоснабжение</td>
-                        <td class="amount">-</td>
-                        <td>м³</td>
-                        <td class="amount">39.35</td>
-                        <td class="amount">46.20</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">1 818.06</td>
-                    </tr>
-                    <tr>
-                        <td>Водоотведение</td>
-                        <td class="amount">-</td>
-                        <td>м³</td>
-                        <td class="amount">5.73</td>
-                        <td class="amount">379.78</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">379.78</td>
-                    </tr>
-                    <tr>
-                        <td>Электроснабжение</td>
-                        <td class="amount">-</td>
-                        <td>кВт⋅ч</td>
-                        <td class="amount">4.00</td>
-                        <td class="amount">117.70</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">470.80</td>
-                    </tr>
-                    <tr>
-                        <td>Обращение с ТКО</td>
-                        <td class="amount">-</td>
-                        <td>-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">5 647.77</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">5 647.77</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="4"><strong>Итого по коммунальным услугам</strong></td>
-                        <td class="amount">8 021.36</td>
-                        <td class="amount">-2.19</td>
-                        <td class="amount">-</td>
-                        <td class="amount"><strong>7 027.51</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Содержание жилого помещения</td>
-                        <td class="amount">-</td>
-                        <td>м²</td>
-                        <td class="amount">61.90</td>
-                        <td class="amount">2 591.72</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">2 591.72</td>
-                    </tr>
-                    <tr class="sub-row">
-                        <td>в т.ч. Холодная вода (ОДН)</td>
-                        <td class="amount">-</td>
-                        <td>м³</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="4"><strong>Итого за содержание помещения</strong></td>
-                        <td class="amount">2 937.91</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount"><strong>2 739.22</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Домофон</td>
-                        <td class="amount">-</td>
-                        <td>-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">69.00</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">69.00</td>
-                    </tr>
-                    <tr>
-                        <td>Взнос на капитальный ремонт</td>
-                        <td class="amount">-</td>
-                        <td>м²</td>
-                        <td class="amount">61.90</td>
-                        <td class="amount">524.29</td>
-                        <td class="amount">-</td>
-                        <td class="amount">-</td>
-                        <td class="amount">524.29</td>
-                    </tr>
-                    <tr class="total-row" style="background: #fff3cd; font-size: 14px;">
-                        <td colspan="4"><strong>ВСЕГО К ОПЛАТЕ</strong></td>
-                        <td class="amount">11 552.56</td>
-                        <td class="amount">-2.19</td>
-                        <td class="amount">-</td>
-                        <td class="amount" style="font-size: 16px;"><strong>10 360.02 ₽</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <!-- Льготы -->
-            <div style="margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 8px; font-size: 13px;">
-                <strong>Льготы:</strong> как льгота 1 139.95 руб.; как малообеспеченным 6.00 руб.; как ЕДВ 630.00 руб.; как компенсация за тепло 0.00 руб.
-            </div>
-            
-            <!-- Таблица показаний счётчиков -->
-            <h3 style="margin: 20px 0 10px 0; font-size: 16px; color: #2E7D32;">Показания приборов учёта (ИПУ)</h3>
-            <div style="overflow-x: auto;">
-                <table class="receipt-meters-table">
-                    <thead>
-                        <tr>
-                            <th>Услуга</th>
-                            <th>№ прибора</th>
-                            <th>Дата поверки</th>
-                            <th>Пред. показания</th>
-                            <th>Дата пред.</th>
-                            <th>Тек. показания</th>
-                            <th>Дата тек.</th>
-                            <th>Разница</th>
-                            <th>Расход</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Гор. Вода</td>
-                            <td>82373415</td>
-                            <td>-</td>
-                            <td>98.00</td>
-                            <td>14.04.2023</td>
-                            <td>98.00</td>
-                            <td>01.10.2023</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                        </tr>
-                        <tr>
-                            <td>Гор. Вода</td>
-                            <td>82373357</td>
-                            <td>-</td>
-                            <td>703.00</td>
-                            <td>02.09.2023</td>
-                            <td>703.00</td>
-                            <td>01.10.2023</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                        </tr>
-                        <tr>
-                            <td>Хол. вода</td>
-                            <td>01465369</td>
-                            <td>-</td>
-                            <td>65.00</td>
-                            <td>01.05.2023</td>
-                            <td>65.00</td>
-                            <td>01.10.2023</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                        </tr>
-                        <tr>
-                            <td>Хол. вода</td>
-                            <td>01465372</td>
-                            <td>-</td>
-                            <td>65.00</td>
-                            <td>01.05.2023</td>
-                            <td>65.00</td>
-                            <td>01.10.2023</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                        </tr>
-                        <tr>
-                            <td>Электроснабжение</td>
-                            <td>020019949128</td>
-                            <td>-</td>
-                            <td>1806.60</td>
-                            <td>01.05.2023</td>
-                            <td>1806.60</td>
-                            <td>01.10.2023</td>
-                            <td>0.00</td>
-                            <td>1926.92</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Итоговая сумма -->
-            <div class="receipt-total">
-                <div style="font-size: 18px; color: #666; margin-bottom: 10px;">Всего к оплате</div>
-                <div class="receipt-total-value">10 360.02 ₽</div>
-                <div style="font-size: 14px; color: #666;">Срок оплаты: до 28.10.2025</div>
-            </div>
-            
-            <!-- Кнопки действий -->
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-pay" onclick="handlePaymentClick()" style="flex: 1;">💳 Оплатить онлайн</button>
-                <button class="btn btn-download" onclick="generateReceiptPDF()" style="flex: 1;">📥 Скачать PDF</button>
+                <p style="color: #6c757d; margin-bottom: 20px;">Отсканируйте QR-код в приложении вашего банка</p>
+                
+                <button onclick="mockSbpPayment()" class="submit-btn" style="margin-top: 20px;">
+                    ✅ Симуляция оплаты (MOCK)
+                </button>
             </div>
         </div>
     </div>
@@ -4663,6 +4420,97 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         }
 
         // ===== ИНИЦИАЛИЗАЦИЯ =====
+        // === СБП-ОПЛАТА С ВЫБОРОМ БАНКА ===
+
+        // Список банков с deep links
+        const SBP_BANKS = [
+            { name: 'Сбербанк', icon: '🟢', scheme: 'sberbank://', package: 'ru.sberbankmobile' },
+            { name: 'Т-Банк (Тинькофф)', icon: '🟡', scheme: 'tinkoffbank://', package: 'com.idamob.tinkoff.android' },
+            { name: 'ВТБ', icon: '🔵', scheme: 'vtb://', package: 'ru.vtb.mobilebanking.android' },
+            { name: 'Альфа-Банк', icon: '🔴', scheme: 'alfabank://', package: 'ru.alfabank.mobile.android' },
+            { name: 'Райффайзен', icon: '🟠', scheme: 'raiffeisen://', package: 'ru.raiffeisen.rmobile' },
+            { name: 'Ак Барс', icon: '🟣', scheme: 'akbars://', package: 'ru.akbars.mobile' },
+            { name: 'Газпромбанк', icon: '🔵', scheme: 'gazprombank://', package: 'ru.gazprombank.mobile' },
+            { name: 'Росбанк', icon: '🔴', scheme: 'rosbank://', package: 'ru.rosbank.android' },
+            { name: 'Открытие', icon: '🟢', scheme: 'openbank://', package: 'ru.open.mobile' },
+            { name: 'ПСБ', icon: '🔵', scheme: 'psb://', package: 'ru.psbank.mobile' },
+            { name: 'Совкомбанк', icon: '🟠', scheme: 'sovcombank://', package: 'ru.sovcombank.mobile' },
+            { name: 'Почта Банк', icon: '🔵', scheme: 'pochtabank://', package: 'ru.pochtabank.mobile' }
+        ];
+
+        // Сумма к оплате (можно сделать динамической)
+        const PAYMENT_AMOUNT = 5000; // 5000 рублей
+        const MERCHANT_ID = 'uk_zelenaya_dolina'; // ID вашей организации
+
+        function showSbpBankSelection() {
+            console.log('[Payment] 💳 Открытие выбора банка для СБП');
+            
+            const modal = document.getElementById('sbpBankModal');
+            const bankList = document.getElementById('bankList');
+            
+            if (!modal || !bankList) {
+                console.error('[Payment] ❌ Элементы модала не найдены');
+                return;
+            }
+            
+            // Очищаем список
+            bankList.innerHTML = '';
+            
+            // Добавляем кнопки банков
+            SBP_BANKS.forEach(bank => {
+                const bankBtn = document.createElement('button');
+                bankBtn.className = 'submit-btn';
+                bankBtn.style.cssText = 'width: 100%; display: flex; align-items: center; gap: 12px; padding: 16px; font-size: 16px; justify-content: flex-start;';
+                bankBtn.innerHTML = `
+                    <span style="font-size: 24px;">${bank.icon}</span>
+                    <span style="flex: 1; text-align: left;">${bank.name}</span>
+                    <span style="font-size: 18px;">→</span>
+                `;
+                bankBtn.onclick = () => openBankApp(bank);
+                bankList.appendChild(bankBtn);
+            });
+            
+            modal.style.display = 'block';
+            console.log('[Payment] ✅ Модал выбора банка открыт');
+        }
+
+        function closeSbpBankModal() {
+            console.log('[Payment] 🔙 Закрытие модала выбора банка');
+            const modal = document.getElementById('sbpBankModal');
+            if (modal) {
+                modal.style.display = 'none';
+                console.log('[Payment] ✅ Модал закрыт');
+            }
+        }
+
+        function openBankApp(bank) {
+            console.log(`[Payment] 🏦 Попытка открыть ${bank.name}`);
+            
+            // Генерируем СБП deep link
+            const sbpUrl = `${bank.scheme}qr?amount=${PAYMENT_AMOUNT}&merchant=${MERCHANT_ID}`;
+            
+            // Попытка открыть приложение банка
+            window.location.href = sbpUrl;
+            
+            // Уведомление пользователя
+            if (typeof showNotification === 'function') {
+                showNotification(`Открываем ${bank.name}... Если приложение не открылось, установите его из магазина приложений`, 'info');
+            }
+            
+            console.log(`[Payment] ✅ Deep link отправлен: ${sbpUrl}`);
+            
+            // Закрываем модал через 2 секунды
+            setTimeout(() => {
+                closeSbpBankModal();
+            }, 2000);
+            
+            // Возврат на главную через 3 секунды (если приложение не открылось)
+            setTimeout(() => {
+                showSection('main');
+                console.log('[Payment] 🏠 Возврат на главную');
+            }, 3000);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ DOM загружен, инициализация приложения');
             

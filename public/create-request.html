@@ -903,6 +903,7 @@
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         console.log('[Photo] ✅ Файл прочитан, размер данных:', event.target.result.length);
+                        console.log('[Photo] Фото сохранено, размер:', event.target.result.length);
                         attachedMedia.push({
                             type: 'photo',
                             data: event.target.result,
@@ -1461,6 +1462,10 @@
                 return;
             }
             
+            // Сделать контейнер превью видимым
+            preview.style.display = 'block';
+            preview.style.opacity = '1';
+            
             console.log('[Media] 🎨 Рендеринг медиа...');
             attachedMedia.forEach((media, index) => {
                 console.log(`[Media] 📦 Медиа ${index + 1}/${attachedMedia.length}:`, media.type);
@@ -1474,6 +1479,7 @@
                             <button class="media-remove" data-index="${index}">✕</button>
                         </div>
                     `;
+                    console.log('[Photo] Превью установлено');
                 } else if (media.type === 'video') {
                     item.innerHTML = `
                         <div class="media-item">

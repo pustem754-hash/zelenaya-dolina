@@ -608,6 +608,10 @@
                         });
                         localStorage.setItem('requests', JSON.stringify(requests));
                         
+                        // Очистить медиафайлы из localStorage
+                        localStorage.removeItem('requestMedia');
+                        attachedMedia = [];
+                        
                         // Редирект к списку заявок
                         setTimeout(() => {
                             window.location.href = 'index.html';

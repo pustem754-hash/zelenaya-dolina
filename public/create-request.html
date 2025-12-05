@@ -588,56 +588,108 @@
         
         function initializeCreateRequestPage() {
             console.log('[Init] 🚀 === ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ ===');
+            console.log('[Init] 📍 URL:', window.location.href);
+            console.log('[Init] 📍 ReadyState:', document.readyState);
             
             // Очистить старые ресурсы
+            console.log('[Init] 🧹 Очистка старых ресурсов...');
             cleanupAudioResources();
             
             // Загрузить существующие медиа
+            console.log('[Init] 📦 Загрузка существующих медиа из localStorage...');
             const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            console.log('[Init] 📦 Найдено медиа в localStorage:', savedMedia.length);
+            
             attachedMedia = savedMedia.filter(media => {
-                if (!media.timestamp) return false;
+                if (!media.timestamp) {
+                    console.log('[Init] ⚠️ Медиа без timestamp пропущено:', media.type);
+                    return false;
+                }
                 const age = Date.now() - media.timestamp;
-                return age < 24 * 60 * 60 * 1000; // 24 часа
+                const isValid = age < 24 * 60 * 60 * 1000; // 24 часа
+                if (!isValid) {
+                    console.log('[Init] ⚠️ Старое медиа пропущено (возраст:', Math.round(age / 1000 / 60 / 60), 'ч):', media.type);
+                }
+                return isValid;
             });
+            
             if (attachedMedia.length !== savedMedia.length) {
                 localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+                console.log('[Init] 🗑️ Удалено старых медиа:', savedMedia.length - attachedMedia.length);
             }
+            
+            console.log('[Init] ✅ Актуальных медиа:', attachedMedia.length);
             renderMediaPreview();
             
             // Привязать обработчики
+            console.log('[Init] 🔗 Привязка обработчиков событий...');
             const audioBtn = document.getElementById('audioRecordBtn');
             const photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
             const videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
             
+            console.log('[Init] 🔍 Поиск элементов:');
+            console.log('[Init]   - audioBtn:', audioBtn ? '✅ найден' : '❌ не найден');
+            console.log('[Init]   - photoBtn:', photoBtn ? '✅ найден' : '❌ не найден');
+            console.log('[Init]   - videoBtn:', videoBtn ? '✅ найден' : '❌ не найден');
+            
             if (audioBtn) {
+                console.log('[Init] 🔄 Клонирование кнопки аудио для удаления старых обработчиков...');
                 // КРИТИЧНО: Удалить старые обработчики через клонирование
                 const newAudioBtn = audioBtn.cloneNode(true);
                 audioBtn.parentNode.replaceChild(newAudioBtn, audioBtn);
                 
+                console.log('[Init] ✅ Кнопка клонирована и заменена');
+                
                 // Добавить новый обработчик
-                newAudioBtn.addEventListener('click', function() {
+                newAudioBtn.addEventListener('click', function(e) {
+                    console.log('[Init] 🎯 === КЛИК ПО КНОПКЕ АУДИО ===');
+                    console.log('[Init] 🎯 isRecording:', isRecording);
+                    console.log('[Init] 🎯 window.isRecording:', window.isRecording);
+                    console.log('[Init] 🎯 Event:', e);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
                     if (isRecording) {
+                        console.log('[Init] 🎯 Вызов stopAudioRecording()...');
                         stopAudioRecording();
                     } else {
+                        console.log('[Init] 🎯 Вызов recordAudio()...');
                         recordAudio();
                     }
-                });
-                console.log('[Init] ✅ recordAudio() привязана к #audioRecordBtn');
+                }, true); // Использовать capture phase
+                
+                console.log('[Init] ✅ recordAudio() привязана к #audioRecordBtn через addEventListener');
             } else {
                 console.error('[Init] ❌ #audioRecordBtn не найдена!');
+                console.error('[Init] ❌ Все кнопки на странице:', document.querySelectorAll('button').length);
             }
             
             if (photoBtn && typeof takePhoto === 'function') {
-                photoBtn.onclick = takePhoto;
+                photoBtn.onclick = function(e) {
+                    console.log('[Init] 📷 Клик по кнопке фото');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    takePhoto();
+                };
                 console.log('[Init] ✅ takePhoto() привязана');
             }
             
             if (videoBtn && typeof recordVideo === 'function') {
-                videoBtn.onclick = recordVideo;
+                videoBtn.onclick = function(e) {
+                    console.log('[Init] 🎥 Клик по кнопке видео');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    recordVideo();
+                };
                 console.log('[Init] ✅ recordVideo() привязана');
             }
             
             // Проверить поддержку MediaRecorder
+            console.log('[Init] 🔍 Проверка поддержки MediaRecorder...');
+            console.log('[Init]   - navigator.mediaDevices:', !!navigator.mediaDevices);
+            console.log('[Init]   - getUserMedia:', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+            console.log('[Init]   - MediaRecorder:', typeof MediaRecorder !== 'undefined');
+            
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 console.warn('[Init] ⚠️ getUserMedia не поддерживается');
                 if (audioBtn) audioBtn.disabled = true;
@@ -645,6 +697,7 @@
             }
             
             console.log('[Init] 🎉 Инициализация завершена');
+            console.log('[Init] ✅ Все функции готовы к работе');
         }
         
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
@@ -861,54 +914,87 @@
         
         // Очистка ресурсов
         function cleanupAudioResources() {
-            console.log('[Audio] 🧹 Очистка ресурсов...');
+            console.log('[Audio] 🧹 === ОЧИСТКА РЕСУРСОВ ===');
+            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Audio] 📍 Состояние до очистки:');
+            console.log('[Audio]   - audioTimer:', audioTimer);
+            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
+            console.log('[Audio]   - mediaRecorder.state:', mediaRecorder ? mediaRecorder.state : 'null');
+            console.log('[Audio]   - mediaStream:', mediaStream);
+            console.log('[Audio]   - isRecording:', isRecording);
+            console.log('[Audio]   - audioChunks.length:', audioChunks.length);
             
             // Остановить таймер
             if (audioTimer) {
+                console.log('[Audio] 🧹 Очистка таймера...');
                 clearInterval(audioTimer);
                 audioTimer = null;
+                console.log('[Audio] ✅ Таймер очищен');
             }
             
             // Остановить MediaRecorder
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                try {
-                    mediaRecorder.stop();
-                } catch (e) {
-                    console.warn('[Audio] MediaRecorder уже остановлен');
+            if (mediaRecorder) {
+                console.log('[Audio] 🧹 Остановка MediaRecorder...');
+                if (mediaRecorder.state !== 'inactive') {
+                    try {
+                        mediaRecorder.stop();
+                        console.log('[Audio] ✅ MediaRecorder остановлен');
+                    } catch (e) {
+                        console.warn('[Audio] ⚠️ MediaRecorder уже остановлен:', e.message);
+                    }
+                } else {
+                    console.log('[Audio] ℹ️ MediaRecorder уже неактивен');
                 }
             }
             mediaRecorder = null;
             
             // Остановить MediaStream
             if (mediaStream) {
-                mediaStream.getTracks().forEach(track => {
+                console.log('[Audio] 🧹 Остановка MediaStream...');
+                const tracks = mediaStream.getTracks();
+                console.log('[Audio] 📊 Найдено треков:', tracks.length);
+                tracks.forEach(track => {
                     track.stop();
-                    console.log('[Audio] Track остановлен:', track.kind);
+                    console.log('[Audio] ✅ Track остановлен:', track.kind, track.label);
                 });
                 mediaStream = null;
+                console.log('[Audio] ✅ MediaStream очищен');
             }
             
             // Сбросить флаги
+            console.log('[Audio] 🧹 Сброс флагов...');
             isRecording = false;
             window.isRecording = false;
             audioChunks = [];
+            console.log('[Audio] ✅ Флаги сброшены');
             
             console.log('[Audio] ✅ Ресурсы очищены');
         }
         
         async function recordAudio() {
             console.log('[Audio] 🎤 === НАЧАЛО ФУНКЦИИ recordAudio ===');
+            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Audio] 📍 Текущее состояние:');
+            console.log('[Audio]   - isRecording:', isRecording);
+            console.log('[Audio]   - window.isRecording:', window.isRecording);
+            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
+            console.log('[Audio]   - mediaStream:', mediaStream);
+            console.log('[Audio]   - audioTimer:', audioTimer);
             
             const audioBtn = document.getElementById('audioRecordBtn');
             
             if (!audioBtn) {
                 console.error('[Audio] ❌ Кнопка #audioRecordBtn не найдена!');
+                console.error('[Audio] ❌ Все кнопки:', document.querySelectorAll('button').length);
                 return;
             }
             
+            console.log('[Audio] ✅ Кнопка найдена:', audioBtn);
+            console.log('[Audio] ✅ Текст кнопки:', audioBtn.textContent);
+            
             // Если идёт запись - остановить
             if (isRecording) {
-                console.log('[Audio] ⏹️ Остановка записи...');
+                console.log('[Audio] ⏹️ Уже идёт запись, остановка...');
                 stopAudioRecording();
                 return;
             }
@@ -1065,30 +1151,53 @@
         
         function stopAudioRecording() {
             console.log('[Audio] 🛑 === ОСТАНОВКА ЗАПИСИ ===');
+            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Audio] 📍 Текущее состояние:');
+            console.log('[Audio]   - isRecording:', isRecording);
+            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
+            console.log('[Audio]   - mediaRecorder.state:', mediaRecorder ? mediaRecorder.state : 'null');
+            console.log('[Audio]   - audioTimer:', audioTimer);
             
             const audioBtn = document.getElementById('audioRecordBtn');
             
+            if (!audioBtn) {
+                console.warn('[Audio] ⚠️ Кнопка не найдена при остановке');
+            }
+            
             // Очистить таймер СРАЗУ
             if (audioTimer) {
+                console.log('[Audio] 🧹 Очистка таймера...');
                 clearInterval(audioTimer);
                 audioTimer = null;
                 console.log('[Audio] ✅ Таймер очищен');
+            } else {
+                console.log('[Audio] ℹ️ Таймер не был установлен');
             }
             
             // Остановить MediaRecorder
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                try {
-                    console.log(`[Audio] MediaRecorder state: ${mediaRecorder.state}`);
-                    mediaRecorder.stop();
-                    console.log('[Audio] ✅ MediaRecorder.stop() вызван');
-                } catch (error) {
-                    console.error('[Audio] ❌ Ошибка остановки MediaRecorder:', error);
+            if (mediaRecorder) {
+                console.log(`[Audio] 📊 MediaRecorder state: ${mediaRecorder.state}`);
+                if (mediaRecorder.state !== 'inactive') {
+                    try {
+                        console.log('[Audio] 🛑 Вызов mediaRecorder.stop()...');
+                        mediaRecorder.stop();
+                        console.log('[Audio] ✅ MediaRecorder.stop() вызван');
+                    } catch (error) {
+                        console.error('[Audio] ❌ Ошибка остановки MediaRecorder:', error);
+                        console.error('[Audio] ❌ Stack:', error.stack);
+                    }
+                } else {
+                    console.log('[Audio] ℹ️ MediaRecorder уже неактивен');
                 }
+            } else {
+                console.log('[Audio] ℹ️ MediaRecorder не был создан');
             }
             
             // Сбросить флаг
+            console.log('[Audio] 🔄 Сброс флагов...');
             isRecording = false;
             window.isRecording = false;
+            console.log('[Audio] ✅ Флаги сброшены');
             
             // НЕ очищаем mediaStream и mediaRecorder здесь!
             // Они будут очищены в mediaRecorder.onstop

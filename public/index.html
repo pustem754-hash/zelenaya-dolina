@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.1.0</title>
+    <title>УК «Зелёная долина» v6.1.3</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -671,7 +671,7 @@
     <div class="header">
         <h1>🏡 УК «Зелёная долина»</h1>
         <p style="font-size: 14px; margin-top: 5px; opacity: 0.9;">Жилищная компания</p>
-        <div class="version">v6.1.0</div>
+        <div class="version">v6.1.3</div>
     </div>
 
     <!-- Главная -->
@@ -1562,7 +1562,7 @@
     </nav>
 
     <script>
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.1.0');
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.1.3');
         
         // ========== АУДИО ПЕРЕМЕННЫЕ ==========
         let mediaRecorder = null;
@@ -1962,9 +1962,9 @@
                 return;
             }
             
-            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+            const photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
             const filtered = photos.filter(p => p.id !== id);
-            localStorage.setItem('photos', JSON.stringify(filtered));
+            localStorage.setItem('requestPhotos', JSON.stringify(filtered));
             console.log('✅ Фото удалено, осталось:', filtered.length);
             renderPhotos();
         }
@@ -2017,14 +2017,44 @@
                         audio: true
                     });
                     
-                    const options = { mimeType: 'video/webm;codecs=vp8,opus' };
-                    videoRecorder = new MediaRecorder(videoStream, options);
+                    // Определяем поддерживаемый mimeType с fallback
+                    let videoMimeType = 'video/webm;codecs=vp8,opus';
+                    if (!MediaRecorder.isTypeSupported(videoMimeType)) {
+                        videoMimeType = 'video/webm;codecs=vp8';
+                        if (!MediaRecorder.isTypeSupported(videoMimeType)) {
+                            videoMimeType = 'video/webm';
+                            if (!MediaRecorder.isTypeSupported(videoMimeType)) {
+                                videoMimeType = 'video/mp4';
+                                if (!MediaRecorder.isTypeSupported(videoMimeType)) {
+                                    videoMimeType = ''; // Используем формат по умолчанию браузера
+                                }
+                            }
+                        }
+                    }
+                    console.log('🎥 Используемый video mimeType:', videoMimeType || 'default');
+                    
+                    const options = videoMimeType ? { mimeType: videoMimeType } : {};
+                    try {
+                        videoRecorder = new MediaRecorder(videoStream, options);
+                    } catch (e) {
+                        console.warn('⚠️ Ошибка создания MediaRecorder с options, пробуем без options:', e);
+                        videoRecorder = new MediaRecorder(videoStream);
+                    }
                     videoChunks = [];
                     videoStartTime = Date.now();
                     
                     videoRecorder.ondataavailable = (event) => {
                         if (event.data && event.data.size > 0) {
                             videoChunks.push(event.data);
+                        }
+                    };
+                    
+                    videoRecorder.onerror = (event) => {
+                        console.error('❌ Ошибка MediaRecorder:', event.error);
+                        alert('❌ Ошибка записи видео: ' + (event.error?.message || 'Неизвестная ошибка'));
+                        resetVideoRecording();
+                        if (videoStream) {
+                            videoStream.getTracks().forEach(track => track.stop());
                         }
                     };
                     
@@ -2395,10 +2425,21 @@
                     
                     console.log('✅ Доступ к микрофону получен');
                     
-                    // Создаём MediaRecorder
-                    mediaRecorder = new MediaRecorder(stream, {
-                        mimeType: 'audio/webm;codecs=opus'
-                    });
+                    // Создаём MediaRecorder с fallback для iOS/Android
+                    let mimeType = 'audio/webm;codecs=opus';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'audio/webm';
+                        if (!MediaRecorder.isTypeSupported(mimeType)) {
+                            mimeType = 'audio/mp4';
+                            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                                mimeType = ''; // Используем формат по умолчанию браузера
+                            }
+                        }
+                    }
+                    console.log('🎤 Используемый mimeType:', mimeType || 'default');
+                    
+                    const options = mimeType ? { mimeType } : {};
+                    mediaRecorder = new MediaRecorder(stream, options);
                     audioChunks = [];
                     audioStartTime = Date.now();
                     
@@ -2495,12 +2536,22 @@
                         // Автостоп на 60 секундах
                         if (elapsed >= 60) {
                             console.log('⏰ Достигнут лимит 60 секунд');
+                            // ОСТАНОВИТЬ ТАЙМЕР ПЕРВЫМ ДЕЛОМ
                             clearInterval(audioTimer);
                             audioTimer = null;
+                            // ОСТАНОВИТЬ ЗАПИСЬ
                             if (mediaRecorder && mediaRecorder.state === 'recording') {
+                                console.log('⏹️ Останавливаем запись из-за лимита времени');
                                 mediaRecorder.stop();
                             }
-                            alert('⏰ Достигнут лимит записи (60 секунд)');
+                            // Освободить микрофон
+                            if (stream) {
+                                stream.getTracks().forEach(track => track.stop());
+                            }
+                            // Показать сообщение ПОСЛЕ остановки
+                            setTimeout(() => {
+                                alert('⏰ Достигнут лимит записи (60 секунд)');
+                            }, 100);
                         }
                     }, 1000);
                     

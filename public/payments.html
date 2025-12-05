@@ -358,10 +358,7 @@
             initializePage();
         });
         
-        function initializePage() {
-            const session = getSession();
-            console.log('[Page] Сессия пользователя:', session);
-        
+        // Глобальные переменные
         const paymentHistory = [
             { date: '2025-09-25', amount: 9845.30, status: 'paid', receipt: 'receipt-sep-2025.pdf' },
             { date: '2025-08-27', amount: 9123.15, status: 'paid', receipt: 'receipt-aug-2025.pdf' },
@@ -440,12 +437,15 @@
             localStorage.setItem('autopayEnabled', toggle.checked);
         }
         
-        // Загрузка состояния автоплатежа
-        window.addEventListener('DOMContentLoaded', () => {
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
+            
+            // Загрузка состояния автоплатежа
             const autopayEnabled = localStorage.getItem('autopayEnabled') === 'true';
             document.getElementById('autopayToggle').checked = autopayEnabled;
             renderPaymentHistory('all');
-        });
+        }
     </script>
 </body>
 </html>

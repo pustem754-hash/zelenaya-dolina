@@ -209,11 +209,7 @@
             initializePage();
         });
         
-        function initializePage() {
-            const session = getSession();
-            console.log('[Page] Сессия пользователя:', session);
-        
-        // Данные камер (mock)
+        // Данные камер (mock) - глобальная переменная
         const cameras = [
             { id: 1, name: 'Подъезд 1', location: 'Вход в подъезд №1', status: 'online', snapshot: null },
             { id: 2, name: 'Парковка', location: 'Парковочная зона', status: 'online', snapshot: null },
@@ -295,8 +291,13 @@
             }
         });
         
-        // Загрузка камер при инициализации
-        window.addEventListener('DOMContentLoaded', loadCameras);
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
+            
+            // Загрузка камер при инициализации
+            loadCameras();
+        }
     </script>
 </body>
 </html>

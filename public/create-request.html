@@ -498,19 +498,9 @@
             initializePage();
         });
         
-        function initializePage() {
-            const session = getSession();
-            console.log('[Page] Сессия пользователя:', session);
-        
+        // Глобальные переменные
         let attachedMedia = [];
         let selectedUrgency = 'medium';
-        
-        // Загрузить сохранённые медиафайлы при загрузке страницы
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
-            attachedMedia = savedMedia;
-            renderMediaPreview();
-        });
         
         // Переменные для записи аудио
         let audioRecorder = null;
@@ -520,94 +510,104 @@
         let audioStream = null;
         const MAX_AUDIO_DURATION = 30000; // 30 секунд
         
-        // Счётчик символов
-        document.getElementById('requestDescription').addEventListener('input', (e) => {
-            document.getElementById('charCount').textContent = e.target.value.length;
-        });
-        
-        // Кнопки срочности
-        document.querySelectorAll('.urgency-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.urgency-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedUrgency = btn.dataset.urgency;
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
+            
+            // Загрузить сохранённые медиафайлы при загрузке страницы
+            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            attachedMedia = savedMedia;
+            renderMediaPreview();
+            
+            // Счётчик символов
+            document.getElementById('requestDescription').addEventListener('input', (e) => {
+                document.getElementById('charCount').textContent = e.target.value.length;
             });
-        });
-        
-        // Обработка формы
-        document.getElementById('requestForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
             
-            const formData = {
-                category: document.getElementById('requestCategory').value,
-                title: document.getElementById('requestTitle').value,
-                description: document.getElementById('requestDescription').value,
-                urgency: selectedUrgency,
-                media: attachedMedia,
-                timestamp: new Date().toISOString(),
-                status: 'new'
-            };
+            // Кнопки срочности
+            document.querySelectorAll('.urgency-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.urgency-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedUrgency = btn.dataset.urgency;
+                });
+            });
             
-            // Валидация
-            if (!formData.category) {
-                showError('Выберите категорию');
-                return;
-            }
-            
-            if (formData.title.length < 10) {
-                showError('Описание должно быть не менее 10 символов');
-                return;
-            }
-            
-            // Показать лоадер
-            const loader = document.createElement('div');
-            loader.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            `;
-            loader.innerHTML = `
-                <div style="text-align: center; color: white;">
-                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-                    <p style="font-size: 16px; font-weight: 500; margin: 0;">Создание заявки...</p>
-                </div>
-            `;
-            document.body.appendChild(loader);
-            
-            try {
-                // Mock API call
-                await mockAPICall('/api/requests/create', formData);
+            // Обработка формы
+            document.getElementById('requestForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                setTimeout(() => {
-                    loader.remove();
-                    showSuccessNotification('Заявка создана успешно!');
+                const formData = {
+                    category: document.getElementById('requestCategory').value,
+                    title: document.getElementById('requestTitle').value,
+                    description: document.getElementById('requestDescription').value,
+                    urgency: selectedUrgency,
+                    media: attachedMedia,
+                    timestamp: new Date().toISOString(),
+                    status: 'new'
+                };
+                
+                // Валидация
+                if (!formData.category) {
+                    showError('Выберите категорию');
+                    return;
+                }
+                
+                if (formData.title.length < 10) {
+                    showError('Описание должно быть не менее 10 символов');
+                    return;
+                }
+                
+                // Показать лоадер
+                const loader = document.createElement('div');
+                loader.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999;
+                `;
+                loader.innerHTML = `
+                    <div style="text-align: center; color: white;">
+                        <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                        <p style="font-size: 16px; font-weight: 500; margin: 0;">Создание заявки...</p>
+                    </div>
+                `;
+                document.body.appendChild(loader);
+                
+                try {
+                    // Mock API call
+                    await mockAPICall('/api/requests/create', formData);
                     
-                    // Сохранить локально
-                    const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-                    requests.push({
-                        ...formData,
-                        id: Date.now().toString()
-                    });
-                    localStorage.setItem('requests', JSON.stringify(requests));
-                    
-                    // Редирект к списку заявок
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        loader.remove();
+                        showSuccessNotification('Заявка создана успешно!');
+                        
+                        // Сохранить локально
+                        const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                        requests.push({
+                            ...formData,
+                            id: Date.now().toString()
+                        });
+                        localStorage.setItem('requests', JSON.stringify(requests));
+                        
+                        // Редирект к списку заявок
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
                     }, 1500);
-                }, 1500);
-                
-            } catch (error) {
-                loader.remove();
-                showError('Ошибка создания заявки');
-            }
-        });
+                    
+                } catch (error) {
+                    loader.remove();
+                    showError('Ошибка создания заявки');
+                }
+            });
+        }
         
         function mockAPICall(endpoint, data) {
             return new Promise((resolve) => {

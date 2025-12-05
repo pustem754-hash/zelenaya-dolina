@@ -1055,14 +1055,14 @@
                     item.innerHTML = `
                         <div class="media-item">
                             <img src="${media.data}" alt="Фото">
-                            <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                            <button class="media-remove" data-index="${index}">✕</button>
                         </div>
                     `;
                 } else if (media.type === 'video') {
                     item.innerHTML = `
                         <div class="media-item">
                             <video src="${media.data}" controls></video>
-                            <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                            <button class="media-remove" data-index="${index}">✕</button>
                         </div>
                     `;
                 } else if (media.type === 'audio') {
@@ -1070,16 +1070,24 @@
                         <div class="audio-preview">
                             <div class="audio-icon">🎤</div>
                             <div class="audio-info">
-                                <div class="audio-name">${media.name}</div>
-                                <div class="audio-details">${media.duration} сек • ${formatFileSize(media.size)}</div>
+                                <div class="audio-name">${media.name || 'audio.webm'}</div>
+                                <div class="audio-details">${media.duration || 0} сек • ${formatFileSize(media.size || 0)}</div>
                             </div>
-                            <audio controls src="${media.data}" style="width: 100%; height: 32px; margin-top: 8px;"></audio>
-                            <button class="delete-media-btn" onclick="removeMedia(${index})">✕</button>
+                            <audio controls src="${media.data}"></audio>
+                            <button class="delete-media-btn" data-index="${index}">✕</button>
                         </div>
                     `;
                 }
                 
                 preview.appendChild(item);
+            });
+            
+            // Добавить обработчики удаления
+            document.querySelectorAll('.media-remove, .delete-media-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeMedia(index);
+                });
             });
         }
         

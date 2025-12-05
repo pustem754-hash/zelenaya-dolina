@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина» v6.4.3</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.4.5</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -463,6 +463,50 @@
         window.isRecording = false;
         // ===== КОНЕЦ ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ =====
         
+        // ====================================
+        // 🛠️ УНИВЕРСАЛЬНАЯ ИНИЦИАЛИЗАЦИЯ
+        // ====================================
+        
+        function initializeCreateRequestPage() {
+            console.log('[Init] Инициализация страницы создания заявки...');
+            
+            // 1. Привязать обработчики событий к кнопкам
+            const audioBtn = document.getElementById('audioRecordBtn');
+            const photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
+            const videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
+            
+            if (audioBtn && typeof handleAudioButtonClick === 'function') {
+                // Удалить старый обработчик (если был)
+                audioBtn.removeEventListener('click', handleAudioButtonClick);
+                // Добавить новый
+                audioBtn.addEventListener('click', handleAudioButtonClick);
+                console.log('[Init] ✅ handleAudioButtonClick() привязана к #audioRecordBtn');
+            } else {
+                console.error('[Init] ❌ Кнопка audioRecordBtn не найдена или handleAudioButtonClick не определена');
+            }
+            
+            if (photoBtn && typeof takePhoto === 'function') {
+                photoBtn.onclick = takePhoto;
+                console.log('[Init] ✅ takePhoto() привязана к кнопке фото');
+            }
+            
+            if (videoBtn && typeof recordVideo === 'function') {
+                videoBtn.onclick = recordVideo;
+                console.log('[Init] ✅ recordVideo() привязана к кнопке видео');
+            }
+            
+            // 2. Проверить поддержку MediaRecorder
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                console.warn('[Init] ⚠️ getUserMedia не поддерживается');
+                if (audioBtn) audioBtn.disabled = true;
+                if (videoBtn) videoBtn.disabled = true;
+            }
+            
+            // 3. Форма уже обрабатывается в initializePage()
+            
+            console.log('[Init] 🎉 Инициализация завершена');
+        }
+        
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
         document.addEventListener('DOMContentLoaded', () => {
             console.log('[Page] Проверка авторизации...');
@@ -474,6 +518,11 @@
             
             console.log('[Page] Инициализация страницы...');
             initializePage();
+            
+            // Дополнительная инициализация для гарантии
+            setTimeout(() => {
+                initializeCreateRequestPage();
+            }, 200);
         });
         
         function initializePage() {
@@ -518,27 +567,9 @@
                 document.getElementById('charCount').textContent = e.target.value.length;
             });
             
-            // Кнопки срочности
-            document.querySelectorAll('.urgency-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.urgency-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    selectedUrgency = btn.dataset.urgency;
-                });
-            });
-            
             // Обработчик кнопки записи аудио с задержкой (для гарантии)
             setTimeout(() => {
-                const audioBtn = document.getElementById('audioRecordBtn');
-                if (audioBtn) {
-                    // Удалить старый обработчик (если был)
-                    audioBtn.removeEventListener('click', handleAudioButtonClick);
-                    // Добавить новый
-                    audioBtn.addEventListener('click', handleAudioButtonClick);
-                    console.log('[Page] ✅ Обработчик кнопки аудио подключён');
-                } else {
-                    console.error('[Page] ❌ Кнопка audioRecordBtn не найдена!');
-                }
+                initializeCreateRequestPage();
             }, 100);
             
             // Обработка формы
@@ -549,7 +580,7 @@
                     category: document.getElementById('requestCategory').value,
                     title: document.getElementById('requestTitle').value,
                     description: document.getElementById('requestDescription').value,
-                    urgency: selectedUrgency,
+                    // urgency удалена — не нужна
                     media: attachedMedia,
                     timestamp: new Date().toISOString(),
                     status: 'new'
@@ -1128,7 +1159,59 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // ====================================
+        // 🚀 ЗАПУСК ИНИЦИАЛИЗАЦИИ (дополнительные проверки)
+        // ====================================
+        
+        // Вариант 1: При загрузке DOM (уже обработан выше)
+        
+        // Вариант 2: Если DOM уже загружен (при навигации через SPA)
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            console.log('[Init] DOM уже загружен, запуск инициализации...');
+            setTimeout(() => {
+                if (typeof initializeCreateRequestPage === 'function') {
+                    initializeCreateRequestPage();
+                }
+            }, 100);
+        }
+        
+        // Вариант 3: При входе на страницу через window.onload (запасной)
+        window.addEventListener('load', function() {
+            console.log('[Init] window.load - проверка инициализации...');
+            const mediaPreview = document.getElementById('mediaPreview');
+            if (mediaPreview && mediaPreview.children.length === 0 && attachedMedia.length > 0) {
+                console.warn('[Init] ⚠️ Медиа не отображены, повторная инициализация...');
+                renderMediaPreview();
+                initializeCreateRequestPage();
+            }
+        });
+        
+        // Вариант 4: При показе страницы (для мобильных браузеров)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                console.log('[Init] Страница стала видимой, проверка...');
+                // Перезагрузить медиа, если они пропали
+                const mediaPreview = document.getElementById('mediaPreview');
+                if (mediaPreview && mediaPreview.children.length === 0 && attachedMedia.length > 0) {
+                    renderMediaPreview();
+                }
+                // Переинициализировать обработчики
+                setTimeout(() => {
+                    initializeCreateRequestPage();
+                }, 100);
+            }
+        });
     </script>
+    
+    <!-- Отладочная кнопка (временно, для тестирования) -->
+    <button 
+        onclick="initializeCreateRequestPage()" 
+        style="position: fixed; bottom: 80px; right: 20px; z-index: 9999; 
+               padding: 10px; background: #FF5722; color: white; border: none; 
+               border-radius: 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+        🔄 Переинициализация
+    </button>
 </body>
 </html>
 

@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- УК "Зелёная Долина" - Главная страница v6.5.9 -->
+    <!-- УК "Зелёная Долина" - Главная страница v6.6.0 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.5.9</title>
+    <title>УК «Зелёная долина» v6.6.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -722,6 +722,18 @@
             font-size: 10px;
             color: #666;
         }
+        /* Плавные вкладки заявок */
+        .request-tab-content {
+            min-height: 400px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            position: relative;
+        }
+        .request-tab-content.active {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
@@ -1297,7 +1309,7 @@
             </nav>
             
             <!-- Вкладка: Фото -->
-            <div id="requestPhotosTab" class="tab-content active">
+            <div id="requestPhotosTab" class="tab-content request-tab-content active">
                 <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фото проблемы</h3>
                 <p style="color: #666; margin-bottom: 15px;">Сфотографируйте проблему для наглядности</p>
                 
@@ -1313,7 +1325,7 @@
             </div>
             
             <!-- Вкладка: Видео -->
-            <div id="requestVideosTab" class="tab-content">
+            <div id="requestVideosTab" class="tab-content request-tab-content">
                 <h3 style="margin-top: 30px; color: #27ae60;">🎥 Прикрепить видео к заявке</h3>
                 
                 <!-- Определение платформы -->
@@ -1365,7 +1377,7 @@
             </div>
             
             <!-- Вкладка: Аудио -->
-            <div id="requestAudioTab" class="tab-content">
+            <div id="requestAudioTab" class="tab-content request-tab-content">
                 <!-- Аудио (фиксированная высота, без прыжков) -->
                 <div class="audio-container" style="min-height: 200px; position: relative;">
                     <button id="audioBtn" class="media-btn">
@@ -2442,8 +2454,9 @@
             tabs.forEach(tab => {
                 const tabElement = document.getElementById(tab.id);
                 if (tabElement) {
-                    tabElement.style.display = 'none';
                     tabElement.classList.remove('active');
+                    tabElement.style.opacity = '0';
+                    tabElement.style.visibility = 'hidden';
                 }
             });
             
@@ -2455,8 +2468,9 @@
             const tabId = 'request' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'Tab';
             const targetTab = document.getElementById(tabId);
             if (targetTab) {
-                targetTab.style.display = 'block';
                 targetTab.classList.add('active');
+                targetTab.style.opacity = '1';
+                targetTab.style.visibility = 'visible';
             }
             
             // Добавить активный класс к нажатой кнопке

@@ -363,10 +363,7 @@
             initializePage();
         });
         
-        function initializePage() {
-            const session = getSession();
-            console.log('[Page] Сессия пользователя:', session);
-        
+        // Глобальные переменные для показаний
         const previousReadings = {
             coldWater: 1234.56,
             hotWater: 987.32,
@@ -380,6 +377,14 @@
             { date: '2025-08-05', coldWater: 1203.90, hotWater: 970.12, gas: 12295, electricity: 45188 },
             { date: '2025-07-05', coldWater: 1188.67, hotWater: 961.45, gas: 12270, electricity: 44943 }
         ];
+        
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
+            
+            // Загрузка истории при инициализации
+            renderHistory();
+        }
         
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
@@ -536,6 +541,7 @@
                     <td>${formatDate(reading.date)}</td>
                     <td>${reading.coldWater.toFixed(2)}</td>
                     <td>${reading.hotWater.toFixed(2)}</td>
+                    <td>${reading.gas ? reading.gas.toFixed(2) : '-'}</td>
                     <td>${reading.electricity}</td>
                 `;
                 tbody.appendChild(row);
@@ -550,9 +556,6 @@
             }
         `;
         document.head.appendChild(style);
-        
-        // Загрузка истории при инициализации
-        window.addEventListener('DOMContentLoaded', renderHistory);
     </script>
 </body>
 </html>

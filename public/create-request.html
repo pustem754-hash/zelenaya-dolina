@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина» v6.4.0</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.4.2</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -472,7 +472,7 @@
                 <button type="button" class="media-btn" onclick="recordVideo()">
                     🎥 Видео
                 </button>
-                <button type="button" class="media-btn" onclick="recordAudio()">
+                <button type="button" class="media-btn" id="audioRecordBtn">
                     🎤 Аудио
                 </button>
             </div>
@@ -536,6 +536,12 @@
                     selectedUrgency = btn.dataset.urgency;
                 });
             });
+            
+            // Обработчик кнопки записи аудио
+            const audioBtn = document.getElementById('audioRecordBtn');
+            if (audioBtn) {
+                audioBtn.addEventListener('click', handleAudioButtonClick);
+            }
             
             // Обработка формы
             document.getElementById('requestForm').addEventListener('submit', async (e) => {
@@ -681,21 +687,36 @@
         }
         
         /**
+         * Обработчик клика на кнопку аудио
+         */
+        function handleAudioButtonClick() {
+            if (isRecording) {
+                // Если идёт запись - остановить
+                stopAudioRecording();
+            } else {
+                // Если не идёт - начать
+                recordAudio();
+            }
+        }
+        
+        /**
          * Запись аудиосообщения
          */
         async function recordAudio() {
             try {
-                // Проверка поддержки браузером
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    showError('Ваш браузер не поддерживает запись аудио');
+                // Защита от повторных вызовов
+                if (isRecording) {
+                    console.warn('[Audio] Запись уже идёт');
                     return;
                 }
                 
-                // Если уже идёт запись - остановить
-                if (audioRecorder && audioRecorder.state === 'recording') {
-                    stopAudioRecording();
+                // Проверка поддержки браузером
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showNotification('Ваш браузер не поддерживает запись аудио', 'error');
                     return;
                 }
+                
+                console.log('[Audio] Запрос доступа к микрофону...');
                 
                 // Запрос доступа к микрофону
                 audioStream = await navigator.mediaDevices.getUserMedia({ 
@@ -706,41 +727,70 @@
                     } 
                 });
                 
+                console.log('[Audio] Доступ к микрофону получен');
+                
                 // Определение поддерживаемого MIME type
                 const mimeType = getSupportedAudioMimeType();
                 
                 if (!mimeType) {
-                    showError('Браузер не поддерживает запись аудио');
+                    showNotification('Браузер не поддерживает запись аудио', 'error');
                     audioStream.getTracks().forEach(track => track.stop());
+                    audioStream = null;
                     return;
                 }
+                
+                console.log('[Audio] MIME type:', mimeType);
                 
                 // Создание MediaRecorder
                 audioRecorder = new MediaRecorder(audioStream, { mimeType });
                 audioChunks = [];
                 audioStartTime = Date.now();
+                isRecording = true; // ВАЖНО: установить флаг
                 
                 // Обработчик данных
                 audioRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
+                        console.log('[Audio] Получен chunk размером:', event.data.size);
                         audioChunks.push(event.data);
                     }
                 };
                 
                 // Обработчик остановки записи
                 audioRecorder.onstop = async () => {
+                    console.log('[Audio] Запись остановлена, chunks:', audioChunks.length);
+                    
+                    // Очистить флаг СРАЗУ
+                    isRecording = false;
+                    
                     // Остановить все треки микрофона
                     if (audioStream) {
-                        audioStream.getTracks().forEach(track => track.stop());
+                        audioStream.getTracks().forEach(track => {
+                            track.stop();
+                            console.log('[Audio] Track остановлен:', track.label);
+                        });
                         audioStream = null;
                     }
                     
+                    // Очистить таймер
+                    if (audioTimer) {
+                        clearTimeout(audioTimer);
+                        audioTimer = null;
+                    }
+                    
                     // Создать blob из записанных данных
+                    if (audioChunks.length === 0) {
+                        showNotification('Не удалось записать аудио', 'error');
+                        updateAudioRecordingUI(false);
+                        return;
+                    }
+                    
                     const audioBlob = new Blob(audioChunks, { type: mimeType });
+                    console.log('[Audio] Blob создан, размер:', audioBlob.size);
                     
                     // Проверка размера
                     if (audioBlob.size === 0) {
-                        showError('Не удалось записать аудио');
+                        showNotification('Не удалось записать аудио', 'error');
+                        updateAudioRecordingUI(false);
                         return;
                     }
                     
@@ -750,41 +800,53 @@
                     // Очистка
                     audioChunks = [];
                     audioRecorder = null;
+                    
+                    // Обновить UI
+                    updateAudioRecordingUI(false);
                 };
                 
                 // Обработчик ошибок
                 audioRecorder.onerror = (event) => {
-                    console.error('Ошибка MediaRecorder:', event.error);
-                    showError('Ошибка записи аудио: ' + event.error.message);
+                    console.error('[Audio] Ошибка MediaRecorder:', event.error);
+                    showNotification('Ошибка записи: ' + event.error.message, 'error');
+                    
+                    // Сброс состояния
+                    isRecording = false;
                     stopAudioRecording();
                 };
                 
                 // Начать запись
-                audioRecorder.start(1000); // Сохранять данные каждую секунду
+                audioRecorder.start(100); // Сохранять данные каждые 100мс (более стабильно)
+                console.log('[Audio] Запись началась');
                 
-                // Обновить UI - показать, что идёт запись
+                // Обновить UI
                 updateAudioRecordingUI(true);
                 
                 // Показать уведомление
-                showSuccessNotification('Запись началась (максимум 30 секунд)');
+                showNotification('🎤 Запись началась (макс. 30 сек)', 'success');
                 
                 // Таймер автоматической остановки через 30 секунд
                 audioTimer = setTimeout(() => {
-                    if (audioRecorder && audioRecorder.state === 'recording') {
+                    console.log('[Audio] Таймаут 30 секунд');
+                    if (isRecording) {
                         stopAudioRecording();
-                        showNotification('Достигнута максимальная длительность записи', 'warning');
+                        showNotification('⏱️ Достигнута максимальная длительность', 'warning');
                     }
                 }, MAX_AUDIO_DURATION);
                 
             } catch (error) {
-                console.error('Ошибка доступа к микрофону:', error);
+                console.error('[Audio] Ошибка:', error);
+                
+                // Сброс состояния
+                isRecording = false;
+                updateAudioRecordingUI(false);
                 
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                    showError('Доступ к микрофону запрещён. Разрешите доступ в настройках браузера');
+                    showNotification('❌ Доступ к микрофону запрещён', 'error');
                 } else if (error.name === 'NotFoundError') {
-                    showError('Микрофон не найден');
+                    showNotification('❌ Микрофон не найден', 'error');
                 } else {
-                    showError('Ошибка записи аудио: ' + error.message);
+                    showNotification('❌ Ошибка записи: ' + error.message, 'error');
                 }
             }
         }
@@ -793,15 +855,25 @@
          * Остановка записи аудио
          */
         function stopAudioRecording() {
-            // Очистить таймер
-            if (audioTimer) {
-                clearTimeout(audioTimer);
-                audioTimer = null;
+            console.log('[Audio] Остановка записи...');
+            
+            // Проверка состояния
+            if (!isRecording) {
+                console.warn('[Audio] Запись не активна');
+                return;
             }
             
-            // Остановить запись
+            // Сбросить флаг
+            isRecording = false;
+            
+            // Остановить запись (это вызовет обработчик onstop)
             if (audioRecorder && audioRecorder.state !== 'inactive') {
-                audioRecorder.stop();
+                try {
+                    audioRecorder.stop();
+                    console.log('[Audio] MediaRecorder остановлен');
+                } catch (error) {
+                    console.error('[Audio] Ошибка остановки:', error);
+                }
             }
             
             // Обновить UI

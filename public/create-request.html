@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина» v6.4.7</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.4.9</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -565,16 +565,20 @@
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
         let attachedMedia = [];
         
-        // Переменные для записи аудио
-        let audioRecorder = null;
-        let audioChunks = [];
-        let audioTimer = null;
-        let audioStartTime = null;
-        let audioStream = null;
-        let isRecording = false; // Защита от дублирования
-        const MAX_AUDIO_DURATION = 60000; // 60 секунд
+        // ====================================
+        // 🎤 АУДИОЗАПИСЬ v6.4.9 (ПОЛНОЕ ИСПРАВЛЕНИЕ)
+        // ====================================
         
-        // Экспорт для навигации (чтобы navigation.js мог проверить состояние)
+        // Глобальные переменные для аудио
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let mediaStream = null;
+        let isRecording = false;
+        let audioTimer = null;
+        let audioStartTime = 0;
+        let audioDuration = 0;
+        
+        // Экспорт для навигации
         window.isRecording = false;
         // ===== КОНЕЦ ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ =====
         
@@ -583,57 +587,62 @@
         // ====================================
         
         function initializeCreateRequestPage() {
-            console.log('[Init] Инициализация страницы создания заявки...');
+            console.log('[Init] 🚀 === ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ ===');
             
-            // 1. Привязать обработчики событий к кнопкам
+            // Очистить старые ресурсы
+            cleanupAudioResources();
+            
+            // Загрузить существующие медиа
+            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            attachedMedia = savedMedia.filter(media => {
+                if (!media.timestamp) return false;
+                const age = Date.now() - media.timestamp;
+                return age < 24 * 60 * 60 * 1000; // 24 часа
+            });
+            if (attachedMedia.length !== savedMedia.length) {
+                localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+            }
+            renderMediaPreview();
+            
+            // Привязать обработчики
             const audioBtn = document.getElementById('audioRecordBtn');
             const photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
             const videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
             
-            if (!audioBtn) {
-                console.error('[Init] ❌ Кнопка audioRecordBtn не найдена в DOM!');
-                return;
-            }
-            
-            // Удалить все старые обработчики через клонирование элемента
-            const newAudioBtn = audioBtn.cloneNode(true);
-            audioBtn.parentNode.replaceChild(newAudioBtn, audioBtn);
-            
-            // Добавить обработчик на новую кнопку
-            if (typeof handleAudioButtonClick === 'function') {
-                newAudioBtn.addEventListener('click', handleAudioButtonClick);
-                console.log('[Init] ✅ handleAudioButtonClick() привязана к #audioRecordBtn');
-            } else {
-                console.error('[Init] ❌ handleAudioButtonClick не определена! Используется fallback');
-                // Fallback: прямая привязка
+            if (audioBtn) {
+                // КРИТИЧНО: Удалить старые обработчики через клонирование
+                const newAudioBtn = audioBtn.cloneNode(true);
+                audioBtn.parentNode.replaceChild(newAudioBtn, audioBtn);
+                
+                // Добавить новый обработчик
                 newAudioBtn.addEventListener('click', function() {
-                    console.log('[Init] Fallback: прямой вызов recordAudio()');
-                    if (isRecording || window.isRecording) {
+                    if (isRecording) {
                         stopAudioRecording();
                     } else {
                         recordAudio();
                     }
                 });
+                console.log('[Init] ✅ recordAudio() привязана к #audioRecordBtn');
+            } else {
+                console.error('[Init] ❌ #audioRecordBtn не найдена!');
             }
             
             if (photoBtn && typeof takePhoto === 'function') {
                 photoBtn.onclick = takePhoto;
-                console.log('[Init] ✅ takePhoto() привязана к кнопке фото');
+                console.log('[Init] ✅ takePhoto() привязана');
             }
             
             if (videoBtn && typeof recordVideo === 'function') {
                 videoBtn.onclick = recordVideo;
-                console.log('[Init] ✅ recordVideo() привязана к кнопке видео');
+                console.log('[Init] ✅ recordVideo() привязана');
             }
             
-            // 2. Проверить поддержку MediaRecorder
+            // Проверить поддержку MediaRecorder
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 console.warn('[Init] ⚠️ getUserMedia не поддерживается');
                 if (audioBtn) audioBtn.disabled = true;
                 if (videoBtn) videoBtn.disabled = true;
             }
-            
-            // 3. Форма уже обрабатывается в initializePage()
             
             console.log('[Init] 🎉 Инициализация завершена');
         }
@@ -850,65 +859,84 @@
             input.click();
         }
         
-        /**
-         * Обработчик клика на кнопку аудио
-         */
-        function handleAudioButtonClick() {
-            console.log('[AudioBtn] Клик по кнопке аудио. Текущее состояние isRecording:', isRecording);
+        // Очистка ресурсов
+        function cleanupAudioResources() {
+            console.log('[Audio] 🧹 Очистка ресурсов...');
             
-            if (isRecording) {
-                console.log('[AudioBtn] Остановка записи...');
-                stopAudioRecording();
-            } else {
-                console.log('[AudioBtn] Начало записи...');
-                recordAudio();
+            // Остановить таймер
+            if (audioTimer) {
+                clearInterval(audioTimer);
+                audioTimer = null;
             }
+            
+            // Остановить MediaRecorder
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                try {
+                    mediaRecorder.stop();
+                } catch (e) {
+                    console.warn('[Audio] MediaRecorder уже остановлен');
+                }
+            }
+            mediaRecorder = null;
+            
+            // Остановить MediaStream
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => {
+                    track.stop();
+                    console.log('[Audio] Track остановлен:', track.kind);
+                });
+                mediaStream = null;
+            }
+            
+            // Сбросить флаги
+            isRecording = false;
+            window.isRecording = false;
+            audioChunks = [];
+            
+            console.log('[Audio] ✅ Ресурсы очищены');
         }
         
-        /**
-         * Запись аудиосообщения
-         */
         async function recordAudio() {
-            console.log('[Audio] 🎤 Начало функции recordAudio');
+            console.log('[Audio] 🎤 === НАЧАЛО ФУНКЦИИ recordAudio ===');
             
             const audioBtn = document.getElementById('audioRecordBtn');
             
-            // Если уже идёт запись - остановить
-            if (isRecording || window.isRecording) {
+            if (!audioBtn) {
+                console.error('[Audio] ❌ Кнопка #audioRecordBtn не найдена!');
+                return;
+            }
+            
+            // Если идёт запись - остановить
+            if (isRecording) {
                 console.log('[Audio] ⏹️ Остановка записи...');
                 stopAudioRecording();
                 return;
             }
             
             try {
+                // КРИТИЧНО: Полная очистка перед началом
+                cleanupAudioResources();
+                
                 console.log('[Audio] 📡 Запрос доступа к микрофону...');
                 
-                // Очистить предыдущие ошибки
-                if (audioStream) {
-                    audioStream.getTracks().forEach(track => track.stop());
-                    audioStream = null;
-                }
-                
-                // КРИТИЧНО: Обернуть в try-catch для избежания unhandled rejection
-                let stream;
+                // Запросить доступ к микрофону
                 try {
-                    stream = await navigator.mediaDevices.getUserMedia({ 
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ 
                         audio: {
                             echoCancellation: true,
                             noiseSuppression: true,
-                            autoGainControl: true
+                            sampleRate: 44100
                         } 
                     });
+                    console.log('[Audio] ✅ Доступ к микрофону получен');
                 } catch (micError) {
-                    console.error('[Audio] ❌ Доступ к микрофону запрещён:', micError);
-                    showNotification('❌ Доступ к микрофону запрещён. Разрешите доступ в настройках браузера.', 'error');
+                    console.error('[Audio] ❌ Отказано в доступе к микрофону:', micError);
+                    showNotification('❌ Разрешите доступ к микрофону в настройках браузера', 'error');
+                    cleanupAudioResources();
                     return;
                 }
                 
-                console.log('[Audio] ✅ Доступ к микрофону получен');
-                audioStream = stream;
-                
-                // Определение поддерживаемого MIME type
+                // Определить поддерживаемый MIME type
                 const mimeTypes = [
                     'audio/webm;codecs=opus',
                     'audio/webm',
@@ -927,180 +955,145 @@
                 }
                 
                 if (!selectedMimeType) {
-                    selectedMimeType = 'audio/webm'; // fallback
-                    console.warn('[Audio] ⚠️ Использование fallback MIME type: audio/webm');
+                    selectedMimeType = 'audio/webm';
+                    console.warn('[Audio] ⚠️ Fallback на audio/webm');
                 }
                 
-                const mimeType = selectedMimeType;
-                console.log('[Audio] MIME type:', mimeType);
+                // Создать MediaRecorder
+                mediaRecorder = new MediaRecorder(mediaStream, { 
+                    mimeType: selectedMimeType,
+                    audioBitsPerSecond: 128000
+                });
                 
-                // Создание MediaRecorder
-                audioRecorder = new MediaRecorder(audioStream, { mimeType });
                 audioChunks = [];
-                audioStartTime = Date.now();
-                isRecording = true; // ВАЖНО: установить флаг
-                window.isRecording = true; // Экспорт для навигации
                 
                 // Обработчик данных
-                audioRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data && event.data.size > 0) {
                         audioChunks.push(event.data);
-                        // Убрали console.log — он мог вызывать перерисовку DOM
+                        console.log(`[Audio] 📦 Chunk: ${event.data.size} байт (всего: ${audioChunks.length})`);
                     }
                 };
                 
-                // Обработчик остановки записи
-                audioRecorder.onstop = async () => {
-                    console.log('[Audio] Запись остановлена, chunks:', audioChunks.length);
-                    
-                    // Очистить флаг СРАЗУ
-                    isRecording = false;
-                    window.isRecording = false; // Экспорт для навигации
-                    
-                    // Остановить все треки микрофона
-                    if (audioStream) {
-                        audioStream.getTracks().forEach(track => {
-                            track.stop();
-                            console.log('[Audio] Track остановлен:', track.label);
-                        });
-                        audioStream = null;
-                    }
+                // Обработчик остановки
+                mediaRecorder.onstop = function() {
+                    console.log('[Audio] ⏹️ MediaRecorder остановлен');
+                    console.log(`[Audio] 📦 Всего chunks: ${audioChunks.length}`);
                     
                     // Очистить таймер
                     if (audioTimer) {
-                        clearTimeout(audioTimer);
+                        clearInterval(audioTimer);
                         audioTimer = null;
                     }
                     
-                    // Создать blob из записанных данных
                     if (audioChunks.length === 0) {
-                        showNotification('Не удалось записать аудио', 'error');
-                        updateAudioRecordingUI(false);
+                        console.error('[Audio] ❌ Нет данных для сохранения');
+                        showNotification('❌ Не удалось записать аудио', 'error');
+                        cleanupAudioResources();
+                        
+                        // Сбросить UI
+                        audioBtn.textContent = '🎤 Аудио';
+                        audioBtn.classList.remove('recording');
                         return;
                     }
                     
-                    const audioBlob = new Blob(audioChunks, { type: mimeType });
-                    console.log('[Audio] Blob создан, размер:', audioBlob.size);
-                    
-                    // Проверка размера
-                    if (audioBlob.size === 0) {
-                        showNotification('Не удалось записать аудио', 'error');
-                        updateAudioRecordingUI(false);
-                        return;
-                    }
+                    // Создать Blob
+                    const audioBlob = new Blob(audioChunks, { type: selectedMimeType });
+                    console.log(`[Audio] 📦 Blob создан: ${audioBlob.size} байт, тип: ${audioBlob.type}`);
                     
                     // Сохранить аудио
-                    await saveAudioRecording(audioBlob, mimeType);
-                    
-                    // Очистка
-                    audioChunks = [];
-                    audioRecorder = null;
-                    
-                    // Обновить UI
-                    updateAudioRecordingUI(false);
+                    saveAudioRecording(audioBlob, selectedMimeType, audioDuration).then(() => {
+                        // Очистить ресурсы
+                        cleanupAudioResources();
+                        
+                        // Сбросить UI
+                        audioBtn.textContent = '🎤 Аудио';
+                        audioBtn.classList.remove('recording');
+                    }).catch((error) => {
+                        console.error('[Audio] ❌ Ошибка сохранения:', error);
+                        showNotification('❌ Ошибка сохранения аудио', 'error');
+                        cleanupAudioResources();
+                        audioBtn.textContent = '🎤 Аудио';
+                        audioBtn.classList.remove('recording');
+                    });
                 };
                 
                 // Обработчик ошибок
-                audioRecorder.onerror = (event) => {
-                    console.error('[Audio] Ошибка MediaRecorder:', event.error);
-                    showNotification('Ошибка записи: ' + event.error.message, 'error');
-                    
-                    // Сброс состояния
-                    isRecording = false;
-                    window.isRecording = false; // Экспорт для навигации
-                    stopAudioRecording();
-                };
-                
-                // Начать запись (1000мс для стабильности интерфейса)
-                audioRecorder.start(1000);
-                console.log('[Audio] Запись началась');
-                
-                // Обновить UI
-                updateAudioRecordingUI(true);
-                
-                // Показать уведомление
-                showNotification('🎤 Запись началась (макс. 60 сек)', 'success');
-                
-                // Таймер автоматической остановки через 60 секунд
-                // ВАЖНО: Очистить предыдущий таймер, если он был
-                if (audioTimer) {
-                    clearTimeout(audioTimer);
-                    audioTimer = null;
-                }
-                
-                audioTimer = setTimeout(() => {
-                    console.log('[Audio] Таймаут 60 секунд достигнут');
-                    
-                    // КРИТИЧЕСКИ ВАЖНО: Очистить таймер СРАЗУ, чтобы избежать повторных срабатываний
-                    clearTimeout(audioTimer);
-                    audioTimer = null;
-                    
-                    // Проверить, что запись всё ещё активна
-                    if (isRecording && audioRecorder && audioRecorder.state !== 'inactive') {
-                        console.log('[Audio] Автоматическая остановка по таймауту');
-                        stopAudioRecording();
-                        showNotification('⏱️ Достигнута максимальная длительность (60 секунд)', 'warning');
-                    } else {
-                        console.log('[Audio] Запись уже остановлена, таймер проигнорирован');
-                    }
-                }, MAX_AUDIO_DURATION);
-                
-            } catch (error) {
-                console.error('[Audio] ❌ Критическая ошибка:', error);
-                showNotification('❌ Ошибка записи аудио: ' + error.message, 'error');
-                
-                // Очистка при ошибке
-                if (audioStream) {
-                    audioStream.getTracks().forEach(track => track.stop());
-                    audioStream = null;
-                }
-                isRecording = false;
-                window.isRecording = false;
-                
-                const audioBtn = document.getElementById('audioRecordBtn');
-                if (audioBtn) {
+                mediaRecorder.onerror = function(error) {
+                    console.error('[Audio] ❌ MediaRecorder error:', error);
+                    showNotification('❌ Ошибка записи аудио', 'error');
+                    cleanupAudioResources();
                     audioBtn.textContent = '🎤 Аудио';
                     audioBtn.classList.remove('recording');
-                }
+                };
+                
+                // Начать запись
+                mediaRecorder.start(100); // timeslice 100ms
+                isRecording = true;
+                window.isRecording = true;
+                audioStartTime = Date.now();
+                audioDuration = 0;
+                
+                console.log('[Audio] ▶️ Запись началась');
+                audioBtn.classList.add('recording');
+                audioBtn.textContent = '⏹️ Остановить (0с)';
+                
+                // Таймер
+                audioTimer = setInterval(() => {
+                    audioDuration = Math.floor((Date.now() - audioStartTime) / 1000);
+                    audioBtn.textContent = `⏹️ Остановить (${audioDuration}с)`;
+                    
+                    // Автостоп на 60 секундах
+                    if (audioDuration >= 60) {
+                        console.log('[Audio] ⏰ Достигнута максимальная длительность (60с)');
+                        stopAudioRecording();
+                        showNotification('⏰ Достигнута максимальная длительность (60 сек)', 'info');
+                    }
+                }, 1000);
+                
+                console.log('[Audio] ✅ Таймер запущен');
+                
+            } catch (error) {
+                console.error('[Audio] ❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
+                console.error('[Audio] Stack:', error.stack);
+                showNotification('❌ Ошибка: ' + error.message, 'error');
+                cleanupAudioResources();
+                audioBtn.textContent = '🎤 Аудио';
+                audioBtn.classList.remove('recording');
             }
         }
         
-        /**
-         * Остановка записи аудио
-         */
         function stopAudioRecording() {
-            console.log('[Audio] 🛑 stopAudioRecording вызвана');
+            console.log('[Audio] 🛑 === ОСТАНОВКА ЗАПИСИ ===');
             
-            // КРИТИЧНО: Очистить таймер в НАЧАЛЕ функции
+            const audioBtn = document.getElementById('audioRecordBtn');
+            
+            // Очистить таймер СРАЗУ
             if (audioTimer) {
-                clearTimeout(audioTimer);
+                clearInterval(audioTimer);
                 audioTimer = null;
                 console.log('[Audio] ✅ Таймер очищен');
             }
             
-            if (audioRecorder && audioRecorder.state !== 'inactive') {
+            // Остановить MediaRecorder
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 try {
-                    audioRecorder.stop();
-                    console.log('[Audio] ✅ MediaRecorder остановлен');
+                    console.log(`[Audio] MediaRecorder state: ${mediaRecorder.state}`);
+                    mediaRecorder.stop();
+                    console.log('[Audio] ✅ MediaRecorder.stop() вызван');
                 } catch (error) {
                     console.error('[Audio] ❌ Ошибка остановки MediaRecorder:', error);
                 }
             }
             
-            if (audioStream) {
-                audioStream.getTracks().forEach(track => track.stop());
-                audioStream = null;
-                console.log('[Audio] ✅ MediaStream очищен');
-            }
-            
+            // Сбросить флаг
             isRecording = false;
             window.isRecording = false;
             
-            const audioBtn = document.getElementById('audioRecordBtn');
-            if (audioBtn) {
-                audioBtn.textContent = '🎤 Аудио';
-                audioBtn.classList.remove('recording');
-            }
+            // НЕ очищаем mediaStream и mediaRecorder здесь!
+            // Они будут очищены в mediaRecorder.onstop
+            
+            console.log('[Audio] 🛑 Остановка завершена');
         }
         
         /**

@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- УК "Зелёная Долина" - Главная страница v6.6.1 -->
+    <!-- УК "Зелёная Долина" - Главная страница v6.7.0 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.6.1</title>
+    <title>УК «Зелёная долина» v6.7.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -1230,246 +1230,19 @@
 
     <!-- Заявки -->
     <div id="requests" class="section">
-        <div class="section-header" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <h2 style="margin:0;">📋 Заявки</h2>
-        </div>
-        <div class="media-section">
-            <h3>📎 Прикрепить медиа</h3>
-            
-            <!-- Аудио -->
-            <div class="audio-container" style="min-height: 200px; position: relative;">
-                <button id="audioBtn" class="media-btn" style="transition: opacity 0.3s;" onclick="toggleAudio()">
-                    <span class="icon">🎤</span> Аудио
-                </button>
-                
-                <!-- Состояние записи -->
-                <div id="audioControls" style="display: none; position: absolute; top: 0; left: 0; right: 0; opacity: 0; transition: opacity 0.3s; pointer-events: none;">
-                    <div class="recording-indicator" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                        <span class="icon" style="color: #dc3545;">🔴</span>
-                        <span id="recordingTimer" style="font-weight: bold; margin-left: 10px;">00:00</span>
-                    </div>
-                    <button id="stopRecordingBtn" class="media-btn" style="background: #dc3545;">
-                        <span class="icon">⏹</span> Стоп
-                    </button>
-                </div>
-                
-                <!-- Превью записи -->
-                <div id="audioPreview" style="display: none; position: absolute; top: 0; left: 0; right: 0; opacity: 0; transition: opacity 0.3s; pointer-events: none;">
-                    <audio id="audioPlayer" controls style="width: 100%; margin-bottom: 10px; border-radius: 8px;"></audio>
-                    <button id="deleteAudioBtn" class="media-btn" style="background: #dc3545;">
-                        <span class="icon">❌</span> Удалить
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Кнопка отправки -->
-            <button class="submit-btn" onclick="submitRequest()" style="margin-top: 20px;">
-                <span class="icon">📤</span> Отправить заявку
-            </button>
-        </div>
-        <!-- Табы: Новая заявка / Мои заявки -->
-        <div class="card" style="margin-bottom: 15px;">
-            <nav class="tabs" style="margin-bottom: 0;">
-                <button class="tab-btn active" onclick="window.location.href='create-request.html'">📝 Новая заявка</button>
-                <button class="tab-btn" onclick="showRequestSection('list', event)">📋 Мои заявки</button>
-            </nav>
-        </div>
-        
-        <!-- Секция: Новая заявка -->
-        <div id="newRequestSection" class="request-section">
-        <div class="card">
-            <h2>📝 Новая заявка</h2>
-            
-            <!-- Выбор категории -->
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;">Категория</label>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="category-btn" id="categoryRepair" onclick="selectCategory('repair', this)" style="flex: 1; min-width: 100px; padding: 12px; border: 2px solid #2E7D32; background: #f0f8f0; color: #2E7D32; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                        ремонт
-                    </button>
-                    <button class="category-btn" id="categoryCleaning" onclick="selectCategory('cleaning', this)" style="flex: 1; min-width: 100px; padding: 12px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                        уборка
-                    </button>
-                    <button class="category-btn" id="categoryOther" onclick="selectCategory('other', this)" style="flex: 1; min-width: 100px; padding: 12px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                        другое
-                    </button>
-                </div>
-            </div>
-            
-            <div class="input-group">
-                <label>Описание проблемы</label>
-                <textarea id="problemDescription" placeholder="Подробное описание проблемы..." rows="4"></textarea>
-            </div>
-            
-            <!-- Табы для медиа -->
-            <nav class="tabs" style="margin-top: 20px;">
-                <button class="tab-btn active" onclick="showRequestTab('photos', event)">📸 Фото</button>
-                <button class="tab-btn" onclick="showRequestTab('videos', event)">🎥 Видео</button>
-                <button class="tab-btn" onclick="showRequestTab('audio', event)">🎤 Аудио</button>
-            </nav>
-            
-            <!-- Вкладка: Фото -->
-            <div id="requestPhotosTab" class="tab-content request-tab-content active">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фото проблемы</h3>
-                <p style="color: #666; margin-bottom: 15px;">Сфотографируйте проблему для наглядности</p>
-                
-                <!-- Скрытый input для камеры -->
-                <input type="file" id="photoCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="handlePhoto(event)">
-                <input type="file" id="photoGalleryInput" accept="image/*" style="display: none;" onchange="handlePhoto(event)">
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <button class="btn btn-camera" onclick="document.getElementById('photoCameraInput').click()" style="flex: 1;">📷 Камера</button>
-                    <button class="btn btn-camera" onclick="document.getElementById('photoGalleryInput').click()" style="flex: 1;">🖼️ Галерея</button>
-                </div>
-                <div id="photosContainer" class="photos-gallery" style="margin-top: 15px;"></div>
-            </div>
-            
-            <!-- Вкладка: Видео -->
-            <div id="requestVideosTab" class="tab-content request-tab-content">
-                <h3 style="margin-top: 30px; color: #27ae60;">🎥 Прикрепить видео к заявке</h3>
-                
-                <!-- Определение платформы -->
-                <div id="videoButtonsIOS" style="display: none; display: flex; gap: 10px; margin-bottom: 15px;">
-                    <button class="btn btn-video" onclick="document.getElementById('videoCameraInput').click()" style="flex: 1;">
-                        🎥 Камера
-                    </button>
-                    <button class="btn btn-video" onclick="document.getElementById('videoGalleryInput').click()" style="flex: 1; background: #95a5a6;">
-                        📁 Галерея
-                    </button>
-                </div>
-                
-                <div id="videoButtonsDesktop" style="display: none;">
-                    <button id="recordVideoBtn" class="btn btn-video" onclick="toggleVideoRecording()" style="width: 100%; margin-bottom: 15px;">
-                        🎥 Записать видео
-                    </button>
-                </div>
-                
-                <!-- Скрытые inputs -->
-                <input type="file" id="videoCameraInput" accept="video/*" capture="environment" style="display:none" onchange="handleVideoFile(event)">
-                <input type="file" id="videoGalleryInput" accept="video/*" style="display:none" onchange="handleVideoFile(event)">
-                
-                <!-- Контейнер фиксированной высоты (НЕ ПРЫГАЕТ!) -->
-                <div style="min-height: 100px; position: relative; margin: 15px 0;">
-                    <div id="videoRecordingStatus" style="
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        opacity: 0;
-                        pointer-events: none;
-                        transition: opacity 0.3s;
-                        text-align: center;
-                        padding: 15px;
-                        background: #ffe5e5;
-                        border-radius: 12px;
-                    ">
-                        <div style="font-size: 32px; margin-bottom: 10px; animation: pulse 1.5s infinite;">🔴</div>
-                        <div style="font-weight: bold; color: #e74c3c; font-size: 18px;" id="videoTimer">00:00</div>
-                        <div style="color: #666; font-size: 14px;">Запись видео...</div>
-                    </div>
-                </div>
-                
-                <div id="videosContainer" style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                    gap: 15px;
-                "></div>
-            </div>
-            
-            <!-- Вкладка: Аудио -->
-            <div id="requestAudioTab" class="tab-content request-tab-content">
-                <!-- Аудио (фиксированная высота, без прыжков) -->
-                <div class="audio-container" style="min-height: 200px; position: relative;">
-                    <button id="audioBtn" class="media-btn" onclick="toggleAudio()">
-                        <span class="icon">🎤</span> Аудио
-                    </button>
-
-                    <div id="audioControls" style="display: none; position: absolute; top: 50px; left: 0; right: 0;">
-                        <div class="recording-indicator">
-                            <span class="icon">🔴</span>
-                            <span id="recordingTimer">00:00</span>
-                        </div>
-                        <button id="stopRecordingBtn" class="media-btn" style="background: #dc3545;">
-                            <span class="icon">⏹</span> Стоп
-                        </button>
-                    </div>
-
-                    <div id="audioPreview" style="display: none; position: absolute; top: 50px; left: 0; right: 0;">
-                        <audio id="audioPlayer" controls style="width: 100%; margin-bottom: 10px;"></audio>
-                        <button id="deleteAudioBtn" class="media-btn" style="background: #dc3545;">
-                            <span class="icon">❌</span> Удалить
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Модальное окно аудио плеера -->
-            <div id="audioModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
-                <div style="background: white; border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="font-size: 48px; margin-bottom: 10px;">🎵</div>
-                        <h3 style="font-size: 20px; font-weight: 600; color: #333; margin: 0;">Голосовое сообщение</h3>
-                    </div>
-                    
-                    <!-- Прогресс бар -->
-                    <div style="margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666;">
-                            <span id="audioCurrentTime">0:00</span>
-                            <span id="audioTotalTime">0:00</span>
-                        </div>
-                        <div style="background: #e0e0e0; height: 6px; border-radius: 3px; position: relative; overflow: hidden;">
-                            <div id="audioProgressBar" style="background: #2E7D32; height: 100%; width: 0%; transition: width 0.1s;"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Кнопки управления -->
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px;">
-                        <button id="audioRewindBtn" style="width: 50px; height: 50px; border-radius: 50%; border: none; background: #f0f0f0; font-size: 20px; cursor: pointer;">⏪</button>
-                        <button id="audioPlayPauseBtn" style="width: 70px; height: 70px; border-radius: 50%; border: none; background: #2E7D32; color: white; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;">▶</button>
-                        <button id="audioForwardBtn" style="width: 50px; height: 50px; border-radius: 50%; border: none; background: #f0f0f0; font-size: 20px; cursor: pointer;">⏩</button>
-                    </div>
-                    
-                    <button id="audioCloseBtn" onclick="closeAudioModal()" style="width: 100%; padding: 15px; background: #2E7D32; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer;">Закрыть</button>
-                </div>
-            </div>
-            
-            <!-- Полноэкранный просмотр фото -->
-            <div id="photoViewer" class="photo-viewer">
-                <img id="fullPhoto" alt="Фото">
-                <button class="btn-close-photo" onclick="closePhotoViewer()">✕</button>
-            </div>
-            
-            <!-- Полноэкранный просмотр видео -->
-            <div id="videoViewer" class="video-viewer">
-                <video id="fullVideo" controls></video>
-                <button class="btn-close-photo" onclick="closeVideoViewer()">✕</button>
-            </div>
-            
-            <button class="btn" onclick="submitRequest()" style="margin-top: 20px;">Отправить заявку</button>
-        </div>
-        </div>
-        
-        <!-- Секция: Список заявок -->
-        <div id="listRequestSection" class="request-section" style="display: none;">
-        <div class="card">
+        <div class="section-header">
             <h2>📋 Мои заявки</h2>
-            
-            <!-- Фильтр по статусу -->
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Фильтр по статусу:</label>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="status-filter-btn" onclick="filterRequests('all', this)" style="padding: 10px 15px; border: 2px solid #2E7D32; background: #f0f8f0; color: #2E7D32; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Все</button>
-                    <button class="status-filter-btn" onclick="filterRequests('created', this)" style="padding: 10px 15px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Создана</button>
-                    <button class="status-filter-btn" onclick="filterRequests('in_progress', this)" style="padding: 10px 15px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Выполняется</button>
-                    <button class="status-filter-btn" onclick="filterRequests('completed', this)" style="padding: 10px 15px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Завершена</button>
-                </div>
-            </div>
-            
-            <!-- Список заявок -->
-            <div id="requestsList" style="display: flex; flex-direction: column; gap: 15px;">
-                <!-- Заполнится через JavaScript -->
-            </div>
         </div>
+
+        <div style="text-align: center; padding: 40px 20px;">
+            <button class="submit-btn" onclick="window.location.href='create-request.html'" style="margin-bottom: 30px;">
+                <span class="icon">➕</span> Создать новую заявку
+            </button>
+            
+            <div class="placeholder">
+                <span class="icon" style="font-size: 60px;">📋</span>
+                <p style="margin-top: 20px; color: #6c757d;">У вас пока нет активных заявок</p>
+            </div>
         </div>
     </div>
 

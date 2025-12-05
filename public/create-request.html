@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина»</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.2.2</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -184,6 +184,186 @@
             cursor: pointer;
         }
         
+        /* Анимация пульсации при записи */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+            }
+        }
+        
+        /* Кнопка записи */
+        .media-btn.recording {
+            background: #f44336 !important;
+            color: white !important;
+            animation: pulse 1s infinite;
+        }
+        
+        /* Превью аудио */
+        .audio-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            position: relative;
+            width: 100%;
+        }
+        
+        .audio-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        
+        .audio-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .audio-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2E2E2E;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .audio-details {
+            font-size: 12px;
+            color: #999999;
+        }
+        
+        .audio-preview audio {
+            width: 100%;
+            height: 32px;
+            margin-top: 8px;
+        }
+        
+        .delete-media-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .delete-media-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+        
+        /* Контейнер превью */
+        #mediaPreview {
+            margin-top: 16px;
+        }
+        
+        #mediaPreview:not(:empty) {
+            display: block;
+        }
+        
+        .media-preview-item {
+            margin-bottom: 12px;
+        }
+        
+        .media-preview-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Toast уведомления */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            max-width: 400px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .toast-icon {
+            font-size: 20px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .toast-message {
+            font-size: 14px;
+            color: #2E2E2E;
+            line-height: 1.4;
+        }
+        
+        .toast-success {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .toast-success .toast-icon {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .toast-error {
+            border-left: 4px solid #F44336;
+        }
+        
+        .toast-error .toast-icon {
+            background: #F44336;
+            color: white;
+        }
+        
+        .toast-warning {
+            border-left: 4px solid #FF9800;
+        }
+        
+        .toast-warning .toast-icon {
+            background: #FF9800;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .toast {
+                top: 16px;
+                right: 16px;
+                left: 16px;
+                max-width: none;
+            }
+        }
+        
         .btn-submit-large {
             width: 100%;
             padding: 18px;
@@ -311,6 +491,21 @@
         let attachedMedia = [];
         let selectedUrgency = 'medium';
         
+        // Загрузить сохранённые медиафайлы при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            attachedMedia = savedMedia;
+            renderMediaPreview();
+        });
+        
+        // Переменные для записи аудио
+        let audioRecorder = null;
+        let audioChunks = [];
+        let audioTimer = null;
+        let audioStartTime = null;
+        let audioStream = null;
+        const MAX_AUDIO_DURATION = 30000; // 30 секунд
+        
         // Счётчик символов
         document.getElementById('requestDescription').addEventListener('input', (e) => {
             document.getElementById('charCount').textContent = e.target.value.length;
@@ -416,36 +611,7 @@
         }
         
         function showSuccessNotification(message) {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 24px;
-                right: 24px;
-                background: white;
-                padding: 16px 24px;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                z-index: 10000;
-                opacity: 0;
-                transform: translateX(400px);
-                transition: all 0.3s ease;
-            `;
-            toast.innerHTML = `
-                <span style="font-size: 20px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #4CAF50; color: white; flex-shrink: 0;">✓</span>
-                <span style="font-size: 14px; color: #2E2E2E;">${message}</span>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => toast.style.cssText += 'opacity: 1; transform: translateX(0);', 10);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(400px)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            showNotification(message, 'success');
         }
         
         function takePhoto() {
@@ -496,27 +662,328 @@
             input.click();
         }
         
-        function recordAudio() {
-            alert('Функция записи аудио будет доступна в следующей версии');
+        /**
+         * Запись аудиосообщения
+         */
+        async function recordAudio() {
+            try {
+                // Проверка поддержки браузером
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showError('Ваш браузер не поддерживает запись аудио');
+                    return;
+                }
+                
+                // Если уже идёт запись - остановить
+                if (audioRecorder && audioRecorder.state === 'recording') {
+                    stopAudioRecording();
+                    return;
+                }
+                
+                // Запрос доступа к микрофону
+                audioStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    } 
+                });
+                
+                // Определение поддерживаемого MIME type
+                const mimeType = getSupportedAudioMimeType();
+                
+                if (!mimeType) {
+                    showError('Браузер не поддерживает запись аудио');
+                    audioStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+                
+                // Создание MediaRecorder
+                audioRecorder = new MediaRecorder(audioStream, { mimeType });
+                audioChunks = [];
+                audioStartTime = Date.now();
+                
+                // Обработчик данных
+                audioRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                // Обработчик остановки записи
+                audioRecorder.onstop = async () => {
+                    // Остановить все треки микрофона
+                    if (audioStream) {
+                        audioStream.getTracks().forEach(track => track.stop());
+                        audioStream = null;
+                    }
+                    
+                    // Создать blob из записанных данных
+                    const audioBlob = new Blob(audioChunks, { type: mimeType });
+                    
+                    // Проверка размера
+                    if (audioBlob.size === 0) {
+                        showError('Не удалось записать аудио');
+                        return;
+                    }
+                    
+                    // Сохранить аудио
+                    await saveAudioRecording(audioBlob, mimeType);
+                    
+                    // Очистка
+                    audioChunks = [];
+                    audioRecorder = null;
+                };
+                
+                // Обработчик ошибок
+                audioRecorder.onerror = (event) => {
+                    console.error('Ошибка MediaRecorder:', event.error);
+                    showError('Ошибка записи аудио: ' + event.error.message);
+                    stopAudioRecording();
+                };
+                
+                // Начать запись
+                audioRecorder.start(1000); // Сохранять данные каждую секунду
+                
+                // Обновить UI - показать, что идёт запись
+                updateAudioRecordingUI(true);
+                
+                // Показать уведомление
+                showSuccessNotification('Запись началась (максимум 30 секунд)');
+                
+                // Таймер автоматической остановки через 30 секунд
+                audioTimer = setTimeout(() => {
+                    if (audioRecorder && audioRecorder.state === 'recording') {
+                        stopAudioRecording();
+                        showNotification('Достигнута максимальная длительность записи', 'warning');
+                    }
+                }, MAX_AUDIO_DURATION);
+                
+            } catch (error) {
+                console.error('Ошибка доступа к микрофону:', error);
+                
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    showError('Доступ к микрофону запрещён. Разрешите доступ в настройках браузера');
+                } else if (error.name === 'NotFoundError') {
+                    showError('Микрофон не найден');
+                } else {
+                    showError('Ошибка записи аудио: ' + error.message);
+                }
+            }
+        }
+        
+        /**
+         * Остановка записи аудио
+         */
+        function stopAudioRecording() {
+            // Очистить таймер
+            if (audioTimer) {
+                clearTimeout(audioTimer);
+                audioTimer = null;
+            }
+            
+            // Остановить запись
+            if (audioRecorder && audioRecorder.state !== 'inactive') {
+                audioRecorder.stop();
+            }
+            
+            // Обновить UI
+            updateAudioRecordingUI(false);
+        }
+        
+        /**
+         * Определение поддерживаемого MIME type для аудио
+         */
+        function getSupportedAudioMimeType() {
+            const types = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus',
+                'audio/mp4',
+                'audio/mpeg'
+            ];
+            
+            for (const type of types) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    console.log('Используется MIME type:', type);
+                    return type;
+                }
+            }
+            
+            return null;
+        }
+        
+        /**
+         * Сохранение записанного аудио
+         */
+        async function saveAudioRecording(blob, mimeType) {
+            try {
+                // Вычислить длительность
+                const duration = Date.now() - audioStartTime;
+                const durationSeconds = Math.round(duration / 1000);
+                
+                // Конвертировать в base64
+                const base64 = await blobToBase64(blob);
+                
+                // Определить расширение файла
+                const extension = getAudioExtension(mimeType);
+                const filename = `audio_${Date.now()}.${extension}`;
+                
+                // Создать объект аудио
+                const audioFile = {
+                    type: 'audio',
+                    name: filename,
+                    mimeType: mimeType,
+                    data: base64,
+                    size: blob.size,
+                    duration: durationSeconds,
+                    timestamp: Date.now()
+                };
+                
+                // Добавить в attachedMedia
+                attachedMedia.push(audioFile);
+                
+                // Сохранить в localStorage
+                let requestMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+                requestMedia.push(audioFile);
+                localStorage.setItem('requestMedia', JSON.stringify(requestMedia));
+                
+                // Обновить превью в UI
+                renderMediaPreview();
+                
+                // Показать уведомление
+                showSuccessNotification(`Аудио записано (${durationSeconds} сек, ${formatFileSize(blob.size)})`);
+                
+            } catch (error) {
+                console.error('Ошибка сохранения аудио:', error);
+                showError('Не удалось сохранить аудио');
+            }
+        }
+        
+        /**
+         * Получить расширение файла по MIME type
+         */
+        function getAudioExtension(mimeType) {
+            if (mimeType.includes('webm')) return 'webm';
+            if (mimeType.includes('ogg')) return 'ogg';
+            if (mimeType.includes('mp4')) return 'm4a';
+            if (mimeType.includes('mpeg')) return 'mp3';
+            return 'audio';
+        }
+        
+        /**
+         * Конвертация Blob в Base64
+         */
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        
+        /**
+         * Форматирование размера файла
+         */
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        /**
+         * Обновление UI кнопки записи
+         */
+        function updateAudioRecordingUI(isRecording) {
+            const audioBtn = document.querySelector('.media-btn[onclick*="recordAudio"]');
+            
+            if (!audioBtn) return;
+            
+            if (isRecording) {
+                audioBtn.classList.add('recording');
+                audioBtn.innerHTML = '⏹️ Остановить';
+                audioBtn.style.background = '#f44336';
+                audioBtn.style.animation = 'pulse 1s infinite';
+            } else {
+                audioBtn.classList.remove('recording');
+                audioBtn.innerHTML = '🎤 Аудио';
+                audioBtn.style.background = '';
+                audioBtn.style.animation = '';
+            }
+        }
+        
+        /**
+         * Показать уведомление
+         */
+        function showNotification(message, type = 'info', duration = 3000) {
+            // Удалить предыдущие уведомления
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || icons.info}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
         }
         
         function renderMediaPreview() {
             const preview = document.getElementById('mediaPreview');
             preview.innerHTML = '';
             
+            if (attachedMedia.length === 0) {
+                return;
+            }
+            
             attachedMedia.forEach((media, index) => {
                 const item = document.createElement('div');
-                item.className = 'media-item';
+                item.className = 'media-preview-item';
                 
                 if (media.type === 'photo') {
                     item.innerHTML = `
-                        <img src="${media.data}" alt="Фото">
-                        <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                        <div class="media-item">
+                            <img src="${media.data}" alt="Фото">
+                            <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                        </div>
                     `;
                 } else if (media.type === 'video') {
                     item.innerHTML = `
-                        <video src="${media.data}" controls></video>
-                        <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                        <div class="media-item">
+                            <video src="${media.data}" controls></video>
+                            <button class="media-remove" onclick="removeMedia(${index})">✕</button>
+                        </div>
+                    `;
+                } else if (media.type === 'audio') {
+                    item.innerHTML = `
+                        <div class="audio-preview">
+                            <div class="audio-icon">🎤</div>
+                            <div class="audio-info">
+                                <div class="audio-name">${media.name}</div>
+                                <div class="audio-details">${media.duration} сек • ${formatFileSize(media.size)}</div>
+                            </div>
+                            <audio controls src="${media.data}" style="width: 100%; height: 32px; margin-top: 8px;"></audio>
+                            <button class="delete-media-btn" onclick="removeMedia(${index})">✕</button>
+                        </div>
                     `;
                 }
                 

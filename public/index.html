@@ -1634,6 +1634,39 @@
         </button>
     </nav>
 
+    <script>
+        // ====================================
+        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.4.6
+        // ====================================
+        
+        // Отключить ошибки от расширений браузера
+        window.addEventListener('error', function(e) {
+            if (e.message && (
+                e.message.includes('message channel closed') ||
+                e.message.includes('Extension context invalidated') ||
+                e.message.includes('chrome-extension://')
+            )) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.warn('[Global] Игнорируем ошибку расширения:', e.message);
+                return false;
+            }
+        }, true);
+        
+        // Отключить unhandled rejections от расширений
+        window.addEventListener('unhandledrejection', function(e) {
+            if (e.reason && e.reason.message && (
+                e.reason.message.includes('message channel') ||
+                e.reason.message.includes('Extension context') ||
+                e.reason.message.includes('chrome-extension://')
+            )) {
+                e.preventDefault();
+                console.warn('[Global] Игнорируем unhandled rejection от расширения');
+            }
+        }, true);
+        
+        console.log('[Global] 🛡️ Защита от ошибок расширений v6.4.6 активирована');
+    </script>
     <script src="auth.js"></script>
     <script>
         console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.2.3');

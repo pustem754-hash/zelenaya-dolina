@@ -1,217 +1,143 @@
-// auth.js
-const AUTH_CONFIG = {
-  SESSION_KEY: 'userSession',
-  SESSION_DURATION: 24 * 60 * 60 * 1000, // 24 часа
-  LOGIN_PAGE: 'login.html',
-  HOME_PAGE: 'index.html'
-};
+// ====================================
+// 🔐 МОДУЛЬ АВТОРИЗАЦИИ v6.4.6
+// ====================================
 
-/**
- * Проверка авторизации БЕЗ редиректа
- * @returns {boolean} true если авторизован, false если нет
- */
+// Глобальная переменная для отключения расширений браузера
+window.addEventListener('error', function(e) {
+    if (e.message && e.message.includes('message channel closed')) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.warn('[Auth] Игнорируем ошибку расширения браузера');
+        return false;
+    }
+});
+
+// Отключить конфликтующие Promise от расширений
+window.addEventListener('unhandledrejection', function(e) {
+    if (e.reason && e.reason.message && e.reason.message.includes('message channel')) {
+        e.preventDefault();
+        console.warn('[Auth] Игнорируем unhandled rejection от расширения');
+    }
+});
+
+// ====================================
+// ПРОВЕРКА АВТОРИЗАЦИИ
+// ====================================
+
 function isAuthenticated() {
-  try {
-    const sessionData = localStorage.getItem(AUTH_CONFIG.SESSION_KEY);
-    
-    if (!sessionData) {
-      console.log('[Auth] Сессия не найдена');
-      return false;
-    }
+    try {
+        const session = localStorage.getItem('userSession');
+        if (!session) {
+            console.log('[Auth] ❌ Сессия отсутствует');
+            return false;
+        }
 
-    const session = JSON.parse(sessionData);
-    
-    // Проверка обязательных полей
-    if (!session.phone || !session.userId) {
-      console.log('[Auth] Сессия повреждена');
-      localStorage.removeItem(AUTH_CONFIG.SESSION_KEY);
-      return false;
-    }
+        const sessionData = JSON.parse(session);
+        const now = Date.now();
+        const sessionAge = now - sessionData.createdAt;
+        const maxAge = 24 * 60 * 60 * 1000; // 24 часа
 
-    // Проверка срока действия (используем expiresAt или вычисляем из loginTime)
-    const expiresAt = session.expiresAt || (session.loginTime + (session.expiresIn || AUTH_CONFIG.SESSION_DURATION));
-    
-    if (Date.now() > expiresAt) {
-      console.log('[Auth] Сессия истекла');
-      localStorage.removeItem(AUTH_CONFIG.SESSION_KEY);
-      return false;
-    }
+        if (sessionAge > maxAge) {
+            console.log('[Auth] ❌ Сессия истекла');
+            localStorage.removeItem('userSession');
+            return false;
+        }
 
-    console.log('[Auth] Пользователь авторизован:', session.phone);
-    return true;
-    
-  } catch (error) {
-    console.error('[Auth] Ошибка проверки авторизации:', error);
-    return false;
-  }
+        console.log('[Auth] ✅ Сессия активна');
+        return true;
+    } catch (error) {
+        console.error('[Auth] ❌ Ошибка проверки сессии:', error);
+        return false;
+    }
 }
 
-/**
- * Проверка авторизации С редиректом на login
- * ВАЖНО: Вызывать только после загрузки DOM!
- */
+// ====================================
+// ЗАЩИТА СТРАНИЦ
+// ====================================
+
 function requireAuth() {
-  // Проверка: мы уже на странице логина?
-  const currentPage = window.location.pathname;
-  const isLoginPage = currentPage.includes('login.html') || currentPage.endsWith('login') || currentPage.endsWith('/');
-  
-  if (isLoginPage && !currentPage.includes('index.html')) {
-    // Если на странице логина и не авторизован - остаёмся здесь
-    if (isAuthenticated()) {
-      console.log('[Auth] Пользователь авторизован, редирект с login на главную');
-      const returnUrl = sessionStorage.getItem('returnUrl') || AUTH_CONFIG.HOME_PAGE;
-      sessionStorage.removeItem('returnUrl');
-      window.location.href = returnUrl;
-      return true;
+    try {
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Если уже на странице логина, не редиректить
+        if (currentPage === 'login.html') {
+            console.log('[Auth] Уже на странице логина');
+            return;
+        }
+
+        // Проверить авторизацию
+        if (!isAuthenticated()) {
+            console.warn('[Auth] ⚠️ Доступ запрещён, редирект на login.html');
+            window.location.replace('login.html');
+        } else {
+            console.log('[Auth] ✅ Доступ разрешён');
+        }
+    } catch (error) {
+        console.error('[Auth] ❌ Ошибка requireAuth:', error);
+        window.location.replace('login.html');
     }
-    console.log('[Auth] Уже на странице логина, пропускаем проверку');
-    return true;
-  }
-
-  // Проверка авторизации
-  if (!isAuthenticated()) {
-    console.log('[Auth] Пользователь не авторизован, редирект на login.html');
-    
-    // Сохранить текущую страницу для возврата после входа
-    sessionStorage.setItem('returnUrl', window.location.pathname);
-    
-    // Редирект на login
-    window.location.href = AUTH_CONFIG.LOGIN_PAGE;
-    return false;
-  }
-
-  console.log('[Auth] Доступ разрешён');
-  return true;
 }
 
-/**
- * Создание новой сессии после успешного входа
- * @param {string} phone - Номер телефона пользователя
- * @param {object} userData - Дополнительные данные пользователя
- */
-function createSession(phone, userData = {}) {
-  const session = {
-    phone: phone,
-    userId: userData.userId || generateUserId(phone),
-    name: userData.name || '',
-    loginTime: Date.now(),
-    expiresAt: Date.now() + AUTH_CONFIG.SESSION_DURATION, // 24 часа
-    ...userData
-  };
+// ====================================
+// СОЗДАНИЕ СЕССИИ
+// ====================================
 
-  try {
-    localStorage.setItem(AUTH_CONFIG.SESSION_KEY, JSON.stringify(session));
-    console.log('[Auth] Сессия создана для:', phone);
-    console.log('[Auth] Срок действия:', new Date(session.expiresAt).toLocaleString());
-    return session;
-  } catch (error) {
-    console.error('[Auth] Ошибка создания сессии:', error);
-    throw error;
-  }
+function createSession(phone) {
+    try {
+        const sessionData = {
+            phone: phone,
+            createdAt: Date.now(),
+            isAuthenticated: true
+        };
+        
+        localStorage.setItem('userSession', JSON.stringify(sessionData));
+        console.log('[Auth] ✅ Сессия создана для:', phone);
+        return true;
+    } catch (error) {
+        console.error('[Auth] ❌ Ошибка создания сессии:', error);
+        return false;
+    }
 }
 
-/**
- * Получение текущей сессии
- * @returns {object|null} Данные сессии или null
- */
+// ====================================
+// ПОЛУЧЕНИЕ СЕССИИ
+// ====================================
+
 function getSession() {
-  try {
-    const sessionData = localStorage.getItem(AUTH_CONFIG.SESSION_KEY);
-    if (!sessionData) return null;
-    
-    return JSON.parse(sessionData);
-  } catch (error) {
-    console.error('[Auth] Ошибка чтения сессии:', error);
-    return null;
-  }
+    try {
+        const session = localStorage.getItem('userSession');
+        return session ? JSON.parse(session) : null;
+    } catch (error) {
+        console.error('[Auth] ❌ Ошибка получения сессии:', error);
+        return null;
+    }
 }
 
-/**
- * Выход из системы
- */
+// ====================================
+// ВЫХОД
+// ====================================
+
 function logout() {
-  try {
-    localStorage.removeItem(AUTH_CONFIG.SESSION_KEY);
-    sessionStorage.removeItem('returnUrl');
-    console.log('[Auth] Пользователь вышел из системы');
-    
-    // Редирект на страницу входа
-    window.location.href = AUTH_CONFIG.LOGIN_PAGE;
-  } catch (error) {
-    console.error('[Auth] Ошибка выхода:', error);
-  }
-}
-
-/**
- * Генерация ID пользователя на основе телефона
- * @param {string} phone - Номер телефона
- * @returns {string} Уникальный ID
- */
-function generateUserId(phone) {
-  const cleanPhone = phone.replace(/\D/g, '');
-  return 'user_' + cleanPhone + '_' + Date.now();
-}
-
-/**
- * Обновление срока действия сессии
- */
-function refreshSession() {
-  const session = getSession();
-  if (!session) return false;
-
-  session.expiresAt = Date.now() + AUTH_CONFIG.SESSION_DURATION;
-  localStorage.setItem(AUTH_CONFIG.SESSION_KEY, JSON.stringify(session));
-  console.log('[Auth] Сессия продлена до:', new Date(session.expiresAt).toLocaleString());
-  
-  return true;
-}
-
-/**
- * Показать информацию о пользователе
- */
-function showUserInfo() {
-  const session = getSession();
-  if (session) {
-    const userInfoElement = document.getElementById('userPhone');
-    if (userInfoElement) {
-      userInfoElement.textContent = formatPhone(session.phone);
+    try {
+        localStorage.removeItem('userSession');
+        console.log('[Auth] ✅ Пользователь вышел');
+        window.location.replace('login.html');
+    } catch (error) {
+        console.error('[Auth] ❌ Ошибка выхода:', error);
+        window.location.replace('login.html');
     }
-    
-    const userNameElement = document.getElementById('userName');
-    if (userNameElement && session.name) {
-      userNameElement.textContent = session.name.split(' ')[0];
-    }
-  }
 }
 
-/**
- * Форматирование телефона
- */
-function formatPhone(phone) {
-  const cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length === 11) {
-    return `+7 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7, 9)}-${cleaned.slice(9, 11)}`;
-  }
-  return phone;
+// ====================================
+// ЭКСПОРТ (для использования в других файлах)
+// ====================================
+
+if (typeof window !== 'undefined') {
+    window.isAuthenticated = isAuthenticated;
+    window.requireAuth = requireAuth;
+    window.createSession = createSession;
+    window.getSession = getSession;
+    window.logout = logout;
 }
 
-// Автоматическое продление сессии при активности
-let activityTimer;
-
-function resetActivityTimer() {
-  clearTimeout(activityTimer);
-  activityTimer = setTimeout(() => {
-    if (isAuthenticated()) {
-      refreshSession();
-    }
-  }, 30 * 60 * 1000); // Продлевать каждые 30 минут активности
-}
-
-// Слушатели активности (только если DOM доступен)
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('click', resetActivityTimer);
-    document.addEventListener('keypress', resetActivityTimer);
-    document.addEventListener('scroll', resetActivityTimer);
-  });
-}
+console.log('[Auth] 🔐 Модуль авторизации v6.4.6 загружен');

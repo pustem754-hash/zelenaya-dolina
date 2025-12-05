@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина» v6.4.5</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.4.6</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -738,34 +738,69 @@
          * Запись аудиосообщения
          */
         async function recordAudio() {
+            console.log('[Audio] 🎤 Начало функции recordAudio');
+            
+            const audioBtn = document.getElementById('audioRecordBtn');
+            
+            // Если уже идёт запись - остановить
+            if (isRecording || window.isRecording) {
+                console.log('[Audio] ⏹️ Остановка записи...');
+                stopAudioRecording();
+                return;
+            }
+            
             try {
-                // Защита от повторных вызовов
-                if (isRecording) {
-                    console.warn('[Audio] Запись уже идёт');
+                console.log('[Audio] 📡 Запрос доступа к микрофону...');
+                
+                // Очистить предыдущие ошибки
+                if (audioStream) {
+                    audioStream.getTracks().forEach(track => track.stop());
+                    audioStream = null;
+                }
+                
+                // КРИТИЧНО: Обернуть в try-catch для избежания unhandled rejection
+                let stream;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true
+                        } 
+                    });
+                } catch (micError) {
+                    console.error('[Audio] ❌ Доступ к микрофону запрещён:', micError);
+                    showNotification('❌ Доступ к микрофону запрещён. Разрешите доступ в настройках браузера.', 'error');
                     return;
                 }
                 
-                // Проверка поддержки браузером
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    showNotification('Ваш браузер не поддерживает запись аудио', 'error');
-                    return;
-                }
-                
-                console.log('[Audio] Запрос доступа к микрофону...');
-                
-                // Запрос доступа к микрофону
-                audioStream = await navigator.mediaDevices.getUserMedia({ 
-                    audio: {
-                        echoCancellation: true,
-                        noiseSuppression: true,
-                        autoGainControl: true
-                    } 
-                });
-                
-                console.log('[Audio] Доступ к микрофону получен');
+                console.log('[Audio] ✅ Доступ к микрофону получен');
+                audioStream = stream;
                 
                 // Определение поддерживаемого MIME type
-                const mimeType = getSupportedAudioMimeType();
+                const mimeTypes = [
+                    'audio/webm;codecs=opus',
+                    'audio/webm',
+                    'audio/ogg;codecs=opus',
+                    'audio/mp4',
+                    'audio/mpeg'
+                ];
+                
+                let selectedMimeType = '';
+                for (const mimeType of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(mimeType)) {
+                        selectedMimeType = mimeType;
+                        console.log(`[Audio] ✅ Используется MIME type: ${mimeType}`);
+                        break;
+                    }
+                }
+                
+                if (!selectedMimeType) {
+                    selectedMimeType = 'audio/webm'; // fallback
+                    console.warn('[Audio] ⚠️ Использование fallback MIME type: audio/webm');
+                }
+                
+                const mimeType = selectedMimeType;
                 
                 if (!mimeType) {
                     showNotification('Браузер не поддерживает запись аудио', 'error');
@@ -888,19 +923,21 @@
                 }, MAX_AUDIO_DURATION);
                 
             } catch (error) {
-                console.error('[Audio] Ошибка:', error);
+                console.error('[Audio] ❌ Критическая ошибка:', error);
+                showNotification('❌ Ошибка записи аудио: ' + error.message, 'error');
                 
-                // Сброс состояния
+                // Очистка при ошибке
+                if (audioStream) {
+                    audioStream.getTracks().forEach(track => track.stop());
+                    audioStream = null;
+                }
                 isRecording = false;
-                window.isRecording = false; // Экспорт для навигации
-                updateAudioRecordingUI(false);
+                window.isRecording = false;
                 
-                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                    showNotification('❌ Доступ к микрофону запрещён', 'error');
-                } else if (error.name === 'NotFoundError') {
-                    showNotification('❌ Микрофон не найден', 'error');
-                } else {
-                    showNotification('❌ Ошибка записи: ' + error.message, 'error');
+                const audioBtn = document.getElementById('audioRecordBtn');
+                if (audioBtn) {
+                    audioBtn.textContent = '🎤 Аудио';
+                    audioBtn.classList.remove('recording');
                 }
             }
         }
@@ -909,6 +946,42 @@
          * Остановка записи аудио
          */
         function stopAudioRecording() {
+            console.log('[Audio] 🛑 stopAudioRecording вызвана');
+            
+            // КРИТИЧНО: Очистить таймер в НАЧАЛЕ функции
+            if (audioTimer) {
+                clearTimeout(audioTimer);
+                audioTimer = null;
+                console.log('[Audio] ✅ Таймер очищен');
+            }
+            
+            if (audioRecorder && audioRecorder.state !== 'inactive') {
+                try {
+                    audioRecorder.stop();
+                    console.log('[Audio] ✅ MediaRecorder остановлен');
+                } catch (error) {
+                    console.error('[Audio] ❌ Ошибка остановки MediaRecorder:', error);
+                }
+            }
+            
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+                audioStream = null;
+                console.log('[Audio] ✅ MediaStream очищен');
+            }
+            
+            isRecording = false;
+            window.isRecording = false;
+            
+            const audioBtn = document.getElementById('audioRecordBtn');
+            if (audioBtn) {
+                audioBtn.textContent = '🎤 Аудио';
+                audioBtn.classList.remove('recording');
+            }
+        }
+        
+        // Старая функция stopAudioRecording (удалить, если есть дубликат)
+        function stopAudioRecording_OLD() {
             console.log('[Audio] Остановка записи...');
             
             // КРИТИЧЕСКИ ВАЖНО: Очистить таймер ПЕРВЫМ ДЕЛОМ, чтобы избежать повторных срабатываний

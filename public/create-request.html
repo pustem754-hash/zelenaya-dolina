@@ -846,69 +846,123 @@
         }
         
         function mockAPICall(endpoint, data) {
+            console.log('[API] 📡 === НАЧАЛО ФУНКЦИИ mockAPICall ===');
+            console.log('[API] 📍 Endpoint:', endpoint);
+            console.log('[API] 📊 Data:', data);
+            
             return new Promise((resolve) => {
+                console.log('[API] ⏱️ Задержка 1 секунда...');
                 setTimeout(() => {
-                    console.log(`API call to ${endpoint}:`, data);
+                    console.log(`[API] ✅ API call to ${endpoint} успешен`);
                     resolve({ success: true });
                 }, 1000);
             });
         }
         
         function showError(message) {
+            console.log('[Error] ❌ === Показ ошибки ===');
+            console.log('[Error] 📝 Сообщение:', message);
             const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.classList.add('show');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.classList.add('show');
+                console.log('[Error] ✅ Ошибка отображена');
+            } else {
+                console.error('[Error] ❌ Элемент #errorMessage не найден!');
+            }
         }
         
         function showSuccessNotification(message) {
+            console.log('[Notification] ✅ === Показ успешного уведомления ===');
+            console.log('[Notification] 📝 Сообщение:', message);
             showNotification(message, 'success');
         }
         
         function takePhoto() {
+            console.log('[Photo] 📷 === НАЧАЛО ФУНКЦИИ takePhoto ===');
+            console.log('[Photo] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.setAttribute('capture', 'environment');
             
+            console.log('[Photo] 📁 Создан input для выбора файла');
+            
             input.onchange = (e) => {
+                console.log('[Photo] 📁 Файл выбран');
                 const file = e.target.files[0];
                 if (file) {
+                    console.log('[Photo] 📊 Информация о файле:');
+                    console.log('[Photo]   - Имя:', file.name);
+                    console.log('[Photo]   - Размер:', file.size, 'байт');
+                    console.log('[Photo]   - Тип:', file.type);
+                    
                     const reader = new FileReader();
                     reader.onload = (event) => {
+                        console.log('[Photo] ✅ Файл прочитан, размер данных:', event.target.result.length);
                         attachedMedia.push({
                             type: 'photo',
-                            data: event.target.result
+                            data: event.target.result,
+                            timestamp: Date.now()
                         });
+                        console.log('[Photo] ✅ Фото добавлено в attachedMedia, всего:', attachedMedia.length);
                         renderMediaPreview();
                     };
+                    reader.onerror = (error) => {
+                        console.error('[Photo] ❌ Ошибка чтения файла:', error);
+                    };
                     reader.readAsDataURL(file);
+                } else {
+                    console.log('[Photo] ⚠️ Файл не выбран');
                 }
             };
             
+            console.log('[Photo] 🖱️ Открытие диалога выбора файла...');
             input.click();
         }
         
         function recordVideo() {
+            console.log('[Video] 🎥 === НАЧАЛО ФУНКЦИИ recordVideo ===');
+            console.log('[Video] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'video/*';
             input.setAttribute('capture', 'environment');
             
+            console.log('[Video] 📁 Создан input для выбора файла');
+            
             input.onchange = (e) => {
+                console.log('[Video] 📁 Файл выбран');
                 const file = e.target.files[0];
                 if (file) {
+                    console.log('[Video] 📊 Информация о файле:');
+                    console.log('[Video]   - Имя:', file.name);
+                    console.log('[Video]   - Размер:', file.size, 'байт');
+                    console.log('[Video]   - Тип:', file.type);
+                    
                     const reader = new FileReader();
                     reader.onload = (event) => {
+                        console.log('[Video] ✅ Файл прочитан, размер данных:', event.target.result.length);
                         attachedMedia.push({
                             type: 'video',
-                            data: event.target.result
+                            data: event.target.result,
+                            timestamp: Date.now()
                         });
+                        console.log('[Video] ✅ Видео добавлено в attachedMedia, всего:', attachedMedia.length);
                         renderMediaPreview();
                     };
+                    reader.onerror = (error) => {
+                        console.error('[Video] ❌ Ошибка чтения файла:', error);
+                    };
                     reader.readAsDataURL(file);
+                } else {
+                    console.log('[Video] ⚠️ Файл не выбран');
                 }
             };
             
+            console.log('[Video] 🖱️ Открытие диалога выбора файла...');
             input.click();
         }
         
@@ -1388,14 +1442,26 @@
         }
         
         function renderMediaPreview() {
-            const preview = document.getElementById('mediaPreview');
-            preview.innerHTML = '';
+            console.log('[Media] 🖼️ === НАЧАЛО ФУНКЦИИ renderMediaPreview ===');
+            console.log('[Media] 📊 Всего медиа для отображения:', attachedMedia.length);
             
-            if (attachedMedia.length === 0) {
+            const preview = document.getElementById('mediaPreview');
+            if (!preview) {
+                console.error('[Media] ❌ Элемент #mediaPreview не найден!');
                 return;
             }
             
+            console.log('[Media] 🧹 Очистка превью...');
+            preview.innerHTML = '';
+            
+            if (attachedMedia.length === 0) {
+                console.log('[Media] ℹ️ Нет медиа для отображения');
+                return;
+            }
+            
+            console.log('[Media] 🎨 Рендеринг медиа...');
             attachedMedia.forEach((media, index) => {
+                console.log(`[Media] 📦 Медиа ${index + 1}/${attachedMedia.length}:`, media.type);
                 const item = document.createElement('div');
                 item.className = 'media-preview-item';
                 
@@ -1440,21 +1506,34 @@
         }
         
         function removeMedia(index) {
-            console.log('[Media] Удаление медиа, индекс:', index, 'Всего до удаления:', attachedMedia.length);
+            console.log('[Media] 🗑️ === НАЧАЛО ФУНКЦИИ removeMedia ===');
+            console.log('[Media] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Media] 📊 Параметры:');
+            console.log('[Media]   - Индекс:', index);
+            console.log('[Media]   - Всего до удаления:', attachedMedia.length);
+            
+            if (index < 0 || index >= attachedMedia.length) {
+                console.error('[Media] ❌ Неверный индекс:', index);
+                return;
+            }
             
             // Удалить из массива
             const removed = attachedMedia.splice(index, 1);
-            console.log('[Media] Удалён файл:', removed[0]?.name || removed[0]?.type);
+            console.log('[Media] ✅ Удалён файл:', removed[0]?.name || removed[0]?.type);
+            console.log('[Media] 📊 Осталось файлов:', attachedMedia.length);
             
             // КРИТИЧЕСКИ ВАЖНО: Обновить localStorage
+            console.log('[Media] 💾 Обновление localStorage...');
             localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
-            console.log('[Media] localStorage обновлён. Осталось файлов:', attachedMedia.length);
+            console.log('[Media] ✅ localStorage обновлён');
             
             // Обновить UI
+            console.log('[Media] 🎨 Обновление UI...');
             renderMediaPreview();
             
             // Показать уведомление
             showNotification('Файл удалён', 'success', 2000);
+            console.log('[Media] ✅ Удаление завершено');
         }
         
         function getAttachedMedia() {

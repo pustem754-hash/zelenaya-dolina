@@ -323,20 +323,10 @@
         </div>
     </div>
     
+    <script src="auth.js"></script>
     <script>
-        // Проверка авторизации
-        function checkAuth() {
-            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
-            if (!session || Date.now() > session.loginTime + session.expiresIn) {
-                window.location.href = 'login.html';
-                return false;
-            }
-            return true;
-        }
-        
-        if (!checkAuth()) {
-            // Редирект произойдёт в checkAuth()
-        }
+        // Проверка авторизации при загрузке страницы
+        requireAuth();
         
         const previousReadings = {
             coldWater: 1234.56,

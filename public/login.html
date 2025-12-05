@@ -369,13 +369,14 @@
                 return;
             }
             
-            // Генерация SMS-кода (mock)
-            const code = Math.floor(1000 + Math.random() * 9000);
+            // Генерация SMS-кода (mock) - для теста всегда 1234
+            const code = '1234';
             console.log(`📱 SMS код для ${formattedPhone}: ${code}`);
             
             // Сохранение ожидаемого кода
-            localStorage.setItem('expectedCode', code.toString());
-            localStorage.setItem('phoneForAuth', formattedPhone);
+            localStorage.setItem('expectedCode', code);
+            const phoneCleaned = phone.replace(/\D/g, '');
+            localStorage.setItem('phoneForAuth', phoneCleaned);
             
             // Показать форму ввода кода
             document.getElementById('phoneSection').style.display = 'none';
@@ -457,15 +458,13 @@
             }
             
             if (code === expectedCode) {
-                // Создание сессии
-                const session = {
-                    phone: phone,
-                    userId: generateUserId(phone),
-                    loginTime: Date.now(),
-                    expiresIn: 24 * 60 * 60 * 1000 // 24 часа
-                };
+                // Создание сессии через auth.js
+                const phoneCleaned = phone.replace(/\D/g, '');
+                createSession(phoneCleaned);
                 
-                localStorage.setItem('userSession', JSON.stringify(session));
+                // Очищаем временные данные
+                localStorage.removeItem('expectedCode');
+                localStorage.removeItem('phoneForAuth');
                 
                 showSuccess('Вход выполнен успешно!');
                 
@@ -479,20 +478,11 @@
                 codeInput.focus();
             }
         }
-        
-        function generateUserId(phone) {
-            // Генерация ID пользователя на основе телефона
-            return 'user_' + phone.replace(/\D/g, '').slice(-10);
-        }
-        
-        // Проверка авторизации при загрузке
-        window.addEventListener('load', function() {
-            const session = JSON.parse(localStorage.getItem('userSession') || 'null');
-            if (session && Date.now() < session.loginTime + session.expiresIn) {
-                // Пользователь уже авторизован, редирект на главную
-                window.location.href = 'index.html';
-            }
-        });
+    </script>
+    <script src="auth.js"></script>
+    <script>
+        // Проверка авторизации при загрузке (используем requireAuth из auth.js)
+        requireAuth();
     </script>
 </body>
 </html>

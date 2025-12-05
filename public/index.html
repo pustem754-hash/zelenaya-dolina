@@ -740,7 +740,7 @@
     <div class="header">
         <h1>🏡 УК «Зелёная долина»</h1>
         <p style="font-size: 14px; margin-top: 5px; opacity: 0.9;">Жилищная компания</p>
-        <div class="version">v6.5.9</div>
+        <div class="version">v6.6.1</div>
     </div>
 
     <!-- Главная -->
@@ -1238,7 +1238,7 @@
             
             <!-- Аудио -->
             <div class="audio-container" style="min-height: 200px; position: relative;">
-                <button id="audioBtn" class="media-btn" style="transition: opacity 0.3s;">
+                <button id="audioBtn" class="media-btn" style="transition: opacity 0.3s;" onclick="toggleAudio()">
                     <span class="icon">🎤</span> Аудио
                 </button>
                 
@@ -1380,7 +1380,7 @@
             <div id="requestAudioTab" class="tab-content request-tab-content">
                 <!-- Аудио (фиксированная высота, без прыжков) -->
                 <div class="audio-container" style="min-height: 200px; position: relative;">
-                    <button id="audioBtn" class="media-btn">
+                    <button id="audioBtn" class="media-btn" onclick="toggleAudio()">
                         <span class="icon">🎤</span> Аудио
                     </button>
 
@@ -1658,7 +1658,7 @@
 
     <script>
         // ====================================
-        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.5.9
+        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.6.1
         // ====================================
         
         (function() {
@@ -1748,7 +1748,7 @@
                 }
             }, 10000);
             
-            console.log('[Global] 🛡️ Защита от ошибок расширений v6.5.9 активирована');
+            console.log('[Global] 🛡️ Защита от ошибок расширений v6.6.1 активирована');
             console.log('[Global] 📋 Отслеживаются паттерны:', extensionErrorPatterns.length);
         })();
     </script>
@@ -1770,7 +1770,7 @@
         });
 
         /* ===========================================
-           АУДИОЗАПИСЬ v6.5.9 (унифицированный override)
+           АУДИОЗАПИСЬ v6.6.1 (унифицированный override)
            =========================================== */
         // Дополнительные переменные (уникальные имена, не конфликтуют с let-объявлениями)
         let recordingTimerLegacy = null;
@@ -1921,26 +1921,23 @@
             }
             
             const btn = document.getElementById('audioBtn');
-            if (btn && btn.parentNode) {
-                const newBtn = btn.cloneNode(true);
-                btn.parentNode.replaceChild(newBtn, btn);
-                newBtn.addEventListener('click', toggleAudio);
-                console.log('[Audio] ✅ Обработчик audioBtn привязан');
+            if (btn) {
+                btn.removeEventListener('click', toggleAudio);
+                btn.addEventListener('click', toggleAudio);
+                console.log('[Audio] ✅ audioBtn привязан');
             }
             
             const stopBtn = document.getElementById('stopRecordingBtn');
-            if (stopBtn && stopBtn.parentNode) {
-                const newStop = stopBtn.cloneNode(true);
-                stopBtn.parentNode.replaceChild(newStop, stopBtn);
-                newStop.addEventListener('click', stopAudioRecording);
+            if (stopBtn) {
+                stopBtn.removeEventListener('click', stopAudioRecording);
+                stopBtn.addEventListener('click', stopAudioRecording);
                 console.log('[Audio] ✅ Обработчик stopBtn привязан');
             }
             
             const deleteBtn = document.getElementById('deleteAudioBtn');
-            if (deleteBtn && deleteBtn.parentNode) {
-                const newDel = deleteBtn.cloneNode(true);
-                deleteBtn.parentNode.replaceChild(newDel, deleteBtn);
-                newDel.addEventListener('click', deleteAudio);
+            if (deleteBtn) {
+                deleteBtn.removeEventListener('click', deleteAudio);
+                deleteBtn.addEventListener('click', deleteAudio);
                 console.log('[Audio] ✅ Обработчик deleteBtn привязан');
             }
             
@@ -1954,7 +1951,7 @@
     </script>
     <script src="auth.js"></script>
     <script>
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.5.9');
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.6.1');
         
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
         document.addEventListener('DOMContentLoaded', () => {
@@ -2347,7 +2344,7 @@
         `;
         document.head.appendChild(style);
         
-        // ========== АУДИО ПЕРЕМЕННЫЕ v6.5.9 (унифицировано с create-request) ==========
+        // ========== АУДИО ПЕРЕМЕННЫЕ v6.6.1 (унифицировано с create-request) ==========
         let mediaStream = null;
         let mediaRecorder = null;
         let audioChunks = [];

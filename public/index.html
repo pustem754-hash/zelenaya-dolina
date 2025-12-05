@@ -1328,57 +1328,29 @@
             
             <!-- Вкладка: Аудио -->
             <div id="requestAudioTab" class="tab-content">
-                <h3 style="margin-top: 30px; color: #27ae60;">🎤 Голосовое сообщение</h3>
-                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Запишите голосовое сообщение к заявке (до 60 секунд)</p>
-                
-                <button class="btn btn-audio" id="audioBtn" onclick="toggleAudio()">🎤 Начать запись</button>
-                
-                <!-- Контейнер фиксированной высоты (НЕ ПРЫГАЕТ!) -->
-                <div style="min-height: 200px; position: relative; margin: 15px 0;">
-                    
-                    <!-- Статус записи (скрыт по умолчанию) -->
-                    <div id="audioRecordingStatus" style="
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        opacity: 0;
-                        pointer-events: none;
-                        transition: opacity 0.3s ease;
-                        text-align: center;
-                        padding: 20px;
-                        background: #ffe5e5;
-                        border-radius: 12px;
-                    ">
-                        <div style="font-size: 48px; margin-bottom: 15px; animation: pulse 1.5s infinite;">🔴</div>
-                        <div style="font-weight: bold; color: #e74c3c; font-size: 24px; margin-bottom: 10px;" id="audioTimer">00:00</div>
-                        <div style="color: #666; font-size: 16px;">Идёт запись...</div>
-                    </div>
-                    
-                    <!-- Плеер (скрыт по умолчанию) -->
-                    <div id="audioPlayer" style="
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        opacity: 0;
-                        pointer-events: none;
-                        transition: opacity 0.3s ease;
-                        background: #f8f9fa;
-                        padding: 20px;
-                        border-radius: 12px;
-                    ">
-                        <audio id="audioPlayback" controls style="width: 100%; margin-bottom: 15px;"></audio>
-                        <div id="audioInfo" style="color: #27ae60; font-weight: 500; margin-bottom: 15px; text-align: center;"></div>
-                        <button class="btn" onclick="deleteCurrentAudio()" style="background: #e74c3c; width: 100%;">
-                            🗑️ Удалить запись
+                <!-- Аудио (фиксированная высота, без прыжков) -->
+                <div class="audio-container" style="min-height: 200px; position: relative;">
+                    <button id="audioBtn" class="media-btn">
+                        <span class="icon">🎤</span> Аудио
+                    </button>
+
+                    <div id="audioControls" style="display: none; position: absolute; top: 50px; left: 0; right: 0;">
+                        <div class="recording-indicator">
+                            <span class="icon">🔴</span>
+                            <span id="recordingTimer">00:00</span>
+                        </div>
+                        <button id="stopRecordingBtn" class="media-btn" style="background: #dc3545;">
+                            <span class="icon">⏹</span> Стоп
                         </button>
                     </div>
-                    
+
+                    <div id="audioPreview" style="display: none; position: absolute; top: 50px; left: 0; right: 0;">
+                        <audio id="audioPlayer" controls style="width: 100%; margin-bottom: 10px;"></audio>
+                        <button id="deleteAudioBtn" class="media-btn" style="background: #dc3545;">
+                            <span class="icon">❌</span> Удалить
+                        </button>
+                    </div>
                 </div>
-                
-                <!-- Список аудио записей -->
-                <div id="audioList" style="margin-top: 20px;"></div>
             </div>
             
             <!-- Модальное окно аудио плеера -->
@@ -1746,6 +1718,167 @@
             
             console.log('[Fields] 🔒 Защита полей ввода применена к', sensitiveFields.length, 'элементам');
         });
+
+        /* ===========================================
+           АУДИОЗАПИСЬ v6.5.2 (унифицированный override)
+           =========================================== */
+        // Дополнительные переменные (уникальные имена, не конфликтуют с let-объявлениями)
+        let recordingTimer = null;
+        let recordingStartTime = 0;
+        audioDuration = 0;
+
+        // Переиспользуем существующие mediaStream/mediaRecorder/audioChunks/isRecording
+        function cleanupAudioResources() {
+            console.log('[Audio] 🧹 Очистка ресурсов (override)...');
+            if (recordingTimer) {
+                clearInterval(recordingTimer);
+                recordingTimer = null;
+            }
+            if (typeof audioTimer !== 'undefined' && audioTimer) {
+                clearInterval(audioTimer);
+                audioTimer = null;
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                try { mediaRecorder.stop(); } catch (e) { console.warn('[Audio] stop error', e); }
+            }
+            mediaRecorder = null;
+            if (mediaStream) {
+                try {
+                    mediaStream.getTracks().forEach(t => t.stop());
+                } catch (e) { console.warn('[Audio] stream stop error', e); }
+            }
+            mediaStream = null;
+            if (typeof audioChunks !== 'undefined') audioChunks = [];
+            if (typeof savedAudioBlob !== 'undefined') savedAudioBlob = null;
+            if (typeof audioStartTime !== 'undefined') audioStartTime = null;
+            isRecording = false;
+            recordingStartTime = 0;
+            audioDuration = 0;
+        }
+
+        async function recordAudio() {
+            console.log('[Audio] 🎤 start record (override)');
+            cleanupAudioResources();
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+                    ? 'audio/webm'
+                    : MediaRecorder.isTypeSupported('audio/mp4')
+                        ? 'audio/mp4'
+                        : 'audio/ogg';
+                mediaRecorder = new MediaRecorder(mediaStream, { mimeType });
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.onstop = () => saveAudioRecording(audioDuration);
+                mediaRecorder.start();
+                isRecording = true;
+                recordingStartTime = Date.now();
+                recordingTimer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                    audioDuration = elapsed;
+                    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                    const s = String(elapsed % 60).padStart(2, '0');
+                    const timerEl = document.getElementById('recordingTimer');
+                    if (timerEl) timerEl.textContent = `${m}:${s}`;
+                    if (elapsed >= 60) {
+                        stopAudioRecording();
+                        showNotification('✅ Достигнута максимальная длительность записи (60 сек)', 'success');
+                    }
+                }, 1000);
+                const btn = document.getElementById('audioBtn');
+                const controls = document.getElementById('audioControls');
+                const preview = document.getElementById('audioPreview');
+                if (btn) btn.style.display = 'none';
+                if (controls) controls.style.display = 'block';
+                if (preview) preview.style.display = 'none';
+            } catch (err) {
+                console.error('[Audio] error getUserMedia', err);
+                showNotification('❌ Ошибка доступа к микрофону: ' + err.message, 'error');
+                cleanupAudioResources();
+            }
+        }
+
+        function stopAudioRecording() {
+            console.log('[Audio] 🛑 stop record (override)');
+            if (recordingTimer) {
+                clearInterval(recordingTimer);
+                recordingTimer = null;
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                isRecording = false;
+                mediaRecorder.stop();
+            }
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        }
+
+        function saveAudioRecording(durationSeconds) {
+            console.log('[Audio] 💾 save (override), duration:', durationSeconds);
+            const audioBlob = new Blob(audioChunks || [], { type: 'audio/webm' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64Audio = reader.result;
+                localStorage.setItem('audioData', base64Audio);
+                localStorage.setItem('audioDuration', durationSeconds);
+                const audioPlayer = document.getElementById('audioPlayer');
+                if (audioPlayer) audioPlayer.src = audioUrl;
+                const controls = document.getElementById('audioControls');
+                const preview = document.getElementById('audioPreview');
+                if (controls) controls.style.display = 'none';
+                if (preview) preview.style.display = 'block';
+                showNotification('✅ Аудиозапись сохранена', 'success');
+            };
+            reader.readAsDataURL(audioBlob);
+        }
+
+        function toggleAudio() {
+            console.log('[Audio] toggle (override), isRecording:', isRecording);
+            if (isRecording) stopAudioRecording(); else recordAudio();
+        }
+
+        function deleteAudio() {
+            console.log('[Audio] delete (override)');
+            localStorage.removeItem('audioData');
+            localStorage.removeItem('audioDuration');
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer) audioPlayer.src = '';
+            const preview = document.getElementById('audioPreview');
+            const btn = document.getElementById('audioBtn');
+            if (preview) preview.style.display = 'none';
+            if (btn) btn.style.display = 'block';
+            cleanupAudioResources();
+            showNotification('✅ Аудиозапись удалена', 'success');
+        }
+
+        function initializeAudioTab() {
+            console.log('[Audio] init tab (override)');
+            cleanupAudioResources();
+            const savedAudio = localStorage.getItem('audioData');
+            const btn = document.getElementById('audioBtn');
+            const controls = document.getElementById('audioControls');
+            const preview = document.getElementById('audioPreview');
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (savedAudio && audioPlayer) {
+                audioPlayer.src = savedAudio;
+                if (btn) btn.style.display = 'none';
+                if (preview) preview.style.display = 'block';
+                if (controls) controls.style.display = 'none';
+            } else {
+                if (btn) btn.style.display = 'block';
+                if (preview) preview.style.display = 'none';
+                if (controls) controls.style.display = 'none';
+            }
+            const stopBtn = document.getElementById('stopRecordingBtn');
+            const delBtn = document.getElementById('deleteAudioBtn');
+            if (btn) { btn.replaceWith(btn.cloneNode(true)); document.getElementById('audioBtn').addEventListener('click', toggleAudio); }
+            if (stopBtn) { stopBtn.replaceWith(stopBtn.cloneNode(true)); document.getElementById('stopRecordingBtn').addEventListener('click', stopAudioRecording); }
+            if (delBtn) { delBtn.replaceWith(delBtn.cloneNode(true)); document.getElementById('deleteAudioBtn').addEventListener('click', deleteAudio); }
+        }
+
+        // Заглушка для списка аудио (новый UI хранит одну запись)
+        function renderAudioList() {
+            console.log('[Audio] ℹ️ Список аудио не используется в новой версии UI');
+        }
     </script>
     <script src="auth.js"></script>
     <script>
@@ -2155,7 +2288,22 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+            
+            // КРИТИЧНО: Инициализация аудио при открытии раздела "Заявки"
+            if (id === 'requests') {
+                console.log('[Audio] 🎯 Секция "Заявки" открыта, инициализация аудио...');
+                // Небольшая задержка, чтобы DOM успел отрендериться
+                setTimeout(() => {
+                    if (typeof initializeAudioTab === 'function') {
+                        initializeAudioTab();
+                    } else {
+                        console.error('[Audio] ❌ Функция initializeAudioTab() не найдена');
+                    }
+                }, 100);
+            }
         }
         
         // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====

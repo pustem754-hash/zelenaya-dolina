@@ -1172,30 +1172,54 @@
             <div id="requestVideosTab" class="tab-content">
                 <h2 style="font-size: 24px; margin-bottom: 20px;">🎥 Видео заявки</h2>
                 
-                <div class="video-section">
-                    <p style="color: #666; margin-bottom: 15px;">Запишите видео для описания проблемы (макс. 2 видео по 5MB)</p>
-                    
-                    <button id="videoBtn" style="
-                        width: 100%;
-                        padding: 18px;
-                        font-size: 18px;
-                        background: #e74c3c;
-                        color: white;
-                        border: none;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        font-weight: 600;
-                        margin-bottom: 20px;
-                    ">
+                <h3 style="margin-top: 30px; color: #27ae60;">🎥 Прикрепить видео к заявке</h3>
+                
+                <!-- Определение платформы -->
+                <div id="videoButtonsIOS" style="display: none; display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-video" onclick="document.getElementById('videoCameraInput').click()" style="flex: 1;">
+                        🎥 Камера
+                    </button>
+                    <button class="btn btn-video" onclick="document.getElementById('videoGalleryInput').click()" style="flex: 1; background: #95a5a6;">
+                        📁 Галерея
+                    </button>
+                </div>
+                
+                <div id="videoButtonsDesktop" style="display: none;">
+                    <button id="recordVideoBtn" class="btn btn-video" onclick="toggleVideoRecording()" style="width: 100%; margin-bottom: 15px;">
                         🎥 Записать видео
                     </button>
-                    
-                    <div id="videosContainer" style="
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                        gap: 15px;
-                    "></div>
                 </div>
+                
+                <!-- Скрытые inputs -->
+                <input type="file" id="videoCameraInput" accept="video/*" capture="environment" style="display:none" onchange="handleVideoFile(event)">
+                <input type="file" id="videoGalleryInput" accept="video/*" style="display:none" onchange="handleVideoFile(event)">
+                
+                <!-- Контейнер фиксированной высоты (НЕ ПРЫГАЕТ!) -->
+                <div style="min-height: 100px; position: relative; margin: 15px 0;">
+                    <div id="videoRecordingStatus" style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        opacity: 0;
+                        pointer-events: none;
+                        transition: opacity 0.3s;
+                        text-align: center;
+                        padding: 15px;
+                        background: #ffe5e5;
+                        border-radius: 12px;
+                    ">
+                        <div style="font-size: 32px; margin-bottom: 10px; animation: pulse 1.5s infinite;">🔴</div>
+                        <div style="font-weight: bold; color: #e74c3c; font-size: 18px;" id="videoTimer">00:00</div>
+                        <div style="color: #666; font-size: 14px;">Запись видео...</div>
+                    </div>
+                </div>
+                
+                <div id="videosContainer" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                    gap: 15px;
+                "></div>
             </div>
             
             <!-- Вкладка: Аудио -->
@@ -1478,12 +1502,52 @@
             
             <!-- Вкладка: Видео -->
             <div id="videosTab" class="tab-content">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">🎥 Видео счётчиков</h3>
-                <p style="color: #666; margin-bottom: 15px;">Запишите видео показаний счётчиков для подтверждения</p>
+                <h3 style="color: #27ae60; margin-bottom: 15px;">🎥 Видео счётчиков</h3>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Запишите видео показаний счётчиков для подтверждения</p>
                 
-                <button id="counterVideoBtn" class="btn btn-video" style="margin-bottom: 20px;">🎥 Записать видео счётчика</button>
+                <!-- Определение платформы -->
+                <div id="meterVideoButtonsDesktop" style="display: none;">
+                    <button id="recordMeterVideoBtn" class="btn btn-video" onclick="toggleMeterVideoRecording()" style="width: 100%; margin-bottom: 15px;">
+                        📹 Записать видео счётчика
+                    </button>
+                </div>
                 
-                <div id="counterVideosContainer" style="
+                <div id="meterVideoButtonsIOS" style="display: none;">
+                    <button class="btn btn-video" onclick="document.getElementById('meterVideoCameraInput').click()" style="width: 100%; margin-bottom: 10px;">
+                        📹 Камера
+                    </button>
+                    <button class="btn btn-video" onclick="document.getElementById('meterVideoGalleryInput').click()" style="width: 100%; background: #95a5a6;">
+                        📁 Галерея
+                    </button>
+                </div>
+                
+                <!-- Скрытые inputs -->
+                <input type="file" id="meterVideoCameraInput" accept="video/*" capture="environment" style="display:none" onchange="handleMeterVideoFile(event)">
+                <input type="file" id="meterVideoGalleryInput" accept="video/*" style="display:none" onchange="handleMeterVideoFile(event)">
+                
+                <!-- Контейнер фиксированной высоты для статуса (НЕ ПРЫГАЕТ!) -->
+                <div style="min-height: 100px; position: relative; margin: 15px 0;">
+                    <div id="meterVideoRecordingStatus" style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        opacity: 0;
+                        pointer-events: none;
+                        transition: opacity 0.3s;
+                        text-align: center;
+                        padding: 15px;
+                        background: #ffe5e5;
+                        border-radius: 12px;
+                    ">
+                        <div style="font-size: 32px; margin-bottom: 10px; animation: pulse 1.5s infinite;">🔴</div>
+                        <div style="font-weight: bold; color: #e74c3c; font-size: 18px;" id="meterVideoTimer">00:00</div>
+                        <div style="color: #666; font-size: 14px; margin-top: 5px;">Запись видео...</div>
+                    </div>
+                </div>
+                
+                <!-- Галерея видео счётчиков -->
+                <div id="counterVideosContainer" class="video-gallery" style="
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                     gap: 15px;
@@ -3735,6 +3799,19 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             // Загрузить сохранённые видео и аудио при загрузке страницы
             renderVideos();
             renderAudioList();
+            loadMeterVideosFromStorage();
+            
+            // Определить платформу для видео в заявках
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isMediaRecorderSupported = typeof MediaRecorder !== 'undefined';
+            
+            if (isIOS || !isMediaRecorderSupported) {
+                const iosButtons = document.getElementById('videoButtonsIOS');
+                if (iosButtons) iosButtons.style.display = 'flex';
+            } else {
+                const desktopButtons = document.getElementById('videoButtonsDesktop');
+                if (desktopButtons) desktopButtons.style.display = 'block';
+            }
             
             // Обновить напоминание о передаче показаний
             updateReminder();

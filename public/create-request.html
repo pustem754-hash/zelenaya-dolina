@@ -489,6 +489,20 @@
     
     <script src="auth.js"></script>
     <script>
+        // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+        let attachedMedia = [];
+        let selectedUrgency = 'medium';
+        
+        // Переменные для записи аудио
+        let audioRecorder = null;
+        let audioChunks = [];
+        let audioTimer = null;
+        let audioStartTime = null;
+        let audioStream = null;
+        let isRecording = false; // Защита от дублирования
+        const MAX_AUDIO_DURATION = 30000; // 30 секунд
+        // ===== КОНЕЦ ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ =====
+        
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
         document.addEventListener('DOMContentLoaded', () => {
             console.log('[Page] Проверка авторизации...');
@@ -501,18 +515,6 @@
             console.log('[Page] Инициализация страницы...');
             initializePage();
         });
-        
-        // Глобальные переменные
-        let attachedMedia = [];
-        let selectedUrgency = 'medium';
-        
-        // Переменные для записи аудио
-        let audioRecorder = null;
-        let audioChunks = [];
-        let audioTimer = null;
-        let audioStartTime = null;
-        let audioStream = null;
-        const MAX_AUDIO_DURATION = 30000; // 30 секунд
         
         function initializePage() {
             const session = getSession();
@@ -986,12 +988,12 @@
         /**
          * Обновление UI кнопки записи
          */
-        function updateAudioRecordingUI(isRecording) {
-            const audioBtn = document.querySelector('.media-btn[onclick*="recordAudio"]');
+        function updateAudioRecordingUI(recording) {
+            const audioBtn = document.getElementById('audioRecordBtn');
             
             if (!audioBtn) return;
             
-            if (isRecording) {
+            if (recording) {
                 audioBtn.classList.add('recording');
                 audioBtn.innerHTML = '⏹️ Остановить';
                 audioBtn.style.background = '#f44336';

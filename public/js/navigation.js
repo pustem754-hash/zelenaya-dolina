@@ -111,8 +111,23 @@ function createQuickMenu() {
     return html;
 }
 
+// Не обновлять навигацию во время записи аудио
+function shouldSkipNavigationUpdate() {
+    // Проверяем глобальную переменную isRecording из create-request.html
+    if (typeof window.isRecording !== 'undefined') {
+        return window.isRecording;
+    }
+    return false;
+}
+
 // Инициализация навигации
 function initNavigation() {
+    // Проверка: не обновлять навигацию во время записи аудио
+    if (shouldSkipNavigationUpdate()) {
+        console.log('[Navigation] Пропуск обновления навигации (идёт запись аудио)');
+        return;
+    }
+    
     // Добавить стрелки навигации в начало body
     const navigationHTML = createNavigationArrows();
     document.body.insertAdjacentHTML('afterbegin', navigationHTML);

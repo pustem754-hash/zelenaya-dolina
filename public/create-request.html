@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина» v6.4.2</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.4.3</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -522,7 +522,35 @@
             
             // Загрузить сохранённые медиафайлы при загрузке страницы
             const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
-            attachedMedia = savedMedia;
+            console.log('[Page] Загружено из localStorage:', savedMedia.length, 'файлов');
+            
+            // ФИЛЬТРАЦИЯ: Удалить старые записи (старше 24 часов)
+            const now = Date.now();
+            const ONE_DAY = 24 * 60 * 60 * 1000; // 24 часа
+            
+            attachedMedia = savedMedia.filter(media => {
+                // Если нет timestamp или запись старше 24 часов — удалить
+                if (!media.timestamp) {
+                    console.warn('[Media] Файл без timestamp будет удалён:', media.name || media.type);
+                    return false;
+                }
+                
+                const age = now - media.timestamp;
+                if (age > ONE_DAY) {
+                    console.log('[Media] Удалена старая запись (возраст:', Math.round(age / 1000 / 60 / 60), 'часов):', media.name);
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Обновить localStorage после фильтрации
+            if (attachedMedia.length !== savedMedia.length) {
+                localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+                console.log('[Media] Автоочистка: удалено', savedMedia.length - attachedMedia.length, 'старых файлов');
+            }
+            
+            console.log('[Page] Актуальных медиа после очистки:', attachedMedia.length);
             renderMediaPreview();
             
             // Счётчик символов
@@ -539,11 +567,19 @@
                 });
             });
             
-            // Обработчик кнопки записи аудио
-            const audioBtn = document.getElementById('audioRecordBtn');
-            if (audioBtn) {
-                audioBtn.addEventListener('click', handleAudioButtonClick);
-            }
+            // Обработчик кнопки записи аудио с задержкой (для гарантии)
+            setTimeout(() => {
+                const audioBtn = document.getElementById('audioRecordBtn');
+                if (audioBtn) {
+                    // Удалить старый обработчик (если был)
+                    audioBtn.removeEventListener('click', handleAudioButtonClick);
+                    // Добавить новый
+                    audioBtn.addEventListener('click', handleAudioButtonClick);
+                    console.log('[Page] ✅ Обработчик кнопки аудио подключён');
+                } else {
+                    console.error('[Page] ❌ Кнопка audioRecordBtn не найдена!');
+                }
+            }, 100);
             
             // Обработка формы
             document.getElementById('requestForm').addEventListener('submit', async (e) => {
@@ -696,11 +732,13 @@
          * Обработчик клика на кнопку аудио
          */
         function handleAudioButtonClick() {
+            console.log('[AudioBtn] Клик по кнопке аудио. Текущее состояние isRecording:', isRecording);
+            
             if (isRecording) {
-                // Если идёт запись - остановить
+                console.log('[AudioBtn] Остановка записи...');
                 stopAudioRecording();
             } else {
-                // Если не идёт - начать
+                console.log('[AudioBtn] Начало записи...');
                 recordAudio();
             }
         }
@@ -752,12 +790,13 @@
                 audioChunks = [];
                 audioStartTime = Date.now();
                 isRecording = true; // ВАЖНО: установить флаг
+                window.isRecording = true; // Экспорт для навигации
                 
                 // Обработчик данных
                 audioRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
-                        console.log('[Audio] Получен chunk размером:', event.data.size);
                         audioChunks.push(event.data);
+                        // Убрали console.log — он мог вызывать перерисовку DOM
                     }
                 };
                 
@@ -767,6 +806,7 @@
                     
                     // Очистить флаг СРАЗУ
                     isRecording = false;
+                    window.isRecording = false; // Экспорт для навигации
                     
                     // Остановить все треки микрофона
                     if (audioStream) {
@@ -818,6 +858,7 @@
                     
                     // Сброс состояния
                     isRecording = false;
+                    window.isRecording = false; // Экспорт для навигации
                     stopAudioRecording();
                 };
                 
@@ -845,6 +886,7 @@
                 
                 // Сброс состояния
                 isRecording = false;
+                window.isRecording = false; // Экспорт для навигации
                 updateAudioRecordingUI(false);
                 
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
@@ -871,6 +913,7 @@
             
             // Сбросить флаг
             isRecording = false;
+            window.isRecording = false; // Экспорт для навигации
             
             // Остановить запись (это вызовет обработчик onstop)
             if (audioRecorder && audioRecorder.state !== 'inactive') {
@@ -1096,8 +1139,21 @@
         }
         
         function removeMedia(index) {
-            attachedMedia.splice(index, 1);
+            console.log('[Media] Удаление медиа, индекс:', index, 'Всего до удаления:', attachedMedia.length);
+            
+            // Удалить из массива
+            const removed = attachedMedia.splice(index, 1);
+            console.log('[Media] Удалён файл:', removed[0]?.name || removed[0]?.type);
+            
+            // КРИТИЧЕСКИ ВАЖНО: Обновить localStorage
+            localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+            console.log('[Media] localStorage обновлён. Осталось файлов:', attachedMedia.length);
+            
+            // Обновить UI
             renderMediaPreview();
+            
+            // Показать уведомление
+            showNotification('Файл удалён', 'success', 2000);
         }
         
         function getAttachedMedia() {

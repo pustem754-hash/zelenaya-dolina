@@ -457,7 +457,7 @@
         let audioStartTime = null;
         let audioStream = null;
         let isRecording = false; // Защита от дублирования
-        const MAX_AUDIO_DURATION = 30000; // 30 секунд
+        const MAX_AUDIO_DURATION = 60000; // 60 секунд
         
         // Экспорт для навигации (чтобы navigation.js мог проверить состояние)
         window.isRecording = false;
@@ -861,14 +861,29 @@
                 updateAudioRecordingUI(true);
                 
                 // Показать уведомление
-                showNotification('🎤 Запись началась (макс. 30 сек)', 'success');
+                showNotification('🎤 Запись началась (макс. 60 сек)', 'success');
                 
-                // Таймер автоматической остановки через 30 секунд
+                // Таймер автоматической остановки через 60 секунд
+                // ВАЖНО: Очистить предыдущий таймер, если он был
+                if (audioTimer) {
+                    clearTimeout(audioTimer);
+                    audioTimer = null;
+                }
+                
                 audioTimer = setTimeout(() => {
-                    console.log('[Audio] Таймаут 30 секунд');
-                    if (isRecording) {
+                    console.log('[Audio] Таймаут 60 секунд достигнут');
+                    
+                    // КРИТИЧЕСКИ ВАЖНО: Очистить таймер СРАЗУ, чтобы избежать повторных срабатываний
+                    clearTimeout(audioTimer);
+                    audioTimer = null;
+                    
+                    // Проверить, что запись всё ещё активна
+                    if (isRecording && audioRecorder && audioRecorder.state !== 'inactive') {
+                        console.log('[Audio] Автоматическая остановка по таймауту');
                         stopAudioRecording();
-                        showNotification('⏱️ Достигнута максимальная длительность', 'warning');
+                        showNotification('⏱️ Достигнута максимальная длительность (60 секунд)', 'warning');
+                    } else {
+                        console.log('[Audio] Запись уже остановлена, таймер проигнорирован');
                     }
                 }, MAX_AUDIO_DURATION);
                 
@@ -896,13 +911,22 @@
         function stopAudioRecording() {
             console.log('[Audio] Остановка записи...');
             
+            // КРИТИЧЕСКИ ВАЖНО: Очистить таймер ПЕРВЫМ ДЕЛОМ, чтобы избежать повторных срабатываний
+            if (audioTimer) {
+                clearTimeout(audioTimer);
+                audioTimer = null;
+                console.log('[Audio] Таймер очищен');
+            }
+            
             // Проверка состояния
             if (!isRecording) {
                 console.warn('[Audio] Запись не активна');
+                // Всё равно обновить UI на всякий случай
+                updateAudioRecordingUI(false);
                 return;
             }
             
-            // Сбросить флаг
+            // Сбросить флаг СРАЗУ
             isRecording = false;
             window.isRecording = false; // Экспорт для навигации
             
@@ -913,11 +937,13 @@
                     console.log('[Audio] MediaRecorder остановлен');
                 } catch (error) {
                     console.error('[Audio] Ошибка остановки:', error);
+                    // Даже если ошибка, всё равно обновить UI
+                    updateAudioRecordingUI(false);
                 }
+            } else {
+                // Если MediaRecorder уже остановлен, просто обновить UI
+                updateAudioRecordingUI(false);
             }
-            
-            // Обновить UI
-            updateAudioRecordingUI(false);
         }
         
         /**
@@ -1024,24 +1050,34 @@
         }
         
         /**
-         * Обновление UI кнопки записи
+         * Обновление UI кнопки записи (без прыжков интерфейса)
          */
         function updateAudioRecordingUI(recording) {
             const audioBtn = document.getElementById('audioRecordBtn');
             
-            if (!audioBtn) return;
-            
-            if (recording) {
-                audioBtn.classList.add('recording');
-                audioBtn.innerHTML = '⏹️ Остановить';
-                audioBtn.style.background = '#f44336';
-                audioBtn.style.animation = 'pulse 1s infinite';
-            } else {
-                audioBtn.classList.remove('recording');
-                audioBtn.innerHTML = '🎤 Аудио';
-                audioBtn.style.background = '';
-                audioBtn.style.animation = '';
+            if (!audioBtn) {
+                console.warn('[Audio] Кнопка audioRecordBtn не найдена для обновления UI');
+                return;
             }
+            
+            // Использовать requestAnimationFrame для плавного обновления
+            requestAnimationFrame(() => {
+                if (recording) {
+                    audioBtn.classList.add('recording');
+                    audioBtn.innerHTML = '⏹️ Остановить';
+                    audioBtn.style.background = '#f44336';
+                    audioBtn.style.animation = 'pulse 1s infinite';
+                    // Предотвратить прыжки: фиксированная высота
+                    audioBtn.style.minHeight = audioBtn.offsetHeight + 'px';
+                } else {
+                    audioBtn.classList.remove('recording');
+                    audioBtn.innerHTML = '🎤 Аудио';
+                    audioBtn.style.background = '';
+                    audioBtn.style.animation = '';
+                    // Вернуть нормальную высоту
+                    audioBtn.style.minHeight = '';
+                }
+            });
         }
         
         /**

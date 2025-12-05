@@ -339,10 +339,11 @@
         .audio-player {
             width: 100%;
             margin: 10px 0;
-            display: none;
             background: #f8f9fa;
             padding: 15px;
             border-radius: 12px;
+            min-height: 150px;
+            transition: opacity 0.3s ease;
         }
         .audio-player audio {
             width: 100%;
@@ -351,6 +352,17 @@
             margin-top: 10px;
             color: #666;
             font-size: 14px;
+        }
+        #audioRecordingStatus {
+            min-height: 120px;
+            transition: opacity 0.3s ease;
+        }
+        /* Состояния для opacity */
+        .audio-player[style*="opacity: 0"] {
+            pointer-events: none;
+        }
+        #audioRecordingStatus[style*="opacity: 0"] {
+            pointer-events: none;
         }
         .nav {
             position: fixed;
@@ -1189,17 +1201,19 @@
             <!-- Вкладка: Аудио -->
             <div id="requestAudioTab" class="tab-content">
                 <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">🎤 Голосовое сообщение</h3>
-                <p style="color: #666; margin-bottom: 15px;">Запишите голосовое описание проблемы (до 60 секунд)</p>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Запишите голосовое сообщение к заявке (до 60 секунд)</p>
                 
                 <button class="btn btn-audio" id="audioBtn" onclick="toggleAudio()">🎤 Начать запись</button>
                 
-                <div id="audioRecordingStatus" style="display: none; text-align: center; padding: 15px; background: #ffe5e5; border-radius: 12px; margin: 15px 0;">
+                <!-- Статус записи (ВСЕГДА занимает место, но скрыт по opacity) -->
+                <div id="audioRecordingStatus" style="min-height: 120px; opacity: 0; transition: opacity 0.3s; text-align: center; padding: 15px; background: #ffe5e5; border-radius: 12px; margin: 15px 0; pointer-events: none;">
                     <div style="font-size: 32px; margin-bottom: 10px; animation: pulse 1s infinite;">🔴</div>
                     <div style="font-weight: bold; color: #e74c3c; font-size: 18px;" id="audioTimer">00:00</div>
                     <div style="color: #666; font-size: 14px; margin-top: 5px;">Запись...</div>
                 </div>
                 
-                <div class="audio-player" id="audioPlayer" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 12px; margin-top: 15px;">
+                <!-- Плеер (ВСЕГДА занимает место, но скрыт по opacity) -->
+                <div class="audio-player" id="audioPlayer" style="min-height: 150px; opacity: 0; transition: opacity 0.3s; background: #f8f9fa; padding: 15px; border-radius: 12px; margin-top: 15px; pointer-events: none;">
                     <audio id="audioPlayback" controls style="width: 100%; margin-bottom: 10px;"></audio>
                     <div class="audio-info" id="audioInfo" style="color: #27ae60; font-weight: 500; margin-bottom: 10px;"></div>
                     <button class="btn" onclick="deleteAudio()" style="background: #e74c3c; margin-top: 10px; width: 100%;">
@@ -2292,7 +2306,6 @@
                         
                         if (audio) {
                             audio.src = audioUrl;
-                            player.style.display = 'block';
                             
                             const duration = Math.round((Date.now() - audioStartTime) / 1000);
                             const size = (savedAudioBlob.size / 1024).toFixed(1);
@@ -2300,9 +2313,15 @@
                                 `✅ Записано: ${duration} сек. | Размер: ${size} КБ`;
                         }
                         
+                        // ИСПРАВЛЕНО: Используем opacity вместо display
+                        player.style.opacity = '1';
+                        player.style.pointerEvents = 'auto';
+                        
                         btn.textContent = '🎤 Записать новое сообщение';
                         btn.style.background = '#27ae60';
-                        statusDiv.style.display = 'none';
+                        
+                        statusDiv.style.opacity = '0';
+                        statusDiv.style.pointerEvents = 'none';
                         
                         if (audioTimer) {
                             clearInterval(audioTimer);
@@ -2317,7 +2336,14 @@
                     
                     btn.textContent = '⏹️ Остановить запись';
                     btn.style.background = '#e74c3c';
-                    statusDiv.style.display = 'block';
+                    
+                    // ИСПРАВЛЕНО: Показываем статус через opacity
+                    statusDiv.style.opacity = '1';
+                    statusDiv.style.pointerEvents = 'auto';
+                    
+                    // Скрываем плеер
+                    player.style.opacity = '0';
+                    player.style.pointerEvents = 'none';
                     
                     // Таймер записи
                     audioTimer = setInterval(() => {
@@ -2348,24 +2374,52 @@
         }
         
         function deleteAudio() {
-            if (!confirm('Удалить голосовую запись?')) return;
+            if (!confirm('❌ Удалить голосовую запись?')) {
+                return;
+            }
             
-            savedAudioBlob = null;
             const player = document.getElementById('audioPlayer');
+            const audio = document.getElementById('audioPlayback');
             const btn = document.getElementById('audioBtn');
             
-            if (player) player.style.display = 'none';
+            // Остановить воспроизведение
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+                const audioSrc = audio.src;
+                audio.src = '';
+                
+                // Очистить blob URL
+                if (audioSrc && audioSrc.startsWith('blob:')) {
+                    URL.revokeObjectURL(audioSrc);
+                }
+            }
+            
+            // Очистить blob
+            savedAudioBlob = null;
+            
+            // Очистить данные
+            audioChunks = [];
+            
+            // Скрыть плеер через opacity
+            if (player) {
+                player.style.opacity = '0';
+                player.style.pointerEvents = 'none';
+            }
+            
+            // Сбросить кнопку
             if (btn) {
                 btn.textContent = '🎤 Начать запись';
                 btn.style.background = '#27ae60';
             }
             
-            const audio = document.getElementById('audioPlayback');
-            if (audio) {
-                audio.src = '';
+            // Очистить info
+            const audioInfo = document.getElementById('audioInfo');
+            if (audioInfo) {
+                audioInfo.textContent = '';
             }
             
-            console.log('✅ Аудио удалено');
+            console.log('✅ Аудио успешно удалено');
         }
         
         function renderAudioList() {

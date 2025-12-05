@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- УК "Зелёная Долина" - Главная страница v6.5.8 -->
+    <!-- УК "Зелёная Долина" - Главная страница v6.5.9 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>УК «Зелёная долина» v6.5.2</title>
@@ -1946,11 +1946,20 @@
             console.log('[Page] Сессия пользователя:', session);
             
             // Показать информацию о пользователе
-            showUserInfo();
+            if (typeof showUserInfo === 'function') {
+                showUserInfo();
+            } else {
+                console.log('[Page] showUserInfo отсутствует, пропускаем');
+            }
             
             // Здесь код инициализации конкретной страницы
         }
         
+        // Заглушка showUserInfo, чтобы избежать ошибок, если функция не определена
+        function showUserInfo() {
+            console.log('[Page] showUserInfo вызвана');
+        }
+
         // ========== ФУНКЦИИ ДЛЯ КНОПОК ==========
         // Оплата онлайн
         function handlePaymentClick() {

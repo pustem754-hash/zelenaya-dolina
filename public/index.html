@@ -1293,7 +1293,7 @@
                     ">
                         <audio id="audioPlayback" controls style="width: 100%; margin-bottom: 15px;"></audio>
                         <div id="audioInfo" style="color: #27ae60; font-weight: 500; margin-bottom: 15px; text-align: center;"></div>
-                        <button class="btn" onclick="deleteAudio()" style="background: #e74c3c; width: 100%;">
+                        <button class="btn" onclick="deleteCurrentAudio()" style="background: #e74c3c; width: 100%;">
                             🗑️ Удалить запись
                         </button>
                     </div>
@@ -1930,10 +1930,10 @@
         function renderCounterPhotos() {
             console.log('🖼️ Рендеринг фото счётчиков');
             const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
-            const container = document.getElementById('counterPhotosContainer');
+            const container = document.getElementById('metersPhotoGallery');
             
             if (!container) {
-                console.log('⚠️ Контейнер counterPhotosContainer не найден');
+                console.log('⚠️ Контейнер metersPhotoGallery не найден');
                 return;
             }
             
@@ -2540,8 +2540,8 @@
             savedAudioBlob = null;
         }
         
-        function deleteAudio() {
-            console.log('🗑️ Попытка удалить аудио...');
+        function deleteCurrentAudio() {
+            console.log('🗑️ Попытка удалить текущую аудио запись...');
             
             // Подтверждение удаления
             if (!confirm('❌ Удалить голосовую запись?')) {
@@ -4071,7 +4071,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             // Загрузить сохранённые видео и аудио при загрузке страницы
             renderVideos();
             renderAudioList();
-            loadMeterVideosFromStorage();
+            renderCounterVideos();
             
             // Определить платформу для видео в заявках
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;

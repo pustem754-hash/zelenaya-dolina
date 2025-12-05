@@ -345,8 +345,22 @@
     
     <script src="auth.js"></script>
     <script>
-        // Проверка авторизации при загрузке страницы
-        requireAuth();
+        // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Page] Проверка авторизации...');
+            
+            if (!requireAuth()) {
+                console.log('[Page] Пользователь не авторизован, редирект на login');
+                return;
+            }
+            
+            console.log('[Page] Инициализация страницы...');
+            initializePage();
+        });
+        
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
         
         const paymentHistory = [
             { date: '2025-09-25', amount: 9845.30, status: 'paid', receipt: 'receipt-sep-2025.pdf' },

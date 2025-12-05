@@ -260,15 +260,35 @@
         </div>
     </div>
     
+    <script src="auth.js"></script>
     <script>
-        // База номеров телефонов УК (для прототипа)
-        const validPhones = [
-            '+7 (999) 123-45-67',
-            '+7 (999) 234-56-78',
-            '+7 (999) 345-67-89',
-            '+7 (999) 456-78-90',
-            '+7 (999) 567-89-01'
+        // База тестовых пользователей
+        const TEST_USERS = [
+            { phone: '+7 (999) 123-45-67', name: 'Иванов Иван Иванович', apartment: 'ЖК Маяк, д.1, кв.15' },
+            { phone: '+7 (999) 234-56-78', name: 'Петров Пётр Петрович', apartment: 'ЖК Зелёная Долина, д.3, кв.42' },
+            { phone: '+7 (999) 345-67-89', name: 'Сидорова Мария Александровна', apartment: 'ЖК Маяк, д.2, кв.8' },
+            { phone: '+7 (960) 072-03-21', name: 'Диспетчер УК', apartment: 'Администратор' }
         ];
+        
+        const validPhones = TEST_USERS.map(u => u.phone);
+        
+        // Тестовый SMS-код
+        const TEST_SMS_CODE = '1234';
+        
+        // Состояние формы
+        let currentPhone = '';
+        let smsCodeSentAt = null;
+        
+        // Проверка: если уже авторизован, редирект на главную
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isAuthenticated()) {
+                console.log('[Login] Пользователь уже авторизован');
+                const returnUrl = sessionStorage.getItem('returnUrl') || 'index.html';
+                sessionStorage.removeItem('returnUrl');
+                window.location.href = returnUrl;
+                return;
+            }
+        });
         
         let countdownTimer = null;
         let timeLeft = 300; // 5 минут в секундах
@@ -362,21 +382,23 @@
                 return;
             }
             
-            // Проверка номера в базе (для прототипа)
+            // Проверка номера в базе
             const formattedPhone = phoneInput.value;
-            if (!validPhones.includes(formattedPhone)) {
+            const user = TEST_USERS.find(u => u.phone === formattedPhone);
+            if (!user) {
                 showError('Номер телефона не найден в базе УК. Обратитесь в управляющую компанию.');
                 return;
             }
             
-            // Генерация SMS-кода (mock) - для теста всегда 1234
-            const code = '1234';
-            console.log(`📱 SMS код для ${formattedPhone}: ${code}`);
-            
-            // Сохранение ожидаемого кода
-            localStorage.setItem('expectedCode', code);
+            // Сохранение данных
+            currentPhone = formattedPhone;
+            smsCodeSentAt = Date.now();
+            localStorage.setItem('expectedCode', TEST_SMS_CODE);
             const phoneCleaned = phone.replace(/\D/g, '');
             localStorage.setItem('phoneForAuth', phoneCleaned);
+            localStorage.setItem('userData', JSON.stringify(user));
+            
+            console.log(`📱 SMS код для ${formattedPhone}: ${TEST_SMS_CODE}`);
             
             // Показать форму ввода кода
             document.getElementById('phoneSection').style.display = 'none';
@@ -457,33 +479,94 @@
                 return;
             }
             
-            if (code === expectedCode) {
-                // Создание сессии через auth.js
-                const phoneCleaned = phone.replace(/\D/g, '');
-                createSession(phoneCleaned);
-                
-                // Очищаем временные данные
-                localStorage.removeItem('expectedCode');
-                localStorage.removeItem('phoneForAuth');
-                
-                showSuccess('Вход выполнен успешно!');
-                
-                // Редирект на главную страницу
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-            } else {
+            if (code !== TEST_SMS_CODE) {
                 showError('Неверный код. Попробуйте ещё раз.');
                 codeInput.value = '';
                 codeInput.focus();
+                return;
             }
+            
+            // Проверка срока действия кода (3 минуты)
+            if (smsCodeSentAt && Date.now() - smsCodeSentAt > 3 * 60 * 1000) {
+                showError('Код истёк. Запросите новый код.');
+                backToPhone();
+                return;
+            }
+            
+            // Найти пользователя
+            const userDataStr = localStorage.getItem('userData');
+            const user = userDataStr ? JSON.parse(userDataStr) : TEST_USERS.find(u => u.phone === currentPhone);
+            
+            if (!user) {
+                showError('Пользователь не найден');
+                return;
+            }
+            
+            // Показать загрузку
+            const loader = document.createElement('div');
+            loader.id = 'loader';
+            loader.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            `;
+            loader.innerHTML = `
+                <div style="text-align: center; color: white;">
+                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                    <p style="font-size: 16px; font-weight: 500; margin: 0;">Вход в систему...</p>
+                </div>
+            `;
+            document.body.appendChild(loader);
+            
+            setTimeout(() => {
+                try {
+                    // Создать сессию
+                    const phoneCleaned = currentPhone.replace(/\D/g, '');
+                    createSession(phoneCleaned, {
+                        name: user.name,
+                        apartment: user.apartment,
+                        userId: 'user_' + phoneCleaned
+                    });
+                    
+                    console.log('[Login] Сессия успешно создана');
+                    console.log('[Login] Данные:', getSession());
+                    
+                    loader.remove();
+                    showSuccess('Добро пожаловать, ' + user.name.split(' ')[0] + '!');
+                    
+                    // Очищаем временные данные
+                    localStorage.removeItem('expectedCode');
+                    localStorage.removeItem('phoneForAuth');
+                    localStorage.removeItem('userData');
+                    
+                    // Редирект на целевую страницу
+                    setTimeout(() => {
+                        const returnUrl = sessionStorage.getItem('returnUrl') || 'index.html';
+                        sessionStorage.removeItem('returnUrl');
+                        console.log('[Login] Редирект на:', returnUrl);
+                        window.location.href = returnUrl;
+                    }, 1000);
+                    
+                } catch (error) {
+                    loader.remove();
+                    console.error('[Login] Ошибка создания сессии:', error);
+                    showError('Ошибка входа. Попробуйте позже.');
+                }
+            }, 1500);
         }
     </script>
-    <script src="auth.js"></script>
-    <script>
-        // Проверка авторизации при загрузке (используем requireAuth из auth.js)
-        requireAuth();
-    </script>
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </body>
 </html>
 

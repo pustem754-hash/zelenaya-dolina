@@ -196,8 +196,22 @@
     
     <script src="auth.js"></script>
     <script>
-        // Проверка авторизации при загрузке страницы
-        requireAuth();
+        // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Page] Проверка авторизации...');
+            
+            if (!requireAuth()) {
+                console.log('[Page] Пользователь не авторизован, редирект на login');
+                return;
+            }
+            
+            console.log('[Page] Инициализация страницы...');
+            initializePage();
+        });
+        
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
         
         // Данные камер (mock)
         const cameras = [

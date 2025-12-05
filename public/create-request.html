@@ -103,32 +103,6 @@
             margin-top: 4px;
         }
         
-        .urgency-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .urgency-btn {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .urgency-btn:hover {
-            border-color: #2E7D32;
-        }
-        
-        .urgency-btn.active {
-            background: #2E7D32;
-            color: white;
-            border-color: #2E7D32;
-        }
-        
         .media-buttons {
             display: flex;
             gap: 10px;
@@ -446,22 +420,6 @@
             </div>
         </div>
         
-        <!-- Срочность -->
-        <div class="form-group">
-            <label>Срочность</label>
-            <div class="urgency-buttons">
-                <button type="button" class="urgency-btn" data-urgency="low">
-                    🟢 Низкая
-                </button>
-                <button type="button" class="urgency-btn active" data-urgency="medium">
-                    🟡 Средняя
-                </button>
-                <button type="button" class="urgency-btn" data-urgency="high">
-                    🔴 Высокая
-                </button>
-            </div>
-        </div>
-        
         <!-- Медиафайлы -->
         <div class="form-group">
             <label>Прикрепить файлы (фото, видео, аудио)</label>
@@ -491,7 +449,6 @@
     <script>
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
         let attachedMedia = [];
-        let selectedUrgency = 'medium';
         
         // Переменные для записи аудио
         let audioRecorder = null;

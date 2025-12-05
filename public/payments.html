@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Платежи - УК «Зелёная долина» v6.4.0</title>
+    <title>Платежи - УК «Зелёная долина» v6.4.1</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -484,6 +484,123 @@
         </label>
     </div>
     
+    <!-- Модальное окно выбора способа оплаты -->
+    <div id="payment-method-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closePaymentMethodModal()">&times;</button>
+            
+            <h2 style="margin-bottom: 20px; text-align: center;">💳 Выберите способ оплаты</h2>
+            
+            <div class="payment-amount-info">
+                <p style="text-align: center; font-size: 24px; font-weight: bold; color: #27ae60; margin-bottom: 30px;">
+                    11 087.06 ₽
+                </p>
+            </div>
+            
+            <!-- БАНКОВСКИЕ КАРТЫ -->
+            <div class="payment-section">
+                <h3>💳 Банковские карты</h3>
+                
+                <button class="payment-method-btn" onclick="payWithBank('sberbank')">
+                    <span style="font-size: 24px;">🟢</span>
+                    <span>Сбербанк Онлайн</span>
+                    <span class="arrow">→</span>
+                </button>
+                
+                <button class="payment-method-btn" onclick="payWithBank('tinkoff')">
+                    <span style="font-size: 24px;">🟡</span>
+                    <span>Т-Банк (Тинькофф)</span>
+                    <span class="arrow">→</span>
+                </button>
+                
+                <button class="payment-method-btn" onclick="payWithBank('vtb')">
+                    <span style="font-size: 24px;">🔵</span>
+                    <span>ВТБ Онлайн</span>
+                    <span class="arrow">→</span>
+                </button>
+                
+                <button class="payment-method-btn" onclick="payWithBank('alfabank')">
+                    <span style="font-size: 24px;">🔴</span>
+                    <span>Альфа-Банк</span>
+                    <span class="arrow">→</span>
+                </button>
+                
+                <button class="payment-method-btn" onclick="payWithBank('raiffeisen')">
+                    <span style="font-size: 24px;">🟡</span>
+                    <span>Райффайзен Банк</span>
+                    <span class="arrow">→</span>
+                </button>
+                
+                <button class="payment-method-btn" onclick="payWithBank('gazprombank')">
+                    <span style="font-size: 24px;">🏦</span>
+                    <span>Газпромбанк</span>
+                    <span class="arrow">→</span>
+                </button>
+            </div>
+            
+            <!-- СБП -->
+            <div class="payment-section">
+                <h3>⚡ Быстрая оплата</h3>
+                
+                <button class="payment-method-btn sbp-btn" onclick="openSbpModal(); closePaymentMethodModal();">
+                    <span style="font-size: 24px;">⚡</span>
+                    <span>Система быстрых платежей (СБП)</span>
+                    <span class="arrow">→</span>
+                </button>
+            </div>
+            
+            <!-- БАНКОВСКИЕ КАРТЫ (ПРЯМОЙ ВВОД) -->
+            <div class="payment-section">
+                <button class="payment-method-btn" onclick="payWithCard()">
+                    <span style="font-size: 24px;">💳</span>
+                    <span>Оплата картой (Visa, MasterCard, Мир)</span>
+                    <span class="arrow">→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно СПБ -->
+    <div id="sbp-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeSbpModal()">&times;</button>
+            
+            <h2 style="margin-bottom: 20px; text-align: center;">⚡ Система быстрых платежей (СБП)</h2>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 32px; margin-bottom: 10px;">📱</div>
+                <p style="font-size: 18px; font-weight: bold; color: #27ae60; margin-bottom: 10px;">
+                    Сумма к оплате: 11 087.06 ₽
+                </p>
+                <p style="color: #666; margin-bottom: 20px;">
+                    Отсканируйте QR-код в приложении вашего банка
+                </p>
+            </div>
+            
+            <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 12px; margin-bottom: 20px;">
+                <div style="width: 200px; height: 200px; margin: 0 auto; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">
+                    QR-код для оплаты<br>(в production: реальный QR)
+                </div>
+            </div>
+            
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="font-size: 14px; color: #1976d2; margin-bottom: 8px;">
+                    <strong>Как оплатить через СБП:</strong>
+                </p>
+                <ol style="font-size: 14px; color: #333; margin-left: 20px; line-height: 1.8;">
+                    <li>Откройте приложение вашего банка</li>
+                    <li>Выберите "Оплата по QR-коду"</li>
+                    <li>Отсканируйте QR-код на экране</li>
+                    <li>Подтвердите платёж</li>
+                </ol>
+            </div>
+            
+            <button class="btn-primary" onclick="closeSbpModal()" style="width: 100%;">
+                Закрыть
+            </button>
+        </div>
+    </div>
+    
     <script src="auth.js"></script>
     <script>
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
@@ -564,9 +681,95 @@
             alert(`Скачивание квитанции: ${filename}\n(В production: генерация реального PDF)`);
         }
         
-        function handlePaymentClick() {
-            window.location.href = 'index.html';
+        // Открытие окна выбора способа оплаты
+        function openPaymentMethodModal() {
+            const modal = document.getElementById('payment-method-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
         }
+        
+        // Закрытие окна выбора способа оплаты
+        function closePaymentMethodModal() {
+            const modal = document.getElementById('payment-method-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Открытие модального окна СПБ
+        function openSbpModal() {
+            const modal = document.getElementById('sbp-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Закрытие модального окна СПБ
+        function closeSbpModal() {
+            const modal = document.getElementById('sbp-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Оплата через банк
+        function payWithBank(bank) {
+            closePaymentMethodModal();
+            
+            const bankNames = {
+                'sberbank': 'Сбербанк Онлайн',
+                'tinkoff': 'Т-Банк',
+                'vtb': 'ВТБ Онлайн',
+                'alfabank': 'Альфа-Банк',
+                'raiffeisen': 'Райффайзен Банк',
+                'gazprombank': 'Газпромбанк'
+            };
+            
+            alert(`🏦 Переход на страницу оплаты ${bankNames[bank] || bank}...\n\n💡 В реальном приложении здесь будет интеграция с платёжным шлюзом банка.`);
+            
+            // TODO: Интеграция с backend API
+            // window.location.href = `/api/payment/redirect?bank=${bank}&amount=11087.06`;
+        }
+        
+        // Оплата картой напрямую
+        function payWithCard() {
+            closePaymentMethodModal();
+            alert('💳 Переход на страницу ввода данных карты...\n\n💡 В реальном приложении здесь будет форма ввода реквизитов карты через защищённый платёжный шлюз (например, ЮKassa, CloudPayments).');
+            
+            // TODO: Интеграция с платёжным шлюзом
+            // window.location.href = '/payment/card?amount=11087.06';
+        }
+        
+        function handlePaymentClick() {
+            openPaymentMethodModal();
+        }
+        
+        // Закрытие модальных окон по клику вне окна
+        window.addEventListener('click', function(event) {
+            const paymentModal = document.getElementById('payment-method-modal');
+            const sbpModal = document.getElementById('sbp-modal');
+            
+            if (event.target === paymentModal) {
+                closePaymentMethodModal();
+            }
+            
+            if (event.target === sbpModal) {
+                closeSbpModal();
+            }
+        });
+        
+        // Закрытие модальных окон по клавише ESC
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closePaymentMethodModal();
+                closeSbpModal();
+            }
+        });
         
         function toggleAutopay() {
             const toggle = document.getElementById('autopayToggle');

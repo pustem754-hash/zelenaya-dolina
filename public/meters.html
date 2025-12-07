@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Счётчики - УК «Зелёная долина» v6.8.2</title>
+    <meta name="theme-color" content="#2E7D32">
+    <title>Счётчики - УК Зелёная долина v6.8.2</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #f5f5f5; }
-        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; text-align: center; }
-        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
-        button { min-height: 44px; padding: 14px; width: 100%; border-radius: 12px; border: none; background: #e0e0e0; font-size: 16px; cursor: pointer; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; padding: 20px; min-height: 100vh; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 24px; border-radius: 12px; }
+        h1 { font-size: 24px; margin-bottom: 24px; color: #2E7D32; }
+        .placeholder { text-align: center; color: #757575; margin: 40px 0; }
+        button { padding: 14px; background: #757575; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; min-height: 44px; }
+        button:active { opacity: 0.8; }
+        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; }
     </style>
 </head>
 <body>
-    <h1> Показания счётчиков</h1>
-    <div style="background: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px; color: #666;">
-        Нет данных о счётчиках
+    <div class="container">
+        <h1> Показания счётчиков</h1>
+        <div class="placeholder">Нет данных о счётчиках</div>
+        <button onclick="window.location.href='index.html'">Назад</button>
     </div>
-    <button onclick="window.history.back()">Назад</button>
     <div class="version">v6.8.2</div>
+    <script>console.log('[meters.html v6.8.2] Загружено');</script>
 </body>
 </html>

@@ -3,107 +3,53 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Вход - УК Зелёная долина v6.8.2</title>
-    <link rel="stylesheet" href="css/design-system.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <meta name="theme-color" content="#00A859">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="icon" href="./icon-48x48.png">
     <style>
-        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-6); background: var(--color-bg); font-family: var(--font-family); }
-        .login-card { max-width: 420px; width: 100%; }
-        .version-badge { position: fixed; top: var(--space-4); right: var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; background: #f5f5f5; }
+        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; word-wrap: break-word; text-align: center; line-height: 1.4; }
+        button { min-height: 44px; padding: 14px 20px; font-size: 16px; border-radius: 12px; border: none; cursor: pointer; transition: opacity 0.2s; width: 100%; margin-bottom: 10px; background: #2E7D32; color: white; }
+        button:active { opacity: 0.7; }
+        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
+        
+        .card { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; width: 100%; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 20px; outline: none; }
+        input:focus { border-color: #2E7D32; }
+        .theme-toggle { position: fixed; top: 16px; left: 16px; width: auto; padding: 8px; background: transparent; color: #333; font-size: 24px; margin: 0; box-shadow: none; }
     </style>
 </head>
 <body>
-    <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;"></button>
-    <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.body.classList.add(`theme-${currentTheme}`);
-    themeToggle.addEventListener('click', () => {
-      const newTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
-      document.body.classList.remove('theme-light', 'theme-dark');
-      document.body.classList.add(`theme-${newTheme}`);
-      localStorage.setItem('theme', newTheme);
-      console.log(` Тема изменена на: ${newTheme}`);
-    });
-    </script>
-    <style>
-    body.theme-dark { background: #1a1a1a; color: #f5f5f5; }
-    body.theme-dark button { background: #2E7D32; color: #fff; }
-    body.theme-dark input { background: #2a2a2a; color: #f5f5f5; border: 1px solid #444; }
-    </style>
-
-    <div class="version-badge">v6.8.2</div>
-    <div class="login-card card card-glass animate-scale-in">
-        <div class="card-header text-center">
-            <h1 class="card-title"> УК Зелёная долина</h1>
-            <p style="margin: var(--space-2) 0 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">Управляющая компания</p>
-        </div>
-        <div class="card-body">
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label class="form-label required" for="phoneInput">Номер телефона</label>
-                    <div class="input-icon-wrapper">
-                        <span class="input-icon"></span>
-                        <input type="tel" id="phoneInput" class="form-input" placeholder="+7 (999) 123-45-67" required autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label required" for="codeInput">СМС-код</label>
-                    <div class="input-icon-wrapper">
-                        <span class="input-icon"></span>
-                        <input type="text" id="codeInput" class="form-input" placeholder="1234" maxlength="4" required autocomplete="off">
-                    </div>
-                </div>
-                <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%;">Войти</button>
-            </form>
-        </div>
-        <div class="card-footer text-center">
-            <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-text-secondary);">Тестовый код: <strong>1234</strong></p>
-        </div>
+    <button id="theme-toggle" class="theme-toggle"></button>
+    
+    <div class="card">
+        <h1> УК Зелёная долина</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 24px;">Вход в личный кабинет</p>
+        
+        <form onsubmit="event.preventDefault(); window.location.href='index.html'">
+            <label for="phone">Номер телефона</label>
+            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" required>
+            
+            <label for="code">СМС-код</label>
+            <input type="number" id="code" placeholder="1234" required>
+            
+            <button type="submit">Войти</button>
+        </form>
+        
+        <p style="text-align: center; font-size: 12px; color: #999; margin-top: 16px;">Тестовый код: 1234</p>
     </div>
-    <div class="version" style="text-align:center; margin-top: var(--space-4); color: var(--color-text-secondary);">v6.8.2</div>
-    <script src="js/ui-modern.js"></script>
-    <script src="js/auth.js"></script>
+
+    <div class="version">v6.8.2</div>
+
     <script>
-        console.log('[login.html v6.8.2] Страница входа загружена');
-        console.log(' Сессия активна');
-        console.log(' Неверный код');
-        const phoneInput = document.getElementById('phoneInput');
-        const codeInput = document.getElementById('codeInput');
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 0 && !value.startsWith('7')) value = '7' + value;
-            let formatted = '+7';
-            if (value.length > 1) formatted += ' (' + value.substring(1, 4);
-            if (value.length >= 5) formatted += ') ' + value.substring(4, 7);
-            if (value.length >= 8) formatted += '-' + value.substring(7, 9);
-            if (value.length >= 10) formatted += '-' + value.substring(9, 11);
-            e.target.value = formatted;
-        });
-        codeInput.addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
-        });
-        async function handleLogin(e) {
-            e.preventDefault();
-            const phone = phoneInput.value;
-            const code = codeInput.value;
-            const loginBtn = document.getElementById('loginBtn');
-            if (phone.length < 18 || code.length !== 4) {
-                showNotification(' Заполните все поля корректно', 'error');
-                return;
-            }
-            showButtonLoading(loginBtn);
-            await login(phone, code);
-            setTimeout(() => hideButtonLoading(loginBtn), 2000);
-        }
-        window.addEventListener('load', () => phoneInput.focus());
+        console.log('[login.html v6.8.2] Loaded');
+        // Theme logic
+        const toggle = document.getElementById('theme-toggle');
+        toggle.onclick = () => {
+            document.body.style.background = document.body.style.background === 'rgb(26, 26, 26)' ? '#f5f5f5' : '#1a1a1a';
+            document.body.style.color = document.body.style.background === 'rgb(26, 26, 26)' ? '#fff' : '#000';
+        };
     </script>
 </body>
 </html>
-

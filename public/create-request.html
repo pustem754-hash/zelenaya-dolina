@@ -3,65 +3,81 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Новая заявка - УК Зелёная долина v6.8.2</title>
-    <link rel="stylesheet" href="css/design-system.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <meta name="theme-color" content="#00A859">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="icon" href="./icon-48x48.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; background: #f5f5f5; }
+        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; word-wrap: break-word; text-align: center; }
+        button { min-height: 44px; padding: 14px 20px; font-size: 16px; border-radius: 12px; border: none; cursor: pointer; width: 100%; margin-bottom: 10px; font-weight: 500; }
+        button:active { opacity: 0.7; }
+        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
+        
+        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        textarea { width: 100%; min-height: 120px; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; outline: none; resize: vertical; font-family: inherit; }
+        textarea:focus { border-color: #2E7D32; }
+        
+        .media-buttons { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+        @media (min-width: 768px) {
+            .media-buttons { grid-template-columns: repeat(3, 1fr); }
+        }
+        .btn-media { background: white; border: 2px solid #e0e0e0; color: #333; }
+        .btn-primary { background: #2E7D32; color: white; font-weight: bold; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+    </style>
 </head>
 <body>
-    <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;"></button>
-    <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.body.classList.add(`theme-${currentTheme}`);
-    themeToggle.addEventListener('click', () => {
-      const newTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
-      document.body.classList.remove('theme-light', 'theme-dark');
-      document.body.classList.add(`theme-${newTheme}`);
-      localStorage.setItem('theme', newTheme);
-      console.log(` Тема изменена на: ${newTheme}`);
-    });
-    </script>
-    <style>
-    body.theme-dark { background: #1a1a1a; color: #f5f5f5; }
-    body.theme-dark button { background: #2E7D32; color: #fff; }
-    body.theme-dark input, body.theme-dark textarea { background: #2a2a2a; color: #f5f5f5; border: 1px solid #444; }
-    </style>
-
-    <main style="max-width: 720px; margin: 80px auto; padding: 20px;">
-        <h1 style="margin-bottom: 16px;">Новая заявка</h1>
-        <div class="form-group">
+    <div class="card">
+        <h1>Новая заявка</h1>
+        <div style="margin-bottom: 20px;">
             <label for="description">Описание проблемы</label>
-            <textarea id="description" placeholder="Опишите проблему..." style="width:100%; min-height:120px; padding: 10px; margin-top: 5px;"></textarea>
-        </div>
-        
-        <div style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); margin: 16px 0;">
-            <!-- Hidden inputs -->
-            <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="console.log(' Фото добавлено')">
-            <input type="file" id="videoInput" accept="video/*" style="display:none" onchange="console.log(' Видео добавлено')">
-            <input type="file" id="audioInput" accept="audio/*" style="display:none" onchange="console.log(' Аудио добавлено')">
-
-            <!-- Buttons triggering inputs -->
-            <button type="button" class="btn" onclick="document.getElementById('photoInput').click()"> Прикрепить фото</button>
-            <button type="button" class="btn" onclick="document.getElementById('videoInput').click()"> Прикрепить видео</button>
-            <button type="button" class="btn" onclick="document.getElementById('audioInput').click()"> Прикрепить аудио</button>
+            <textarea id="description" placeholder="Опишите проблему..."></textarea>
         </div>
 
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" class="btn btn-primary" onclick="console.log(' Заявка отправлена')">Отправить заявку</button>
-            <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
+        <!-- Кнопки медиа -->
+        <div class="media-buttons">
+            <button type="button" class="btn-media" onclick="document.getElementById('photoInput').click()"> Прикрепить фото</button>
+            <button type="button" class="btn-media" onclick="document.getElementById('videoInput').click()"> Прикрепить видео</button>
+            <button type="button" class="btn-media" onclick="document.getElementById('audioInput').click()"> Прикрепить аудио</button>
         </div>
-        
-        <div class="version" style="margin-top: 16px; color: #666; font-size: 14px; text-align: center;">v6.8.2</div>
-    </main>
+
+        <!-- Скрытые file inputs -->
+        <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handlePhoto(this)">
+        <input type="file" id="videoInput" accept="video/*" style="display: none;" onchange="handleVideo(this)">
+        <input type="file" id="audioInput" accept="audio/*" style="display: none;" onchange="handleAudio(this)">
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn-primary" onclick="alert(' Заявка отправлена!'); window.location.href='index.html'">Отправить заявку</button>
+            <button class="btn-secondary" onclick="window.history.back()">Назад</button>
+        </div>
+    </div>
+
+    <div class="version">v6.8.2</div>
 
     <script>
-        console.log('[create-request.html v6.8.2] Форма заявки загружена');
+        console.log('[create-request.html v6.8.2] Loaded');
+
+        function handlePhoto(input) {
+            if (input.files[0]) {
+                console.log(' Фото выбрано:', input.files[0].name);
+                alert(' Фото прикреплено: ' + input.files[0].name);
+            }
+        }
+
+        function handleVideo(input) {
+            if (input.files[0]) {
+                console.log(' Видео выбрано:', input.files[0].name);
+                alert(' Видео прикреплено: ' + input.files[0].name);
+            }
+        }
+
+        function handleAudio(input) {
+            if (input.files[0]) {
+                console.log(' Аудио выбрано:', input.files[0].name);
+                alert(' Аудио прикреплено: ' + input.files[0].name);
+            }
+        }
     </script>
 </body>
 </html>

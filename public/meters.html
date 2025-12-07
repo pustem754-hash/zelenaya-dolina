@@ -1,44 +1,23 @@
 ﻿<!DOCTYPE html>
-<!-- УК "Зелёная Долина" - Счётчики v6.8.2 -->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Показания счётчиков - УК Зелёная долина v6.8.2</title>
-    <link rel="stylesheet" href="css/design-system.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <meta name="theme-color" content="#00A859">
-    <link rel="icon" href="./icon-48x48.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Счётчики - УК «Зелёная долина» v6.8.2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #f5f5f5; }
+        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; text-align: center; }
+        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
+        button { min-height: 44px; padding: 14px; width: 100%; border-radius: 12px; border: none; background: #e0e0e0; font-size: 16px; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;"></button>
-    <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.body.classList.add(`theme-${currentTheme}`);
-    themeToggle.addEventListener('click', () => {
-      const newTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
-      document.body.classList.remove('theme-light', 'theme-dark');
-      document.body.classList.add(`theme-${newTheme}`);
-      localStorage.setItem('theme', newTheme);
-      console.log(` Тема изменена на: ${newTheme}`);
-    });
-    </script>
-    <style>
-    body.theme-dark { background: #1a1a1a; color: #f5f5f5; }
-    body.theme-dark button { background: #2E7D32; color: #fff; }
-    </style>
-
-    <main style="max-width: 720px; margin: 80px auto; padding: 20px;">
-        <h1 style="margin-bottom: 16px;"> Показания счётчиков</h1>
-        <button class="btn btn-secondary" onclick="history.back()">Назад</button>
-        <div class="version" style="margin-top: 16px; color: #666; font-size: 14px; text-align: center;">v6.8.2</div>
-    </main>
-
-    <script>
-        console.log('[meters.html v6.8.2] Счётчики загружены');
-    </script>
+    <h1> Показания счётчиков</h1>
+    <div style="background: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px; color: #666;">
+        Нет данных о счётчиках
+    </div>
+    <button onclick="window.history.back()">Назад</button>
+    <div class="version">v6.8.2</div>
 </body>
 </html>

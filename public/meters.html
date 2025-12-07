@@ -39,21 +39,18 @@
 </head>
 <body>
     <!-- Навигация -->
-            <div class="nav-header">
-        <div style="display: flex; gap: 12px; pointer-events: auto;">
-            <button class="nav-btn" onclick="window.history.back()" aria-label="Назад">
-                <span></span>
-            </button>
-            <button class="nav-btn" onclick="window.history.forward()" aria-label="Вперед">
-                <span></span>
-            </button>
-        </div>
+                <div class="app-header">
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <span></span> На главную
+        </button>
+        <div class="header-title">$title</div>
+    </div>
         <button class="nav-btn nav-home" onclick="window.location.href='index.html'" aria-label="На главную">
             <span></span>
         </button>
     </div>
 
-    <h1> Передача показаний</h1>
+    
     
     <div class="meter-card">
         <label> Электроэнергия (Т1)</label>
@@ -99,6 +96,7 @@
     <div class="version">v6.8.2</div>
 <script src="js/logger.js?v=6.8.3"></script></body>
 </html>
+
 
 
 

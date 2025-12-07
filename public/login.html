@@ -1,687 +1,108 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- УК "Зелёная Долина" - Вход v6.8.2 -->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход - УК «Зелёная долина»</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2E7D32">
+    <title>Вход - УК Зелёная долина v6.8.2</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <meta name="theme-color" content="#00A859">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
-    
+    <link rel="icon" href="./icon-48x48.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .login-header h1 {
-            color: #2E7D32;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .login-header p {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        
-        .phone-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 18px;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-        
-        .phone-input:focus {
-            outline: none;
-            border-color: #2E7D32;
-        }
-        
-        .code-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 24px;
-            text-align: center;
-            letter-spacing: 8px;
-            font-weight: 600;
-            transition: border-color 0.3s;
-        }
-        
-        .code-input:focus {
-            outline: none;
-            border-color: #2E7D32;
-        }
-        
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 10px;
-        }
-        
-        .btn-primary:hover {
-            background: #27ae60;
-        }
-        
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .btn-secondary {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: #2E7D32;
-            border: 2px solid #2E7D32;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-        
-        .btn-secondary:hover {
-            background: #2E7D32;
-            color: white;
-        }
-        
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .error-message.show {
-            display: block;
-        }
-        
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .success-message.show {
-            display: block;
-        }
-        
-        .code-section {
-            display: none;
-        }
-        
-        .code-section.show {
-            display: block;
-        }
-        
-        .timer {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        .resend-link {
-            text-align: center;
-            margin-top: 15px;
-        }
-        
-        .resend-link a {
-            color: #2E7D32;
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        
-        .resend-link a:hover {
-            text-decoration: underline;
-        }
-        
-        .resend-link a.disabled {
-            color: #999;
-            cursor: not-allowed;
-            text-decoration: none;
-        }
+        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-6); background: var(--color-bg); font-family: var(--font-family); }
+        .login-card { max-width: 420px; width: 100%; }
+        .version-badge { position: fixed; top: var(--space-4); right: var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-secondary); }
     </style>
-    
-    <!-- Глобальная защита от ошибок расширений -->
-    <script>
-        // ====================================
-        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.5.0
-        // ====================================
-        
-        (function() {
-            'use strict';
-            
-            // Счётчик подавленных ошибок (для отладки)
-            let suppressedErrors = 0;
-            
-            // Список паттернов ошибок расширений
-            const extensionErrorPatterns = [
-                'message channel closed',
-                'Extension context invalidated',
-                'chrome-extension://',
-                'moz-extension://',
-                'content_script.js',
-                'Cannot read properties of undefined',
-                'reading \'control\'',
-                'reading \'runtime\'',
-                'sending a message',
-                'Receiving end does not exist',
-                'Could not establish connection'
-            ];
-            
-            // Проверка, является ли ошибка от расширения
-            function isExtensionError(errorMessage, errorStack) {
-                if (!errorMessage && !errorStack) return false;
-                
-                const fullText = (errorMessage || '') + ' ' + (errorStack || '');
-                
-                return extensionErrorPatterns.some(pattern => 
-                    fullText.toLowerCase().includes(pattern.toLowerCase())
-                );
-            }
-            
-            // Глобальный обработчик ошибок
-            const originalErrorHandler = window.onerror;
-            window.onerror = function(message, source, lineno, colno, error) {
-                if (isExtensionError(message, error ? error.stack : '')) {
-                    suppressedErrors++;
-                    console.warn(
-                        `[Global] 🛡️ Подавлена ошибка расширения #${suppressedErrors}:`, 
-                        message.substring(0, 100)
-                    );
-                    return true; // Подавить ошибку
-                }
-                
-                // Передать другие ошибки оригинальному обработчику
-                if (originalErrorHandler) {
-                    return originalErrorHandler.apply(this, arguments);
-                }
-                return false;
-            };
-            
-            // Глобальный обработчик unhandled promise rejections
-            window.addEventListener('unhandledrejection', function(event) {
-                const reason = event.reason;
-                const message = reason ? (reason.message || reason.toString()) : '';
-                const stack = reason ? reason.stack : '';
-                
-                if (isExtensionError(message, stack)) {
-                    suppressedErrors++;
-                    console.warn(
-                        `[Global] 🛡️ Подавлен Promise rejection #${suppressedErrors}:`, 
-                        message.substring(0, 100)
-                    );
-                    event.preventDefault();
-                }
-            });
-            
-            // Глобальный обработчик событий focus (где возникает ошибка content_script)
-            document.addEventListener('focusin', function(event) {
-                // Обернуть в try-catch для предотвращения распространения ошибок расширений
-                try {
-                    // Код обработки фокуса (если нужен)
-                } catch (error) {
-                    if (isExtensionError(error.message, error.stack)) {
-                        suppressedErrors++;
-                        console.warn('[Global] 🛡️ Подавлена ошибка focusin от расширения');
-                    }
-                }
-            }, true); // true = capture phase (до расширений)
-            
-            // Отчёт о подавленных ошибках (каждые 10 секунд)
-            setInterval(function() {
-                if (suppressedErrors > 0) {
-                    console.log(`[Global] 📊 Подавлено ошибок расширений: ${suppressedErrors}`);
-                }
-            }, 10000);
-            
-            console.log('[Global] 🛡️ Защита от ошибок расширений v6.5.0 активирована');
-            console.log('[Global] 📋 Отслеживаются паттерны:', extensionErrorPatterns.length);
-        })();
-    </script>
-    
-    <!-- Дополнительная защита для конкретных полей ввода -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Отключить автозаполнение на критичных полях (если нужно)
-            const sensitiveFields = document.querySelectorAll('input[type="tel"], input[type="text"]');
-            sensitiveFields.forEach(field => {
-                // Добавить атрибуты для отключения агрессивных расширений
-                field.setAttribute('autocomplete', 'off');
-                field.setAttribute('data-lpignore', 'true'); // LastPass
-                field.setAttribute('data-form-type', 'other'); // 1Password
-                field.setAttribute('data-bwignore', 'true'); // Bitwarden
-            });
-            
-            console.log('[Fields] 🔒 Защита полей ввода применена к', sensitiveFields.length, 'элементам');
-        });
-    </script>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>🏠 УК «Зелёная долина»</h1>
-            <p>Вход в личный кабинет</p>
-        </div>
-        
-        <div id="errorMessage" class="error-message"></div>
-        <div id="successMessage" class="success-message"></div>
-        
-        <!-- Форма ввода телефона -->
-        <div id="phoneSection">
-            <div class="form-group">
-                <label for="phoneInput">Номер телефона</label>
-                <input 
-                    type="tel" 
-                    id="phoneInput" 
-                    class="phone-input" 
-                    placeholder="+7 (___) ___-__-__"
-                    maxlength="18"
-                >
-            </div>
-            <button class="btn-primary" onclick="sendSMSCode()">
-                Получить код
-            </button>
-        </div>
-        
-        <!-- Форма ввода кода -->
-        <div id="codeSection" class="code-section">
-            <div class="form-group">
-                <label for="codeInput">SMS-код</label>
-                <input 
-                    type="text" 
-                    id="codeInput" 
-                    class="code-input" 
-                    placeholder="0000"
-                    maxlength="4"
-                    pattern="[0-9]{4}"
-                >
-            </div>
-            <div class="timer" id="timer">Код действителен: <span id="timerValue">05:00</span></div>
-            <button class="btn-primary" onclick="verifyCode()">
-                Войти
-            </button>
-            <div class="resend-link">
-                <a href="#" id="resendLink" onclick="resendCode(); return false;">Отправить код повторно</a>
-            </div>
-            <button class="btn-secondary" onclick="backToPhone()">
-                ← Изменить номер телефона
-            </button>
-        </div>
-    </div>
-    
-    <script src="auth.js"></script>
+    <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;"></button>
     <script>
-        // База тестовых пользователей
-        const TEST_USERS = [
-            { phone: '+7 (999) 123-45-67', name: 'Иванов Иван Иванович', apartment: 'ЖК Маяк, д.1, кв.15' },
-            { phone: '+7 (999) 234-56-78', name: 'Петров Пётр Петрович', apartment: 'ЖК Зелёная Долина, д.3, кв.42' },
-            { phone: '+7 (999) 345-67-89', name: 'Сидорова Мария Александровна', apartment: 'ЖК Маяк, д.2, кв.8' },
-            { phone: '+7 (960) 072-03-21', name: 'Диспетчер УК', apartment: 'Администратор' }
-        ];
-        
-        const validPhones = TEST_USERS.map(u => u.phone);
-        
-        // Тестовый SMS-код
-        const TEST_SMS_CODE = '1234';
-        
-        // Состояние формы
-        let currentPhone = '';
-        let smsCodeSentAt = null;
-        
-        // Проверка: если уже авторизован, редирект на главную
-        document.addEventListener('DOMContentLoaded', () => {
-            if (isAuthenticated()) {
-                console.log('[Login] Пользователь уже авторизован');
-                const returnUrl = sessionStorage.getItem('returnUrl') || 'index.html';
-                sessionStorage.removeItem('returnUrl');
-                window.location.href = returnUrl;
-                return;
-            }
-        });
-        
-        let countdownTimer = null;
-        let timeLeft = 300; // 5 минут в секундах
-        
-        // Маска для телефона
-        document.getElementById('phoneInput').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.startsWith('8')) {
-                value = '7' + value.slice(1);
-            }
-            if (value.startsWith('7')) {
-                value = value.slice(0, 11);
-                let formatted = '+7';
-                if (value.length > 1) {
-                    formatted += ' (' + value.slice(1, 4);
-                }
-                if (value.length >= 4) {
-                    formatted += ') ' + value.slice(4, 7);
-                }
-                if (value.length >= 7) {
-                    formatted += '-' + value.slice(7, 9);
-                }
-                if (value.length >= 9) {
-                    formatted += '-' + value.slice(9, 11);
-                }
-                e.target.value = formatted;
-            } else if (value.length > 0) {
-                e.target.value = '+7 (' + value.slice(0, 3);
-                if (value.length > 3) {
-                    e.target.value += ') ' + value.slice(3, 6);
-                }
-                if (value.length > 6) {
-                    e.target.value += '-' + value.slice(6, 8);
-                }
-                if (value.length > 8) {
-                    e.target.value += '-' + value.slice(8, 10);
-                }
-            }
-        });
-        
-        // Ввод только цифр для кода
-        document.getElementById('codeInput').addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
-        
-        // Enter для отправки
-        document.getElementById('phoneInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendSMSCode();
-            }
-        });
-        
-        document.getElementById('codeInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                verifyCode();
-            }
-        });
-        
-        function validatePhone(phone) {
-            const cleaned = phone.replace(/\D/g, '');
-            return cleaned.length === 11 && cleaned.startsWith('7');
-        }
-        
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.classList.add('show');
-            document.getElementById('successMessage').classList.remove('show');
-        }
-        
-        function showSuccess(message) {
-            const successDiv = document.getElementById('successMessage');
-            successDiv.textContent = message;
-            successDiv.classList.add('show');
-            document.getElementById('errorMessage').classList.remove('show');
-        }
-        
-        function hideMessages() {
-            document.getElementById('errorMessage').classList.remove('show');
-            document.getElementById('successMessage').classList.remove('show');
-        }
-        
-        function sendSMSCode() {
-            const phoneInput = document.getElementById('phoneInput');
-            const phone = phoneInput.value.trim();
-            
-            hideMessages();
-            
-            if (!validatePhone(phone)) {
-                showError('Неверный формат номера телефона');
-                return;
-            }
-            
-            // Проверка номера в базе
-            const formattedPhone = phoneInput.value;
-            const user = TEST_USERS.find(u => u.phone === formattedPhone);
-            if (!user) {
-                showError('Номер телефона не найден в базе УК. Обратитесь в управляющую компанию.');
-                return;
-            }
-            
-            // Сохранение данных
-            currentPhone = formattedPhone;
-            smsCodeSentAt = Date.now();
-            localStorage.setItem('expectedCode', TEST_SMS_CODE);
-            const phoneCleaned = phone.replace(/\D/g, '');
-            localStorage.setItem('phoneForAuth', phoneCleaned);
-            localStorage.setItem('userData', JSON.stringify(user));
-            
-            console.log(`📱 SMS код для ${formattedPhone}: ${TEST_SMS_CODE}`);
-            
-            // Показать форму ввода кода
-            document.getElementById('phoneSection').style.display = 'none';
-            document.getElementById('codeSection').classList.add('show');
-            document.getElementById('codeInput').focus();
-            
-            // Запустить таймер
-            startTimer();
-            
-            showSuccess('SMS-код отправлен на номер ' + formattedPhone);
-        }
-        
-        function startTimer() {
-            timeLeft = 300;
-            updateTimer();
-            
-            if (countdownTimer) {
-                clearInterval(countdownTimer);
-            }
-            
-            countdownTimer = setInterval(() => {
-                timeLeft--;
-                updateTimer();
-                
-                if (timeLeft <= 0) {
-                    clearInterval(countdownTimer);
-                    document.getElementById('resendLink').classList.remove('disabled');
-                }
-            }, 1000);
-        }
-        
-        function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timerValue').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        function resendCode() {
-            if (timeLeft > 0) {
-                return;
-            }
-            
-            const phone = localStorage.getItem('phoneForAuth');
-            if (phone) {
-                document.getElementById('phoneInput').value = phone;
-                sendSMSCode();
-            }
-        }
-        
-        function backToPhone() {
-            document.getElementById('phoneSection').style.display = 'block';
-            document.getElementById('codeSection').classList.remove('show');
-            document.getElementById('codeInput').value = '';
-            hideMessages();
-            
-            if (countdownTimer) {
-                clearInterval(countdownTimer);
-            }
-        }
-        
-        function verifyCode() {
-            const codeInput = document.getElementById('codeInput');
-            const code = codeInput.value.trim();
-            
-            hideMessages();
-            
-            if (code.length !== 4) {
-                showError('Введите 4-значный код');
-                return;
-            }
-            
-            const expectedCode = localStorage.getItem('expectedCode');
-            const phone = localStorage.getItem('phoneForAuth');
-            
-            if (!expectedCode || !phone) {
-                showError('Сессия истекла. Пожалуйста, запросите код заново.');
-                return;
-            }
-            
-            if (code !== TEST_SMS_CODE) {
-                showError('Неверный код. Попробуйте ещё раз.');
-                codeInput.value = '';
-                codeInput.focus();
-                return;
-            }
-            
-            // Проверка срока действия кода (3 минуты)
-            if (smsCodeSentAt && Date.now() - smsCodeSentAt > 3 * 60 * 1000) {
-                showError('Код истёк. Запросите новый код.');
-                backToPhone();
-                return;
-            }
-            
-            // Найти пользователя
-            const userDataStr = localStorage.getItem('userData');
-            const user = userDataStr ? JSON.parse(userDataStr) : TEST_USERS.find(u => u.phone === currentPhone);
-            
-            if (!user) {
-                showError('Пользователь не найден');
-                return;
-            }
-            
-            // Показать загрузку
-            const loader = document.createElement('div');
-            loader.id = 'loader';
-            loader.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            `;
-            loader.innerHTML = `
-                <div style="text-align: center; color: white;">
-                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-                    <p style="font-size: 16px; font-weight: 500; margin: 0;">Вход в систему...</p>
-                </div>
-            `;
-            document.body.appendChild(loader);
-            
-            setTimeout(() => {
-                try {
-                    // Создать сессию
-                    const phoneCleaned = currentPhone.replace(/\D/g, '');
-                    createSession(phoneCleaned, {
-                        name: user.name,
-                        apartment: user.apartment,
-                        userId: 'user_' + phoneCleaned
-                    });
-                    
-                    console.log('[Login] Сессия успешно создана');
-                    console.log('[Login] Данные:', getSession());
-                    
-                    loader.remove();
-                    showSuccess('Добро пожаловать, ' + user.name.split(' ')[0] + '!');
-                    
-                    // Очищаем временные данные
-                    localStorage.removeItem('expectedCode');
-                    localStorage.removeItem('phoneForAuth');
-                    localStorage.removeItem('userData');
-                    
-                    // Редирект на целевую страницу
-                    setTimeout(() => {
-                        const returnUrl = sessionStorage.getItem('returnUrl') || 'index.html';
-                        sessionStorage.removeItem('returnUrl');
-                        console.log('[Login] Редирект на:', returnUrl);
-                        window.location.href = returnUrl;
-                    }, 1000);
-                    
-                } catch (error) {
-                    loader.remove();
-                    console.error('[Login] Ошибка создания сессии:', error);
-                    showError('Ошибка входа. Попробуйте позже.');
-                }
-            }, 1500);
-        }
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.body.classList.add(`theme-${currentTheme}`);
+    themeToggle.addEventListener('click', () => {
+      const newTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
+      document.body.classList.remove('theme-light', 'theme-dark');
+      document.body.classList.add(`theme-${newTheme}`);
+      localStorage.setItem('theme', newTheme);
+      console.log(` Тема изменена на: ${newTheme}`);
+    });
     </script>
     <style>
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+    body.theme-dark { background: #1a1a1a; color: #f5f5f5; }
+    body.theme-dark button { background: #2E7D32; color: #fff; }
+    body.theme-dark input { background: #2a2a2a; color: #f5f5f5; border: 1px solid #444; }
     </style>
+
+    <div class="version-badge">v6.8.2</div>
+    <div class="login-card card card-glass animate-scale-in">
+        <div class="card-header text-center">
+            <h1 class="card-title"> УК Зелёная долина</h1>
+            <p style="margin: var(--space-2) 0 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">Управляющая компания</p>
+        </div>
+        <div class="card-body">
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label required" for="phoneInput">Номер телефона</label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon"></span>
+                        <input type="tel" id="phoneInput" class="form-input" placeholder="+7 (999) 123-45-67" required autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required" for="codeInput">СМС-код</label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon"></span>
+                        <input type="text" id="codeInput" class="form-input" placeholder="1234" maxlength="4" required autocomplete="off">
+                    </div>
+                </div>
+                <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%;">Войти</button>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <p style="margin: 0; font-size: var(--font-size-xs); color: var(--color-text-secondary);">Тестовый код: <strong>1234</strong></p>
+        </div>
+    </div>
+    <div class="version" style="text-align:center; margin-top: var(--space-4); color: var(--color-text-secondary);">v6.8.2</div>
+    <script src="js/ui-modern.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        console.log('[login.html v6.8.2] Страница входа загружена');
+        console.log(' Сессия активна');
+        console.log(' Неверный код');
+        const phoneInput = document.getElementById('phoneInput');
+        const codeInput = document.getElementById('codeInput');
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && !value.startsWith('7')) value = '7' + value;
+            let formatted = '+7';
+            if (value.length > 1) formatted += ' (' + value.substring(1, 4);
+            if (value.length >= 5) formatted += ') ' + value.substring(4, 7);
+            if (value.length >= 8) formatted += '-' + value.substring(7, 9);
+            if (value.length >= 10) formatted += '-' + value.substring(9, 11);
+            e.target.value = formatted;
+        });
+        codeInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+        async function handleLogin(e) {
+            e.preventDefault();
+            const phone = phoneInput.value;
+            const code = codeInput.value;
+            const loginBtn = document.getElementById('loginBtn');
+            if (phone.length < 18 || code.length !== 4) {
+                showNotification(' Заполните все поля корректно', 'error');
+                return;
+            }
+            showButtonLoading(loginBtn);
+            await login(phone, code);
+            setTimeout(() => hideButtonLoading(loginBtn), 2000);
+        }
+        window.addEventListener('load', () => phoneInput.focus());
+    </script>
 </body>
 </html>
-

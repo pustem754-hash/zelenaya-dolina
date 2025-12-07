@@ -14,7 +14,7 @@
     <link rel="icon" href="./icon-48x48.png">
 </head>
 <body>
-    <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;">🌓</button>
+    <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;"></button>
     <script>
     const themeToggle = document.getElementById('theme-toggle');
     const currentTheme = localStorage.getItem('theme') || 'light';
@@ -37,27 +37,31 @@
         <h1 style="margin-bottom: 16px;">Новая заявка</h1>
         <div class="form-group">
             <label for="description">Описание проблемы</label>
-            <textarea id="description" placeholder="Опишите проблему..." style="width:100%; min-height:120px; padding: 10px;"></textarea>
+            <textarea id="description" placeholder="Опишите проблему..." style="width:100%; min-height:120px; padding: 10px; margin-top: 5px;"></textarea>
         </div>
+        
         <div style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); margin: 16px 0;">
-            <button type="button" class="btn"> Прикрепить фото</button>
-            <button type="button" class="btn"> Прикрепить видео</button>
-            <button type="button" class="btn"> Прикрепить аудио</button>
+            <!-- Hidden inputs -->
+            <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="console.log(' Фото добавлено')">
+            <input type="file" id="videoInput" accept="video/*" style="display:none" onchange="console.log(' Видео добавлено')">
+            <input type="file" id="audioInput" accept="audio/*" style="display:none" onchange="console.log(' Аудио добавлено')">
+
+            <!-- Buttons triggering inputs -->
+            <button type="button" class="btn" onclick="document.getElementById('photoInput').click()"> Прикрепить фото</button>
+            <button type="button" class="btn" onclick="document.getElementById('videoInput').click()"> Прикрепить видео</button>
+            <button type="button" class="btn" onclick="document.getElementById('audioInput').click()"> Прикрепить аудио</button>
         </div>
+
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" class="btn btn-primary">Отправить заявку</button>
+            <button type="button" class="btn btn-primary" onclick="console.log(' Заявка отправлена')">Отправить заявку</button>
             <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
         </div>
-        <div class="version" style="margin-top: 16px; color: var(--color-text-secondary);">v6.8.2</div>
+        
+        <div class="version" style="margin-top: 16px; color: #666; font-size: 14px; text-align: center;">v6.8.2</div>
     </main>
 
     <script>
         console.log('[create-request.html v6.8.2] Форма заявки загружена');
-        // console.log(' Фото добавлено');
-        // console.log(' Видео добавлено');
-        // console.log(' Аудио добавлено');
-        // console.log(' Заявка отправлена');
     </script>
 </body>
 </html>
-

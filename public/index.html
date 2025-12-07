@@ -668,10 +668,18 @@
     </style>
 <link rel="stylesheet" href="css/navigation.css?v=6.8.4"></head>
 <body class="home-page">
-    <div class="nav-header" style="display: flex !important;">
-        <button class="nav-btn nav-back" onclick="window.history.back()"><span></span></button>
-        <button class="nav-btn nav-forward" onclick="window.history.forward()"><span></span></button>
-        <button class="nav-btn nav-home" onclick="window.location.href='index.html'"><span></span></button>
+        <div class="nav-header">
+        <div style="display: flex; gap: 12px; pointer-events: auto;">
+            <button class="nav-btn" onclick="window.history.back()" aria-label="Назад">
+                <span></span>
+            </button>
+            <button class="nav-btn" onclick="window.history.forward()" aria-label="Вперед">
+                <span></span>
+            </button>
+        </div>
+        <button class="nav-btn nav-home" onclick="window.location.href='index.html'" aria-label="На главную">
+            <span></span>
+        </button>
     </div>
 <button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;">🌓</button>
     <script>
@@ -4183,6 +4191,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
     </script>
 <script src="js/logger.js?v=6.8.3"></script></body>
 </html>
+
 
 
 

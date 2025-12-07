@@ -2,63 +2,95 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2E7D32">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Камеры - УК Зелёная долина v6.8.2</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #f5f5f5; padding-bottom: 60px; }
+        
+        h1 { font-size: 20px; margin-bottom: 20px; color: #2E7D32; text-align: center; }
+        
+        .camera-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .camera-grid { grid-template-columns: 1fr 1fr; } }
+        
+        .camera-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        
+        .camera-view { 
+            height: 200px; background: #000; position: relative; 
+            display: flex; align-items: center; justify-content: center;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
+        
+        .live-badge { 
+            position: absolute; top: 10px; left: 10px; 
+            background: #f44336; color: white; padding: 2px 6px; 
+            border-radius: 4px; font-size: 10px; font-weight: bold; 
+            animation: pulse 2s infinite;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 24px;
-            color: #2E7D32;
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
+        .camera-name { padding: 12px; font-weight: 600; color: #333; font-size: 14px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+        .status { color: #4CAF50; font-size: 12px; }
+        
+        .btn-back { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: white; color: #333; border: none; padding: 12px 30px; 
+            border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-weight: 600;
+            cursor: pointer; z-index: 100;
         }
-        .info {
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        button {
-            width: 100%;
-            padding: 16px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            min-height: 44px;
-        }
-        .version {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            font-size: 12px;
-            opacity: 0.5;
-        }
+        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1> Камеры</h1>
-        <div class="info">
-            <p>Раздел видеонаблюдения в разработке</p>
+    <h1> Видеонаблюдение (Телеком Летай)</h1>
+    
+    <div class="camera-grid">
+        <div class="camera-card">
+            <div class="camera-view">
+                <div class="live-badge">LIVE</div>
+                <div style="color: #666;"> Поток #1</div>
+            </div>
+            <div class="camera-name">
+                Въезд (Шлагбаум)
+                <span class="status"> Онлайн</span>
+            </div>
         </div>
-        <button onclick="window.location.href='index.html'">Назад</button>
+        
+        <div class="camera-card">
+            <div class="camera-view">
+                <div class="live-badge">LIVE</div>
+                <div style="color: #666;"> Поток #2</div>
+            </div>
+            <div class="camera-name">
+                Парковка (Юг)
+                <span class="status"> Онлайн</span>
+            </div>
+        </div>
+        
+        <div class="camera-card">
+            <div class="camera-view">
+                <div class="live-badge">LIVE</div>
+                <div style="color: #666;"> Поток #3</div>
+            </div>
+            <div class="camera-name">
+                Детская площадка
+                <span class="status"> Онлайн</span>
+            </div>
+        </div>
+        
+        <div class="camera-card">
+            <div class="camera-view">
+                <div class="live-badge">LIVE</div>
+                <div style="color: #666;"> Поток #4</div>
+            </div>
+            <div class="camera-name">
+                Вход в подъезд
+                <span class="status"> Онлайн</span>
+            </div>
+        </div>
     </div>
+
+    <button class="btn-back" onclick="window.history.back()"> Назад</button>
     <div class="version">v6.8.2</div>
 </body>
 </html>
-

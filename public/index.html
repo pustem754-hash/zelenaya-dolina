@@ -7,43 +7,83 @@
     <title>УК Зелёная долина v6.8.2</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; background: #f5f5f5; }
-        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; word-wrap: break-word; text-align: center; }
-        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; background: #f5f5f5; padding-bottom: 80px; }
+        
+        .header { text-align: center; margin-bottom: 24px; }
+        .logo { width: 80px; height: 80px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { font-size: 22px; color: #2E7D32; margin: 0; font-weight: 700; }
+        .subtitle { font-size: 14px; color: #666; margin-top: 4px; }
+        
+        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        
+        .btn-gate {
+            width: 100%; padding: 20px; background: #2E7D32; color: white; border: none; border-radius: 12px;
+            font-size: 18px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.2s; box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+        }
+        .btn-gate:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-gate.loading { background: #ccc; pointer-events: none; }
         
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .menu-btn { 
             background: white; border: none; border-radius: 16px; padding: 20px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-height: 100px; cursor: pointer;
-            font-size: 16px; font-weight: 500; color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-height: 110px; cursor: pointer;
+            font-size: 16px; font-weight: 500; color: #333; transition: all 0.2s;
         }
         .menu-btn:active { transform: scale(0.98); background: #f0f0f0; }
         .icon { font-size: 32px; margin-bottom: 10px; }
-        .btn-logout { grid-column: span 2; background: #ffebee; color: #c62828; margin-top: 10px; flex-direction: row; gap: 10px; height: 50px; min-height: auto; }
+        
+        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
+        
+        /* Status badges */
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #ef6c00; }
     </style>
 </head>
 <body>
-    <h1> УК Зелёная долина</h1>
+    <div class="header">
+        <img src="icon-original.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+        <h1>УК Зелёная долина</h1>
+        <div class="subtitle">Ваш комфорт  наша работа</div>
+    </div>
     
+    <!-- PAL Gate Integration -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="margin: 0; font-size: 16px; color: #333;"> Шлагбаум (PAL Gate)</h2>
+            <span class="badge badge-success">GSM Модуль активен</span>
+        </div>
+        <button id="gateBtn" class="btn-gate" onclick="openGate()">
+            <span style="font-size: 24px;"></span> Открыть въезд
+        </button>
+        <p id="gateMessage" style="text-align: center; margin: 10px 0 0; font-size: 14px; color: #666; display: none;"></p>
+    </div>
+    
+    <!-- Navigation -->
     <div class="grid-menu">
         <button class="menu-btn" onclick="window.location.href='create-request.html'">
             <span class="icon"></span> Заявки
+            <span style="font-size: 12px; color: #666; margin-top: 4px;">VSK Desk</span>
         </button>
         
         <button class="menu-btn" onclick="window.location.href='payments.html'">
             <span class="icon"></span> Платежи
+            <span style="font-size: 12px; color: #2E7D32; margin-top: 4px;">К оплате: 0 ₽</span>
         </button>
         
         <button class="menu-btn" onclick="window.location.href='meters.html'">
             <span class="icon"></span> Счётчики
+            <span style="font-size: 12px; color: #ef6c00; margin-top: 4px;">Сдать до 25-го</span>
         </button>
         
         <button class="menu-btn" onclick="window.location.href='cameras.html'">
             <span class="icon"></span> Камеры
+            <span style="font-size: 12px; color: #666; margin-top: 4px;">Телеком Летай</span>
         </button>
         
-        <button class="menu-btn btn-logout" onclick="window.location.href='login.html'">
+        <button class="menu-btn" style="grid-column: span 2; flex-direction: row; height: 50px; min-height: auto; background: #ffebee; color: #c62828;" onclick="window.location.href='login.html'">
              Выйти
         </button>
     </div>
@@ -52,6 +92,32 @@
 
     <script>
         console.log('[index.html v6.8.2] Loaded');
+        
+        function openGate() {
+            const btn = document.getElementById('gateBtn');
+            const msg = document.getElementById('gateMessage');
+            
+            if (btn.classList.contains('loading')) return;
+            
+            // Simulate PAL Gate API call / SMS sending
+            btn.classList.add('loading');
+            btn.innerHTML = ' Отправка сигнала...';
+            msg.style.display = 'none';
+            
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.innerHTML = '<span style="font-size: 24px;"></span> Открыто';
+                btn.style.background = '#4CAF50';
+                msg.textContent = 'Сигнал успешно отправлен на контроллер PAL Gate';
+                msg.style.display = 'block';
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<span style="font-size: 24px;"></span> Открыть въезд';
+                    btn.style.background = '#2E7D32';
+                    msg.style.display = 'none';
+                }, 3000);
+            }, 1500);
+        }
     </script>
 </body>
 </html>

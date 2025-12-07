@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.8.2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5">
+    <title>УК «Зелёная долина» v6.5.0</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
@@ -11,14 +11,33 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
+    <meta name="application-name" content="Зелёная Долина">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-TileColor" content="#2E7D32">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./icon-120x120.png">
     <link rel="manifest" href="./manifest.json">
     
+    <!-- CSS: Brand, Modern UI, Responsive -->
+    <link rel="stylesheet" href="./css/brand.css">
+    <link rel="stylesheet" href="./css/modern-ui.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+    <link rel="stylesheet" href="./css/animations.css">
+    
+    <!-- Platform Detection & Interactions -->
+    <script src="./js/platform.js" defer></script>
+    <script src="./js/interactions.js" defer></script>
+    
     <!-- jsPDF для генерации PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js?v=6.8.6"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js?v=6.8.6"></script>
     
     <style>
         * {
@@ -420,6 +439,8 @@
         }
         .tab-content {
             display: none;
+            min-height: 300px;
+            transition: opacity 0.2s ease-in-out;
         }
         /* Стили для вкладок счётчиков */
         .meters-tab {
@@ -452,7 +473,15 @@
         }
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.3s;
+            animation: fadeIn 0.2s ease-out;
+            opacity: 1;
+        }
+        /* Фиксированная высота для медиа вкладок - предотвращение прыгания */
+        #requestPhotosTab, #requestVideosTab, #requestAudioTab {
+            min-height: 280px;
+        }
+        #photoTab, #videoTab {
+            min-height: 280px;
         }
         
         /* Стили для квитанции */
@@ -666,30 +695,19 @@
             color: #666;
         }
     </style>
+    <link rel="stylesheet" href="css/design-system.css?v=6.8.6">
+    <link rel="stylesheet" href="css/components.css?v=6.8.6">
+    <link rel="stylesheet" href="css/layout.css?v=6.8.6">
+    <link rel="stylesheet" href="css/navigation.css?v=6.8.6">
+    <link rel="stylesheet" href="css/animations.css?v=6.8.6">
+    <link rel="stylesheet" href="css/layout-fixes.css?v=6.8.6">
 </head>
-<body class="home-page">
-<button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;">🌓</button>
-    <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.body.classList.add(`theme-${currentTheme}`);
-    themeToggle.addEventListener('click', () => {
-      const newTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
-      document.body.classList.remove('theme-light', 'theme-dark');
-      document.body.classList.add(`theme-${newTheme}`);
-      localStorage.setItem('theme', newTheme);
-      console.log(` Тема изменена на: ${newTheme}`);
-    });
-    </script>
-    <style>
-    body.theme-dark { background: #1a1a1a; color: #f5f5f5; }
-    body.theme-dark button { background: #2E7D32; color: #fff; }
-    body.theme-dark input, body.theme-dark textarea { background: #2a2a2a; color: #f5f5f5; border: 1px solid #444; }
-    </style>
-    <div class="header">
-        <h1>🏡 УК «Зелёная долина»</h1>
-        <p style="font-size: 14px; margin-top: 5px; opacity: 0.9;">Жилищная компания</p>
-        <div class="version">v6.8.2</div>
+<body>
+    <div class="header header-brand">
+        <img src="./icon-96x96.png" alt="Логотип" class="header-logo">
+        <h1 class="header-title">УК «Зелёная долина»</h1>
+        <p class="header-subtitle">Жилищная компания</p>
+        <div class="version">v6.5.0</div>
     </div>
 
     <!-- Главная -->
@@ -702,7 +720,7 @@
             </div>
             <div class="stat-value" style="font-size: 36px; color: #2E7D32; margin-bottom: 10px;">10 360.02 ₽</div>
             <p style="color: #666; margin-bottom: 15px;">Срок оплаты: до 28.10.2025</p>
-            <button class="btn btn-pay" onclick="showSection('payments')" style="margin-top: 0;">💳 Оплатить онлайн</button>
+            <button class="btn btn-pay" onclick="openBankSelection(10360.02)" style="margin-top: 0;">💳 Оплатить онлайн</button>
         </div>
         
         <!-- Быстрые действия - интеграция всех систем -->
@@ -787,6 +805,11 @@
                     </select>
                 </div>
                 
+                <div class="input-group" id="addressGroup" style="display: none;">
+                    <label>📍 Полный адрес:</label>
+                    <div id="addressDisplay" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 15px; border-radius: 12px; border-left: 4px solid #2E7D32; font-size: 15px; color: #1B5E20; font-weight: 500;"></div>
+                </div>
+                
                 <div class="input-group" id="apartmentGroup" style="display: none;">
                     <label>Номер квартиры:</label>
                     <input type="number" id="apartmentInput" min="1" placeholder="Введите номер квартиры" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
@@ -806,11 +829,12 @@
             
             <!-- Сохранённые данные пользователя -->
             <div id="userInfoCard" style="display: none;">
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                    <p style="margin-bottom: 8px;"><strong>ЖК:</strong> <span id="userComplex"></span></p>
-                    <p style="margin-bottom: 8px;"><strong>Дом:</strong> <span id="userHouse"></span></p>
-                    <p style="margin-bottom: 8px;"><strong>Квартира:</strong> <span id="userApartment"></span></p>
-                    <p id="userStorageInfo" style="display: none; margin-bottom: 0;"><strong>Кладовая:</strong> <span id="userStorage"></span></p>
+                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e9 100%); padding: 20px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #c8e6c9;">
+                    <p style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🏢</span> <strong>ЖК:</strong> <span id="userComplex"></span></p>
+                    <p style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">📍</span> <strong>Адрес:</strong> <span id="userAddress" style="color: #1B5E20;"></span></p>
+                    <p style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🏠</span> <strong>Дом:</strong> <span id="userHouse"></span></p>
+                    <p style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🚪</span> <strong>Квартира:</strong> <span id="userApartment"></span></p>
+                    <p id="userStorageInfo" style="display: none; margin-bottom: 0; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">📦</span> <strong>Кладовая:</strong> <span id="userStorage"></span></p>
                 </div>
                 <button class="btn" onclick="showUserForm()" style="background: #3498db;">✏️ Изменить данные</button>
             </div>
@@ -1150,7 +1174,7 @@
             
             <!-- Кнопки действий -->
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-pay" onclick="alert('Переход на оплату')" style="flex: 1;">💳 Оплатить онлайн</button>
+                <button class="btn btn-pay" onclick="openBankSelection(10360.02)" style="flex: 1;">💳 Оплатить онлайн</button>
                 <button class="btn btn-download" onclick="generateReceiptPDF()" style="flex: 1;">📥 Скачать PDF</button>
             </div>
         </div>
@@ -1449,15 +1473,19 @@
                 <p style="color: #666; margin-bottom: 15px;">Передайте показания счётчиков до 25.10.2025</p>
                 
                 <div class="input-group">
-                    <label>Холодная вода (м³)</label>
+                    <label>💧 Холодная вода (м³)</label>
                     <input type="number" step="0.01" placeholder="Введите показания" id="coldWaterInput">
                 </div>
                 <div class="input-group">
-                    <label>Горячая вода (м³)</label>
+                    <label>🔥 Горячая вода (м³)</label>
                     <input type="number" step="0.01" placeholder="Введите показания" id="hotWaterInput">
                 </div>
                 <div class="input-group">
-                    <label>Электричество (кВт⋅ч)</label>
+                    <label>🔶 Газ (м³)</label>
+                    <input type="number" step="0.01" placeholder="Введите показания" id="gasInput">
+                </div>
+                <div class="input-group">
+                    <label>⚡ Электричество (кВт⋅ч)</label>
                     <input type="number" step="0.01" placeholder="Введите показания" id="electricityInput">
                 </div>
                 
@@ -1580,7 +1608,7 @@
     </nav>
 
     <script>
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.8.2');
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.2.1');
         
         // ========== АУДИО ПЕРЕМЕННЫЕ ==========
         let mediaRecorder = null;
@@ -2413,10 +2441,25 @@
                     
                     console.log('✅ Доступ к микрофону получен');
                     
-                    // Создаём MediaRecorder
-                    mediaRecorder = new MediaRecorder(stream, {
-                        mimeType: 'audio/webm;codecs=opus'
-                    });
+                    // Определяем поддерживаемый mimeType
+                    let mimeType = 'audio/webm;codecs=opus';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'audio/webm';
+                        if (!MediaRecorder.isTypeSupported(mimeType)) {
+                            mimeType = 'audio/mp4';
+                            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                                mimeType = 'audio/ogg';
+                                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                                    mimeType = ''; // Использовать дефолт браузера
+                                }
+                            }
+                        }
+                    }
+                    console.log('🎵 Используем mimeType:', mimeType || 'default');
+                    
+                    // Создаём MediaRecorder с fallback
+                    const recorderOptions = mimeType ? { mimeType } : {};
+                    mediaRecorder = new MediaRecorder(stream, recorderOptions);
                     audioChunks = [];
                     audioStartTime = Date.now();
                     
@@ -2438,8 +2481,9 @@
                             return;
                         }
                         
-                        // Создаём Blob из чанков
-                        savedAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        // Создаём Blob из чанков с правильным mimeType
+                        const blobType = mediaRecorder.mimeType || 'audio/webm';
+                        savedAudioBlob = new Blob(audioChunks, { type: blobType });
                         console.log('💾 Создан Blob:', savedAudioBlob.size, 'байт');
                         
                         const audioUrl = URL.createObjectURL(savedAudioBlob);
@@ -2825,30 +2869,33 @@
         function submitMeterReadings() {
             const coldWater = document.getElementById('coldWaterInput').value;
             const hotWater = document.getElementById('hotWaterInput').value;
+            const gas = document.getElementById('gasInput').value;
             const electricity = document.getElementById('electricityInput').value;
             
-            if (!coldWater || !hotWater || !electricity) {
-                alert('❌ Заполните все показания!');
+            if (!coldWater && !hotWater && !gas && !electricity) {
+                alert('❌ Заполните хотя бы одно показание!');
                 return;
             }
             
             // Сохранить в историю
             const reading = {
                 date: new Date().toISOString(),
-                coldWater: parseFloat(coldWater),
-                hotWater: parseFloat(hotWater),
-                electricity: parseFloat(electricity)
+                coldWater: coldWater ? parseFloat(coldWater) : null,
+                hotWater: hotWater ? parseFloat(hotWater) : null,
+                gas: gas ? parseFloat(gas) : null,
+                electricity: electricity ? parseFloat(electricity) : null
             };
             
             let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
             history.unshift(reading); // Добавить в начало
             localStorage.setItem('metersHistory', JSON.stringify(history));
             
-            alert('✅ Показания успешно отправлены!');
+            alert('✅ Показания успешно отправлены!\n💧 ХВС: ' + (coldWater || '-') + ' м³\n🔥 ГВС: ' + (hotWater || '-') + ' м³\n🔶 Газ: ' + (gas || '-') + ' м³\n⚡ Эл-во: ' + (electricity || '-') + ' кВт⋅ч');
             
             // Очистить поля
             document.getElementById('coldWaterInput').value = '';
             document.getElementById('hotWaterInput').value = '';
+            document.getElementById('gasInput').value = '';
             document.getElementById('electricityInput').value = '';
             
             // Обновить историю
@@ -2885,9 +2932,10 @@
                         <span style="font-size: 12px; color: #666;">${day}.${monthNum}.${year}</span>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
-                        <div>Хол. вода: <strong>${reading.coldWater} м³</strong></div>
-                        <div>Гор. вода: <strong>${reading.hotWater} м³</strong></div>
-                        <div style="grid-column: 1 / -1;">Электричество: <strong>${reading.electricity} кВт⋅ч</strong></div>
+                        <div>💧 ХВС: <strong>${reading.coldWater} м³</strong></div>
+                        <div>🔥 ГВС: <strong>${reading.hotWater} м³</strong></div>
+                        <div>🔶 Газ: <strong>${reading.gas || '-'} м³</strong></div>
+                        <div>⚡ Эл-во: <strong>${reading.electricity} кВт⋅ч</strong></div>
                     </div>
                 `;
                 historyContainer.appendChild(item);
@@ -3103,9 +3151,10 @@
                     }).join('')}
                 </div>
                 <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center; font-size: 12px;">
-                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #3498db; border-radius: 2px;"></div> ХВС</div>
-                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #e74c3c; border-radius: 2px;"></div> ГВС</div>
-                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #f39c12; border-radius: 2px;"></div> Электричество</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #3498db; border-radius: 2px;"></div> 💧 ХВС</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #e74c3c; border-radius: 2px;"></div> 🔥 ГВС</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #ff9800; border-radius: 2px;"></div> 🔶 Газ</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #f39c12; border-radius: 2px;"></div> ⚡ Эл-во</div>
                 </div>
             `;
         }
@@ -3542,6 +3591,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 houseSelect.appendChild(option);
             });
             
+            document.getElementById('addressGroup').style.display = 'none';
             document.getElementById('apartmentGroup').style.display = 'none';
             document.getElementById('storageGroup').style.display = 'none';
         }
@@ -3551,6 +3601,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             const houseIndex = document.getElementById('houseSelect').value;
             
             if (!complex || houseIndex === '') {
+                document.getElementById('addressGroup').style.display = 'none';
                 document.getElementById('apartmentGroup').style.display = 'none';
                 document.getElementById('storageGroup').style.display = 'none';
                 return;
@@ -3558,12 +3609,16 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             
             const house = complexes[complex][houseIndex];
             
+            // Показываем полный адрес
+            document.getElementById('addressGroup').style.display = 'block';
+            document.getElementById('addressDisplay').textContent = house.fullAddress;
+            
             document.getElementById('apartmentGroup').style.display = 'block';
             document.getElementById('storageGroup').style.display = 'block';
             document.getElementById('apartmentInput').max = house.apartments;
             document.getElementById('apartmentInput').min = 1;
             document.getElementById('apartmentHint').textContent = 
-                `В этом доме квартиры от 1 до ${house.apartments}`;
+                `В этом доме квартиры от 1 до ${house.apartments}, кладовых: ${house.storages}`;
         }
         
         function toggleStorage() {
@@ -3625,6 +3680,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         function displayUserInfo(data) {
             const userInfoCard = document.getElementById('userInfoCard');
             const userComplex = document.getElementById('userComplex');
+            const userAddress = document.getElementById('userAddress');
             const userHouse = document.getElementById('userHouse');
             const userApartment = document.getElementById('userApartment');
             const userStorage = document.getElementById('userStorage');
@@ -3632,12 +3688,13 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             
             if (userInfoCard && userComplex && userHouse && userApartment) {
                 userComplex.textContent = data.complex;
+                if (userAddress) userAddress.textContent = data.fullAddress || data.house;
                 userHouse.textContent = data.house;
                 userApartment.textContent = `кв. ${data.apartment}`;
                 
                 if (data.storage) {
                     userStorage.textContent = `кл. ${data.storage}`;
-                    if (userStorageInfo) userStorageInfo.style.display = 'block';
+                    if (userStorageInfo) userStorageInfo.style.display = 'flex';
                 } else {
                     if (userStorageInfo) userStorageInfo.style.display = 'none';
                 }
@@ -4172,8 +4229,63 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             console.log('✅ Приложение инициализировано');
         });
     </script>
-<script src="js/logger.js"></script></body>
+    <script>
+        const BANK_APPS = [
+            { code: 'sber', name: 'Сбербанк', icon: '🟢' },
+            { code: 'tinkoff', name: 'Т-Банк', icon: '🟡' },
+            { code: 'vtb', name: 'ВТБ', icon: '🔵' },
+            { code: 'alfa', name: 'Альфа', icon: '🟥' },
+            { code: 'raif', name: 'Райффайзен', icon: '🟨' },
+            { code: 'gazprom', name: 'Газпром', icon: '🟦' },
+            { code: 'rosselhoz', name: 'Россельхоз', icon: '🟩' },
+            { code: 'promsvyaz', name: 'ПСБ', icon: '🟧' },
+            { code: 'home', name: 'Home Credit', icon: '🏠' },
+            { code: 'sovcom', name: 'Совком', icon: '🟥' },
+            { code: 'pochtabank', name: 'Почта Банк', icon: '📮' },
+            { code: 'uralsib', name: 'Уралсиб', icon: '🟦' },
+        ];
+
+        function openBankSelection(amount = 0) {
+            closeBankSelection();
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'bankSelectionModal';
+            overlay.innerHTML = `
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h3 style="margin:0;">Выберите банк</h3>
+                        <button class="btn btn-icon" style="width:36px;height:36px;" onclick="closeBankSelection()">✕</button>
+                    </div>
+                    <p style="margin-top:0; margin-bottom:16px; color:var(--color-text-secondary); font-size:14px;">
+                        Сумма к оплате: <strong>${amount ? amount.toFixed(2) + ' ₽' : '—'}</strong>
+                    </p>
+                    <div class="bank-grid">
+                        ${BANK_APPS.map(b => `
+                            <div class="bank-card" onclick="openBankApp('${b.code}', ${amount || 0})">
+                                <div class="bank-icon">${b.icon}</div>
+                                <div class="bank-name">${b.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" style="flex:1;" onclick="closeBankSelection()">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function closeBankSelection() {
+            const modal = document.getElementById('bankSelectionModal');
+            if (modal) modal.remove();
+        }
+
+        function openBankApp(code, amount) {
+            console.log('open bank app', code, amount);
+            alert('Открываем приложение банка: ' + code + '\\nСумма: ' + (amount ? amount.toFixed(2) + ' ₽' : '—'));
+            closeBankSelection();
+        }
+    </script>
+</body>
 </html>
-
-
 

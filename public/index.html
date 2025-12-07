@@ -17,8 +17,8 @@
     <link rel="manifest" href="./manifest.json">
     
     <!-- jsPDF для генерации PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js?v=6.8.3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js?v=6.8.3"></script>
     
     <style>
         * {
@@ -1461,6 +1461,10 @@
                     <input type="number" step="0.01" placeholder="Введите показания" id="electricityInput">
                 </div>
                 
+                                <div class="input-group">
+                    <label>🔥 Газ (м³)</label>
+                    <input type="number" step="0.01" placeholder="Введите показания" id="gasInput">
+                </div>
                 <button class="btn" onclick="submitMeterReadings()">
                     📊 Отправить показания
                 </button>
@@ -4172,8 +4176,9 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             console.log('✅ Приложение инициализировано');
         });
     </script>
-<script src="js/logger.js"></script></body>
+<script src="js/logger.js?v=6.8.3"></script></body>
 </html>
+
 
 
 

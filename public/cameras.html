@@ -40,8 +40,17 @@
         }
         .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; }
     </style>
+    <link rel="stylesheet" href="css/navigation.css">
 </head>
-<body>
+<body class="with-nav">
+    <div class="nav-header">
+        <button class="nav-btn nav-back" onclick="window.history.back()">
+            <span></span>
+        </button>
+        <button class="nav-btn nav-home" onclick="window.location.href='index.html'">
+            <span></span>
+        </button>
+    </div>
     <h1> Видеонаблюдение (Телеком Летай)</h1>
     
     <div class="camera-grid">
@@ -90,7 +99,9 @@
         </div>
     </div>
 
-    <button class="btn-back" onclick="window.history.back()"> Назад</button>
+    
     <div class="version">v6.8.2</div>
 </body>
 </html>
+
+

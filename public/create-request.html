@@ -101,8 +101,17 @@
             color: #666;
         }
     </style>
+    <link rel="stylesheet" href="css/navigation.css">
 </head>
-<body>
+<body class="with-nav">
+    <div class="nav-header">
+        <button class="nav-btn nav-back" onclick="window.history.back()">
+            <span></span>
+        </button>
+        <button class="nav-btn nav-home" onclick="window.location.href='index.html'">
+            <span></span>
+        </button>
+    </div>
     <div class="container">
         <h1> Новая заявка</h1>
 
@@ -154,5 +163,7 @@
     </script>
 </body>
 </html>
+
+
 
 

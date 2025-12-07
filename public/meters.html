@@ -33,8 +33,17 @@
         }
         .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; }
     </style>
+    <link rel="stylesheet" href="css/navigation.css">
 </head>
-<body>
+<body class="with-nav">
+    <div class="nav-header">
+        <button class="nav-btn nav-back" onclick="window.history.back()">
+            <span></span>
+        </button>
+        <button class="nav-btn nav-home" onclick="window.location.href='index.html'">
+            <span></span>
+        </button>
+    </div>
     <h1> Передача показаний (ЕРЦ)</h1>
     
     <div class="meter-card">
@@ -61,6 +70,13 @@
         </div>
     </div>
     
+        <div class="meter-card">
+        <label>🔥 Газ (м³)</label>
+        <div class="input-group">
+            <input type="number" placeholder="0000">
+            <span class="unit">м</span>
+        </div>
+    </div>
     <button class="btn-submit" onclick="alert('Показания успешно переданы в ЕРЦ!')">Отправить показания</button>
     
     <div class="history-title">История передачи</div>
@@ -73,7 +89,10 @@
         <span> Принято</span>
     </div>
 
-    <button class="btn-back" onclick="window.history.back()"> Назад</button>
+    
     <div class="version">v6.8.2</div>
 </body>
 </html>
+
+
+

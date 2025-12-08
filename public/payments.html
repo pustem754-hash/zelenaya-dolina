@@ -1,96 +1,283 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Платежи - УК Зелёная долина v6.8.2</title>
+    <title>Платежи - УК «Зелёная долина v7.0</title>
+    
+    <!-- Design System v7.0 -->
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/navigation.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: #f5f5f5; padding-top: 80px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; min-height: 100vh; }
-        
-        h1 { font-size: 20px; margin-bottom: 20px; color: #2E7D32; text-align: center; }
-        
-        .debt-card { background: white; padding: 24px; border-radius: 16px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .amount { font-size: 32px; font-weight: 700; color: #2E7D32; margin: 10px 0; }
-        .period { color: #666; font-size: 14px; }
-        
-        .btn-sbp { 
-            width: 100%; padding: 18px; background: linear-gradient(90deg, #0f766e 0%, #0c4a6e 100%); 
-            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        /* Навигация внизу страницы */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 8px 4px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 70px;
         }
-        .btn-receipt {
-            width: 100%; padding: 16px; background: white; border: 2px solid #e0e0e0; color: #333;
-            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 12px;
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 4px 2px;
+            flex: 1;
+            max-width: 80px;
+            min-width: 50px;
+            border: none;
+            background: none;
+            font-size: 12px;
         }
-        
-        .history-list { margin-top: 30px; }
-        .history-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .btn-back { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: white; color: #333; border: none; padding: 12px 30px; 
-            border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-weight: 600;
-            cursor: pointer; z-index: 100;
+        .nav-item.active {
+            color: #2E7D32;
         }
-        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; }
+        .nav-item:hover {
+            color: #27ae60;
+            transform: scale(1.05);
+        }
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        body {
+            padding-bottom: 80px;
+        }
+        /* Кнопка Выйти */
+        .btn-logout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(46, 125, 50, 0.1);
+            color: #2E7D32;
+            border: 2px solid rgba(46, 125, 50, 0.3);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-logout:hover {
+            background: rgba(46, 125, 50, 0.2);
+            transform: scale(1.05);
+        }
+        .btn-logout:active {
+            transform: scale(0.95);
+        }
     </style>
-    <link rel="stylesheet" href="css/navigation.css?v=6.8.3">
 </head>
-<body class="with-nav">
-                    <div class="app-header">
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            <span></span> На главную
-        </button>
-        <div class="header-title">$title</div>
-    </div>
-        <button class="nav-btn nav-home" onclick="window.location.href='index.html'" aria-label="На главную">
-            <span></span>
-        </button>
-    </div>
-    
-    
-    <div class="debt-card">
-        <div class="period">Задолженность за Октябрь 2023</div>
-        <div class="amount">4 520.00 ₽</div>
-        <div style="font-size: 12px; color: #e53935;">Оплатить до 10 числа</div>
-    </div>
-    
-    <button class="btn-sbp" onclick="alert('Переход в приложение банка (СБП)...')">
-        <span style="font-size: 20px;"></span> Оплатить через СБП
+<body>
+
+    <!-- Кнопка Выйти -->
+    <button class="btn-logout" onclick="window.location.href='index.html'; if(typeof logout === 'function') logout();" title="Выйти">
+        🚪 Выйти
     </button>
-    
-    <button class="btn-receipt"> Скачать квитанцию</button>
-    
-    <div class="history-list">
-        <h3 style="font-size: 16px; margin-bottom: 15px;">История операций</h3>
-        <div class="history-item">
-            <div>
-                <div style="font-weight: 600;">Сентябрь 2023</div>
-                <div style="font-size: 12px; color: #666;">12.09.2023</div>
-            </div>
-            <div style="color: #2E7D32;">- 4 350 ₽</div>
+
+    <!-- Header -->
+    <header class="header-modern">
+        <button class="btn-icon" onclick="window.location.href='index.html'"></button>
+        <h1 style="font-size: 18px; margin:0;">Оплата</h1>
+        <button class="btn-icon" onclick="if(typeof uiModern !== 'undefined' && uiModern.toggleTheme) uiModern.toggleTheme()"></button>
+    </header>
+
+    <div class="container animate-fade">
+        
+        <!-- Total Card -->
+        <div class="card" style="margin-top: 20px; background: var(--gradient-primary); color: white; text-align: center; padding: 32px 20px;">
+            <p style="margin: 0; opacity: 0.9;">К оплате за Октябрь</p>
+            <h1 style="font-size: 42px; margin: 8px 0;">10 360 ₽</h1>
+            <p style="margin: 0; opacity: 0.9; font-size: 12px;">Оплатить до 20.11.2025</p>
         </div>
-        <div class="history-item">
-            <div>
-                <div style="font-weight: 600;">Август 2023</div>
-                <div style="font-size: 12px; color: #666;">10.08.2023</div>
+
+        <!-- SBP Button -->
+        <button class="btn btn-primary" style="width: 100%; margin-top: 20px; background: linear-gradient(135deg, #6c5ce7 0%, #a363d9 100%); border:none;" onclick="showSbpModal()">
+            <span style="margin-right: 8px;"></span> Оплатить через СБП
+        </button>
+        
+        <button class="btn btn-secondary" style="width: 100%; margin-top: 12px;" onclick="openBankSelection(10360)">
+             Выбрать банк (12)
+        </button>
+
+        <!-- Payment History -->
+        <h3 style="margin: 24px 0 12px 0;">История платежей</h3>
+        
+        <div class="card" style="padding: 0;">
+            <!-- Item 1 -->
+            <div style="padding: 16px; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 style="margin: 0;">Сентябрь 2025</h4>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--color-text-secondary);">25.09.2025</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;">- 9 850 ₽</div>
+                    <div style="font-size: 12px; color: var(--color-success);">Оплачено</div>
+                </div>
             </div>
-            <div style="color: #2E7D32;">- 4 100 ₽</div>
+            
+            <!-- Item 2 -->
+             <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 style="margin: 0;">Август 2025</h4>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--color-text-secondary);">25.08.2025</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;">- 9 200 ₽</div>
+                    <div style="font-size: 12px; color: var(--color-success);">Оплачено</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    
-    <div class="version">v6.8.2</div>
-<script src="js/logger.js?v=6.8.3"></script></body>
+    <!-- SBP Modal (Hidden by default) -->
+    <div id="sbpModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; justify-content: center;">
+        <div class="card animate-slide-up" style="width: 100%; border-radius: 20px 20px 0 0; margin: 0; padding: 24px; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Выбор банка (СБП)</h3>
+                <button class="btn-icon" onclick="closeSbpModal()"></button>
+            </div>
+            
+            <div class="grid-2">
+                <button class="card card-glass" onclick="openBankApp('sberbank')" style="text-align: center; border: 1px solid #e0e0e0;">
+                    <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px;">Сбербанк</div>
+                </button>
+                <button class="card card-glass" onclick="openBankApp('tinkoff')" style="text-align: center; border: 1px solid #e0e0e0;">
+                    <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px;">Т-Банк</div>
+                </button>
+                <button class="card card-glass" onclick="openBankApp('vtb')" style="text-align: center; border: 1px solid #e0e0e0;">
+                    <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px;">ВТБ</div>
+                </button>
+                <button class="card card-glass" onclick="openBankApp('alfa')" style="text-align: center; border: 1px solid #e0e0e0;">
+                    <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px;">Альфа</div>
+                </button>
+                 <button class="card card-glass" onclick="openBankApp('raiffeisen')" style="text-align: center; border: 1px solid #e0e0e0;">
+                    <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px;">Райффайзен</div>
+                </button>
+                 <button class="card card-glass" onclick="openBankApp('gazprom')" style="text-align: center; border: 1px solid #e0e0e0;">
+                    <div style="font-size: 32px; margin-bottom: 8px;"></div>
+                    <div style="font-size: 12px;">Газпром</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Bar Navigation -->
+    <nav class="nav">
+        <a href="payments.html" class="nav-item active">
+            <div class="nav-icon">💳</div>
+            <div class="nav-label">Платежи</div>
+        </a>
+        <a href="meters.html" class="nav-item">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Счётчики</div>
+        </a>
+        <a href="create-request.html" class="nav-item">
+            <div class="nav-icon">📝</div>
+            <div class="nav-label">Заявки</div>
+        </a>
+        <a href="cameras.html" class="nav-item">
+            <div class="nav-icon">📹</div>
+            <div class="nav-label">Камеры</div>
+        </a>
+        <a href="barrier.html" class="nav-item">
+            <div class="nav-icon">🚧</div>
+            <div class="nav-label">Шлагбаум</div>
+        </a>
+    </nav>
+
+    <div class="version" style="text-align:center; padding: 20px 0; color: #999; font-size: 12px;">v7.0</div><script src="js/ui-modern.js"></script>
+    <script>
+        function showSbpModal() {
+            const modal = document.getElementById('sbpModal');
+            modal.style.display = 'flex';
+        }
+        function closeSbpModal() {
+            const modal = document.getElementById('sbpModal');
+            modal.style.display = 'none';
+        }
+        function openBankApp(bank) {
+             alert('Открываем приложение ' + bank + ' через Deep Link...');
+             closeSbpModal();
+        }
+        const BANK_APPS = [
+            { code: 'sber', name: 'Сбербанк', icon: '🟢' },
+            { code: 'tinkoff', name: 'Т-Банк', icon: '🟡' },
+            { code: 'vtb', name: 'ВТБ', icon: '🔵' },
+            { code: 'alfa', name: 'Альфа', icon: '🟥' },
+            { code: 'raif', name: 'Райффайзен', icon: '🟨' },
+            { code: 'gazprom', name: 'Газпром', icon: '🟦' },
+            { code: 'rosselhoz', name: 'Россельхоз', icon: '🟩' },
+            { code: 'promsvyaz', name: 'ПСБ', icon: '🟧' },
+            { code: 'home', name: 'Home Credit', icon: '🏠' },
+            { code: 'sovcom', name: 'Совком', icon: '🟥' },
+            { code: 'pochtabank', name: 'Почта Банк', icon: '📮' },
+            { code: 'uralsib', name: 'Уралсиб', icon: '🟦' },
+        ];
+        function openBankSelection(amount = 0) {
+            closeBankSelection();
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'bankSelectionModal';
+            overlay.innerHTML = `
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h3 style="margin:0;">Выберите банк</h3>
+                        <button class="btn btn-icon" style="width:36px;height:36px;" onclick="closeBankSelection()">✕</button>
+                    </div>
+                    <p style="margin-top:0; margin-bottom:16px; color:var(--color-text-secondary); font-size:14px;">
+                        Сумма к оплате: <strong>${amount ? amount.toFixed(2) + ' ₽' : '—'}</strong>
+                    </p>
+                    <div class="bank-grid">
+                        ${BANK_APPS.map(b => `
+                            <div class="bank-card" onclick="openBankApp('${b.code}', ${amount || 0})">
+                                <div class="bank-icon">${b.icon}</div>
+                                <div class="bank-name">${b.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" style="flex:1;" onclick="closeBankSelection()">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+        function closeBankSelection() {
+            const modal = document.getElementById('bankSelectionModal');
+            if (modal) modal.remove();
+        }
+    </script>
+</body>
 </html>
-
-
-
-
-
-
-
-
 

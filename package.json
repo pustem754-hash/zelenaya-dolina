@@ -20,7 +20,12 @@
   "engines": {
     "node": ">=14.0.0"
   },
+<<<<<<< Updated upstream
   "devDependencies": {
     "jest": "^30.2.0"
+=======
+  "dependencies": {
+    "xlsx": "^0.18.5"
+>>>>>>> Stashed changes
   }
 }

@@ -56,7 +56,84 @@
             background: var(--background);
             min-height: 100vh;
             padding: 0 0 100px 0;
+            padding-bottom: 100px;
             color: var(--text-primary);
+        }
+        /* Навигация внизу страницы */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 8px 4px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 70px;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 4px 2px;
+            flex: 1;
+            max-width: 80px;
+            min-width: 50px;
+            border: none;
+            background: none;
+            font-size: 12px;
+        }
+        .nav-item.active {
+            color: #2E7D32;
+        }
+        .nav-item:hover {
+            color: #27ae60;
+            transform: scale(1.05);
+        }
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        /* Кнопка Выйти */
+        .btn-logout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-dark);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-logout:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: scale(1.05);
+        }
+        .btn-logout:active {
+            transform: scale(0.95);
         }
         
         /* Шапка страницы */
@@ -587,10 +664,10 @@
             'use strict';
             
             // Счётчик подавленных ошибок (для отладки)
-            let suppressedErrors = 0;
+            var suppressedErrors = 0;
             
             // Список паттернов ошибок расширений
-            const extensionErrorPatterns = [
+            var extensionErrorPatterns = [
                 'message channel closed',
                 'Extension context invalidated',
                 'chrome-extension://',
@@ -608,20 +685,20 @@
             function isExtensionError(errorMessage, errorStack) {
                 if (!errorMessage && !errorStack) return false;
                 
-                const fullText = (errorMessage || '') + ' ' + (errorStack || '');
+                var fullText = (errorMessage || '') + ' ' + (errorStack || '');
                 
-                return extensionErrorPatterns.some(pattern => 
-                    fullText.toLowerCase().includes(pattern.toLowerCase())
-                );
+                return extensionErrorPatterns.some(function(pattern) {
+                    return fullText.toLowerCase().includes(pattern.toLowerCase());
+                });
             }
             
             // Глобальный обработчик ошибок
-            const originalErrorHandler = window.onerror;
+            var originalErrorHandler = window.onerror;
             window.onerror = function(message, source, lineno, colno, error) {
                 if (isExtensionError(message, error ? error.stack : '')) {
                     suppressedErrors++;
                     console.warn(
-                        `[Global] 🛡️ Подавлена ошибка расширения #${suppressedErrors}:`, 
+                        '[Global] 🛡️ Подавлена ошибка расширения #' + suppressedErrors + ':', 
                         message.substring(0, 100)
                     );
                     return true; // Подавить ошибку
@@ -636,14 +713,14 @@
             
             // Глобальный обработчик unhandled promise rejections
             window.addEventListener('unhandledrejection', function(event) {
-                const reason = event.reason;
-                const message = reason ? (reason.message || reason.toString()) : '';
-                const stack = reason ? reason.stack : '';
+                var reason = event.reason;
+                var message = reason ? (reason.message || reason.toString()) : '';
+                var stack = reason ? reason.stack : '';
                 
                 if (isExtensionError(message, stack)) {
                     suppressedErrors++;
                     console.warn(
-                        `[Global] 🛡️ Подавлен Promise rejection #${suppressedErrors}:`, 
+                        '[Global] 🛡️ Подавлен Promise rejection #' + suppressedErrors + ':', 
                         message.substring(0, 100)
                     );
                     event.preventDefault();
@@ -666,7 +743,7 @@
             // Отчёт о подавленных ошибках (каждые 10 секунд)
             setInterval(function() {
                 if (suppressedErrors > 0) {
-                    console.log(`[Global] 📊 Подавлено ошибок расширений: ${suppressedErrors}`);
+                    console.log('[Global] 📊 Подавлено ошибок расширений: ' + suppressedErrors);
                 }
             }, 10000);
             
@@ -679,8 +756,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Отключить автозаполнение на критичных полях (если нужно)
-            const sensitiveFields = document.querySelectorAll('input[type="tel"], input[type="text"]');
-            sensitiveFields.forEach(field => {
+            var sensitiveFields = document.querySelectorAll('input[type="tel"], input[type="text"]');
+            sensitiveFields.forEach(function(field) {
                 // Добавить атрибуты для отключения агрессивных расширений
                 field.setAttribute('autocomplete', 'off');
                 field.setAttribute('data-lpignore', 'true'); // LastPass
@@ -797,20 +874,20 @@
     <script src="auth.js"></script>
     <script>
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
-        let attachedMedia = [];
+        var attachedMedia = [];
         
         // ====================================
         // 🎤 АУДИОЗАПИСЬ v6.7.2 (ПОЛНОЕ ИСПРАВЛЕНИЕ)
         // ====================================
         
         // Глобальные переменные для аудио
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let mediaStream = null;
-        let isRecording = false;
-        let audioTimer = null;
-        let audioStartTime = 0;
-        let audioDuration = 0;
+        var mediaRecorder = null;
+        var audioChunks = [];
+        var mediaStream = null;
+        var isRecording = false;
+        var audioTimer = null;
+        var audioStartTime = 0;
+        var audioDuration = 0;
         
         // Экспорт для навигации
         window.isRecording = false;
@@ -831,16 +908,16 @@
             
             // Загрузить существующие медиа
             console.log('[Init] 📦 Загрузка существующих медиа из localStorage...');
-            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            var savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
             console.log('[Init] 📦 Найдено медиа в localStorage:', savedMedia.length);
             
-            attachedMedia = savedMedia.filter(media => {
+            attachedMedia = savedMedia.filter(function(media) {
                 if (!media.timestamp) {
                     console.log('[Init] ⚠️ Медиа без timestamp пропущено:', media.type);
                     return false;
                 }
-                const age = Date.now() - media.timestamp;
-                const isValid = age < 24 * 60 * 60 * 1000; // 24 часа
+                var age = Date.now() - media.timestamp;
+                var isValid = age < 24 * 60 * 60 * 1000; // 24 часа
                 if (!isValid) {
                     console.log('[Init] ⚠️ Старое медиа пропущено (возраст:', Math.round(age / 1000 / 60 / 60), 'ч):', media.type);
                 }
@@ -857,9 +934,9 @@
             
             // Привязать обработчики
             console.log('[Init] 🔗 Привязка обработчиков событий...');
-            const audioBtn = document.getElementById('audioRecordBtn');
-            const photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
-            const videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
+            var audioBtn = document.getElementById('audioRecordBtn');
+            var photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
+            var videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
             
             console.log('[Init] 🔍 Поиск элементов:');
             console.log('[Init]   - audioBtn:', audioBtn ? '✅ найден' : '❌ не найден');
@@ -869,7 +946,7 @@
             if (audioBtn) {
                 console.log('[Init] 🔄 Клонирование кнопки аудио для удаления старых обработчиков...');
                 // КРИТИЧНО: Удалить старые обработчики через клонирование
-                const newAudioBtn = audioBtn.cloneNode(true);
+                var newAudioBtn = audioBtn.cloneNode(true);
                 audioBtn.parentNode.replaceChild(newAudioBtn, audioBtn);
                 
                 console.log('[Init] ✅ Кнопка клонирована и заменена');
@@ -935,7 +1012,7 @@
         }
         
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('[Page] Проверка авторизации...');
             
             // Проверить авторизацию
@@ -949,31 +1026,31 @@
             initializePage();
             
             // КРИТИЧНО: Инициализация страницы создания заявки
-            setTimeout(() => {
+            setTimeout(function() {
                 initializeCreateRequestPage();
             }, 100);
         });
         
         function initializePage() {
-            const session = getSession();
+            var session = getSession();
             console.log('[Page] Сессия пользователя:', session);
             
             // Загрузить сохранённые медиафайлы при загрузке страницы
-            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            var savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
             console.log('[Page] Загружено из localStorage:', savedMedia.length, 'файлов');
             
             // ФИЛЬТРАЦИЯ: Удалить старые записи (старше 24 часов)
-            const now = Date.now();
-            const ONE_DAY = 24 * 60 * 60 * 1000; // 24 часа
+            var now = Date.now();
+            var ONE_DAY = 24 * 60 * 60 * 1000; // 24 часа
             
-            attachedMedia = savedMedia.filter(media => {
+            attachedMedia = savedMedia.filter(function(media) {
                 // Если нет timestamp или запись старше 24 часов — удалить
                 if (!media.timestamp) {
                     console.warn('[Media] Файл без timestamp будет удалён:', media.name || media.type);
                     return false;
                 }
                 
-                const age = now - media.timestamp;
+                var age = now - media.timestamp;
                 if (age > ONE_DAY) {
                     console.log('[Media] Удалена старая запись (возраст:', Math.round(age / 1000 / 60 / 60), 'часов):', media.name);
                     return false;
@@ -992,24 +1069,23 @@
             renderMediaPreview();
             
             // Счётчик символов
-            document.getElementById('requestDescription').addEventListener('input', (e) => {
+            document.getElementById('requestDescription').addEventListener('input', function(e) {
                 document.getElementById('charCount').textContent = e.target.value.length;
             });
             
             // Обработчик кнопки записи аудио с задержкой (для гарантии)
-            setTimeout(() => {
+            setTimeout(function() {
                 initializeCreateRequestPage();
             }, 100);
             
             // Обработка формы
-            document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            document.getElementById('requestForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const formData = {
+                var formData = {
                     category: document.getElementById('requestCategory').value,
                     title: document.getElementById('requestTitle').value,
                     description: document.getElementById('requestDescription').value,
-                    // urgency удалена — не нужна
                     media: attachedMedia,
                     timestamp: new Date().toISOString(),
                     status: 'new'
@@ -1027,37 +1103,21 @@
                 }
                 
                 // Показать лоадер
-                const loader = document.createElement('div');
-                loader.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 9999;
-                `;
-                loader.innerHTML = `
-                    <div style="text-align: center; color: white;">
-                        <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-                        <p style="font-size: 16px; font-weight: 500; margin: 0;">Создание заявки...</p>
-                    </div>
-                `;
+                var loader = document.createElement('div');
+                loader.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 9999;';
+                loader.innerHTML = '<div style="text-align: center; color: white;"><div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div><p style="font-size: 16px; font-weight: 500; margin: 0;">Создание заявки...</p></div>';
                 document.body.appendChild(loader);
                 
                 try {
                     // Mock API call
                     await mockAPICall('/api/requests/create', formData);
                     
-                    setTimeout(() => {
+                    setTimeout(function() {
                         loader.remove();
                         showSuccessNotification('Заявка создана успешно!');
                         
                         // Сохранить локально
-                        const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                        var requests = JSON.parse(localStorage.getItem('requests') || '[]');
                         requests.push({
                             ...formData,
                             id: Date.now().toString()
@@ -1069,7 +1129,7 @@
                         attachedMedia = [];
                         
                         // Редирект к списку заявок
-                        setTimeout(() => {
+                        setTimeout(function() {
                             window.location.href = 'index.html';
                         }, 1500);
                     }, 1500);
@@ -1086,10 +1146,10 @@
             console.log('[API] 📍 Endpoint:', endpoint);
             console.log('[API] 📊 Data:', data);
             
-            return new Promise((resolve) => {
+            return new Promise(function(resolve) {
                 console.log('[API] ⏱️ Задержка 1 секунда...');
-                setTimeout(() => {
-                    console.log(`[API] ✅ API call to ${endpoint} успешен`);
+                setTimeout(function() {
+                    console.log('[API] ✅ API call to ' + endpoint + ' успешен');
                     resolve({ success: true });
                 }, 1000);
             });
@@ -1098,7 +1158,7 @@
         function showError(message) {
             console.log('[Error] ❌ === Показ ошибки ===');
             console.log('[Error] 📝 Сообщение:', message);
-            const errorDiv = document.getElementById('errorMessage');
+            var errorDiv = document.getElementById('errorMessage');
             if (errorDiv) {
                 errorDiv.textContent = message;
                 errorDiv.classList.add('show');
@@ -1118,51 +1178,51 @@
             console.log('[Photo] 📸 Начало съёмки фото');
             
             try {
-                const constraints = {
+                var constraints = {
                     video: {
-                        facingMode: 'environment', // Задняя камера
+                        facingMode: 'environment',
                         width: { ideal: 1920 },
                         height: { ideal: 1080 }
                     }
                 };
                 
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                var stream = await navigator.mediaDevices.getUserMedia(constraints);
                 console.log('[Photo] ✅ Доступ к камере получен');
                 
-                const video = document.createElement('video');
+                var video = document.createElement('video');
                 video.srcObject = stream;
-                video.setAttribute('playsinline', ''); // Важно для iOS!
+                video.setAttribute('playsinline', '');
                 await video.play();
                 
                 // Ждём загрузки видео
-                await new Promise(resolve => {
-                    video.onloadedmetadata = () => {
+                await new Promise(function(resolve) {
+                    video.onloadedmetadata = function() {
                         console.log('[Photo] 📹 Видео загружено');
                         resolve();
                     };
                 });
                 
                 // Создаём canvas
-                const canvas = document.createElement('canvas');
+                var canvas = document.createElement('canvas');
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 
-                const ctx = canvas.getContext('2d');
+                var ctx = canvas.getContext('2d');
                 ctx.drawImage(video, 0, 0);
                 
                 // Останавливаем камеру
-                stream.getTracks().forEach(track => track.stop());
+                stream.getTracks().forEach(function(track) { track.stop(); });
                 console.log('[Photo] 🛑 Камера остановлена');
                 
                 // Получаем base64
-                const photoData = canvas.toDataURL('image/jpeg', 0.8);
+                var photoData = canvas.toDataURL('image/jpeg', 0.8);
                 console.log('[Photo] 📸 Фото сохранено, размер:', photoData.length);
                 
                 // Сохраняем в localStorage
                 localStorage.setItem('currentPhoto', photoData);
                 
                 // Синхронизируем с attachedMedia для отправки
-                attachedMedia = attachedMedia.filter(media => media.type !== 'photo');
+                attachedMedia = attachedMedia.filter(function(media) { return media.type !== 'photo'; });
                 attachedMedia.push({
                     type: 'photo',
                     data: photoData,
@@ -1192,26 +1252,25 @@
         
         function recordVideo() {
             console.log('[Video] 🎥 === НАЧАЛО ФУНКЦИИ recordVideo ===');
-            console.log('[Video] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
             
-            const input = document.createElement('input');
+            var input = document.createElement('input');
             input.type = 'file';
             input.accept = 'video/*';
             input.setAttribute('capture', 'environment');
             
             console.log('[Video] 📁 Создан input для выбора файла');
             
-            input.onchange = (e) => {
+            input.onchange = function(e) {
                 console.log('[Video] 📁 Файл выбран');
-                const file = e.target.files[0];
+                var file = e.target.files[0];
                 if (file) {
                     console.log('[Video] 📊 Информация о файле:');
                     console.log('[Video]   - Имя:', file.name);
                     console.log('[Video]   - Размер:', file.size, 'байт');
                     console.log('[Video]   - Тип:', file.type);
                     
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
                         console.log('[Video] ✅ Файл прочитан, размер данных:', event.target.result.length);
                         attachedMedia.push({
                             type: 'video',
@@ -1221,7 +1280,7 @@
                         console.log('[Video] ✅ Видео добавлено в attachedMedia, всего:', attachedMedia.length);
                         renderMediaPreview();
                     };
-                    reader.onerror = (error) => {
+                    reader.onerror = function(error) {
                         console.error('[Video] ❌ Ошибка чтения файла:', error);
                     };
                     reader.readAsDataURL(file);
@@ -1237,14 +1296,6 @@
         // Очистка ресурсов
         function cleanupAudioResources() {
             console.log('[Audio] 🧹 === ОЧИСТКА РЕСУРСОВ ===');
-            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
-            console.log('[Audio] 📍 Состояние до очистки:');
-            console.log('[Audio]   - audioTimer:', audioTimer);
-            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
-            console.log('[Audio]   - mediaRecorder.state:', mediaRecorder ? mediaRecorder.state : 'null');
-            console.log('[Audio]   - mediaStream:', mediaStream);
-            console.log('[Audio]   - isRecording:', isRecording);
-            console.log('[Audio]   - audioChunks.length:', audioChunks.length);
             
             // Остановить таймер
             if (audioTimer) {
@@ -1273,9 +1324,9 @@
             // Остановить MediaStream
             if (mediaStream) {
                 console.log('[Audio] 🧹 Остановка MediaStream...');
-                const tracks = mediaStream.getTracks();
+                var tracks = mediaStream.getTracks();
                 console.log('[Audio] 📊 Найдено треков:', tracks.length);
-                tracks.forEach(track => {
+                tracks.forEach(function(track) {
                     track.stop();
                     console.log('[Audio] ✅ Track остановлен:', track.kind, track.label);
                 });
@@ -1295,24 +1346,13 @@
         
         async function recordAudio() {
             console.log('[Audio] 🎤 === НАЧАЛО ФУНКЦИИ recordAudio ===');
-            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
-            console.log('[Audio] 📍 Текущее состояние:');
-            console.log('[Audio]   - isRecording:', isRecording);
-            console.log('[Audio]   - window.isRecording:', window.isRecording);
-            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
-            console.log('[Audio]   - mediaStream:', mediaStream);
-            console.log('[Audio]   - audioTimer:', audioTimer);
             
-            const audioBtn = document.getElementById('audioRecordBtn');
+            var audioBtn = document.getElementById('audioRecordBtn');
             
             if (!audioBtn) {
                 console.error('[Audio] ❌ Кнопка #audioRecordBtn не найдена!');
-                console.error('[Audio] ❌ Все кнопки:', document.querySelectorAll('button').length);
                 return;
             }
-            
-            console.log('[Audio] ✅ Кнопка найдена:', audioBtn);
-            console.log('[Audio] ✅ Текст кнопки:', audioBtn.textContent);
             
             // Если идёт запись - остановить
             if (isRecording) {
@@ -1345,7 +1385,7 @@
                 }
                 
                 // Определить поддерживаемый MIME type
-                const mimeTypes = [
+                var mimeTypes = [
                     'audio/webm;codecs=opus',
                     'audio/webm',
                     'audio/ogg;codecs=opus',
@@ -1353,11 +1393,11 @@
                     'audio/mpeg'
                 ];
                 
-                let selectedMimeType = '';
-                for (const mimeType of mimeTypes) {
-                    if (MediaRecorder.isTypeSupported(mimeType)) {
-                        selectedMimeType = mimeType;
-                        console.log(`[Audio] ✅ Используется MIME type: ${mimeType}`);
+                var selectedMimeType = '';
+                for (var i = 0; i < mimeTypes.length; i++) {
+                    if (MediaRecorder.isTypeSupported(mimeTypes[i])) {
+                        selectedMimeType = mimeTypes[i];
+                        console.log('[Audio] ✅ Используется MIME type:', selectedMimeType);
                         break;
                     }
                 }
@@ -1379,14 +1419,14 @@
                 mediaRecorder.ondataavailable = function(event) {
                     if (event.data && event.data.size > 0) {
                         audioChunks.push(event.data);
-                        console.log(`[Audio] 📦 Chunk: ${event.data.size} байт (всего: ${audioChunks.length})`);
+                        console.log('[Audio] 📦 Chunk:', event.data.size, 'байт (всего:', audioChunks.length + ')');
                     }
                 };
                 
                 // Обработчик остановки
                 mediaRecorder.onstop = function() {
                     console.log('[Audio] ⏹️ MediaRecorder остановлен');
-                    console.log(`[Audio] 📦 Всего chunks: ${audioChunks.length}`);
+                    console.log('[Audio] 📦 Всего chunks:', audioChunks.length);
                     
                     // Очистить таймер
                     if (audioTimer) {
@@ -1406,18 +1446,18 @@
                     }
                     
                     // Создать Blob
-                    const audioBlob = new Blob(audioChunks, { type: selectedMimeType });
-                    console.log(`[Audio] 📦 Blob создан: ${audioBlob.size} байт, тип: ${audioBlob.type}`);
+                    var audioBlob = new Blob(audioChunks, { type: selectedMimeType });
+                    console.log('[Audio] 📦 Blob создан:', audioBlob.size, 'байт, тип:', audioBlob.type);
                     
                     // Сохранить аудио
-                    saveAudioRecording(audioBlob, selectedMimeType, audioDuration).then(() => {
+                    saveAudioRecording(audioBlob, selectedMimeType, audioDuration).then(function() {
                         // Очистить ресурсы
                         cleanupAudioResources();
                         
                         // Сбросить UI
                         audioBtn.textContent = '🎤 Аудио';
                         audioBtn.classList.remove('recording');
-                    }).catch((error) => {
+                    }).catch(function(error) {
                         console.error('[Audio] ❌ Ошибка сохранения:', error);
                         showNotification('❌ Ошибка сохранения аудио', 'error');
                         cleanupAudioResources();
@@ -1447,9 +1487,9 @@
                 audioBtn.textContent = '⏹️ Остановить (0с)';
                 
                 // Таймер
-                audioTimer = setInterval(() => {
+                audioTimer = setInterval(function() {
                     audioDuration = Math.floor((Date.now() - audioStartTime) / 1000);
-                    audioBtn.textContent = `⏹️ Остановить (${audioDuration}с)`;
+                    audioBtn.textContent = '⏹️ Остановить (' + audioDuration + 'с)';
                     
                     // Автостоп на 60 секундах
                     if (audioDuration >= 60) {
@@ -1473,14 +1513,8 @@
         
         function stopAudioRecording() {
             console.log('[Audio] 🛑 === ОСТАНОВКА ЗАПИСИ ===');
-            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
-            console.log('[Audio] 📍 Текущее состояние:');
-            console.log('[Audio]   - isRecording:', isRecording);
-            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
-            console.log('[Audio]   - mediaRecorder.state:', mediaRecorder ? mediaRecorder.state : 'null');
-            console.log('[Audio]   - audioTimer:', audioTimer);
             
-            const audioBtn = document.getElementById('audioRecordBtn');
+            var audioBtn = document.getElementById('audioRecordBtn');
             
             if (!audioBtn) {
                 console.warn('[Audio] ⚠️ Кнопка не найдена при остановке');
@@ -1498,7 +1532,7 @@
             
             // Остановить MediaRecorder
             if (mediaRecorder) {
-                console.log(`[Audio] 📊 MediaRecorder state: ${mediaRecorder.state}`);
+                console.log('[Audio] 📊 MediaRecorder state:', mediaRecorder.state);
                 if (mediaRecorder.state !== 'inactive') {
                     try {
                         console.log('[Audio] 🛑 Вызов mediaRecorder.stop()...');
@@ -1506,7 +1540,6 @@
                         console.log('[Audio] ✅ MediaRecorder.stop() вызван');
                     } catch (error) {
                         console.error('[Audio] ❌ Ошибка остановки MediaRecorder:', error);
-                        console.error('[Audio] ❌ Stack:', error.stack);
                     }
                 } else {
                     console.log('[Audio] ℹ️ MediaRecorder уже неактивен');
@@ -1521,53 +1554,28 @@
             window.isRecording = false;
             console.log('[Audio] ✅ Флаги сброшены');
             
-            // НЕ очищаем mediaStream и mediaRecorder здесь!
-            // Они будут очищены в mediaRecorder.onstop
-            
             console.log('[Audio] 🛑 Остановка завершена');
-        }
-        
-        /**
-         * Определение поддерживаемого MIME type для аудио
-         */
-        function getSupportedAudioMimeType() {
-            const types = [
-                'audio/webm;codecs=opus',
-                'audio/webm',
-                'audio/ogg;codecs=opus',
-                'audio/mp4',
-                'audio/mpeg'
-            ];
-            
-            for (const type of types) {
-                if (MediaRecorder.isTypeSupported(type)) {
-                    console.log('Используется MIME type:', type);
-                    return type;
-                }
-            }
-            
-            return null;
         }
         
         /**
          * Сохранение записанного аудио
          */
         async function saveAudioRecording(blob, mimeType, durationSeconds) {
-            return new Promise((resolve, reject) => {
+            return new Promise(function(resolve, reject) {
                 try {
                     // Конвертировать в Base64
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     
                     reader.onloadend = function() {
-                        const base64Audio = reader.result;
-                        console.log(`[Audio] ✅ Base64 создан: ${base64Audio.length} символов`);
+                        var base64Audio = reader.result;
+                        console.log('[Audio] ✅ Base64 создан:', base64Audio.length, 'символов');
                         
                         // Определить расширение файла
-                        const extension = getAudioExtension(mimeType);
-                        const filename = `audio_${Date.now()}.${extension}`;
+                        var extension = getAudioExtension(mimeType);
+                        var filename = 'audio_' + Date.now() + '.' + extension;
                         
                         // Создать объект аудио
-                        const audioFile = {
+                        var audioFile = {
                             type: 'audio',
                             name: filename,
                             mimeType: mimeType,
@@ -1581,18 +1589,18 @@
                         attachedMedia.push(audioFile);
                         
                         // Сохранить в localStorage
-                        let requestMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+                        var requestMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
                         requestMedia.push(audioFile);
                         localStorage.setItem('requestMedia', JSON.stringify(requestMedia));
                         
                         console.log('[Audio] ✅ Аудио сохранено в localStorage');
-                        console.log(`[Audio] 📊 Всего аудио: ${requestMedia.length}`);
+                        console.log('[Audio] 📊 Всего аудио:', requestMedia.length);
                         
                         // Обновить превью в UI
                         renderMediaPreview();
                         
                         // Показать уведомление
-                        showSuccessNotification(`Аудио записано (${durationSeconds}с, ${formatFileSize(blob.size)})`);
+                        showSuccessNotification('Аудио записано (' + durationSeconds + 'с, ' + formatFileSize(blob.size) + ')');
                         
                         resolve();
                     };
@@ -1623,102 +1631,59 @@
         }
         
         /**
-         * Конвертация Blob в Base64
-         */
-        function blobToBase64(blob) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        }
-        
-        /**
          * Форматирование размера файла
          */
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            var k = 1024;
+            var sizes = ['Bytes', 'KB', 'MB'];
+            var i = Math.floor(Math.log(bytes) / Math.log(k));
             return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-        
-        /**
-         * Обновление UI кнопки записи (без прыжков интерфейса)
-         */
-        function updateAudioRecordingUI(recording) {
-            const audioBtn = document.getElementById('audioRecordBtn');
-            
-            if (!audioBtn) {
-                console.warn('[Audio] Кнопка audioRecordBtn не найдена для обновления UI');
-                return;
-            }
-            
-            // Использовать requestAnimationFrame для плавного обновления
-            requestAnimationFrame(() => {
-                if (recording) {
-                    audioBtn.classList.add('recording');
-                    audioBtn.innerHTML = '⏹️ Остановить';
-                    audioBtn.style.background = '#f44336';
-                    audioBtn.style.animation = 'pulse 1s infinite';
-                    // Предотвратить прыжки: фиксированная высота
-                    audioBtn.style.minHeight = audioBtn.offsetHeight + 'px';
-                } else {
-                    audioBtn.classList.remove('recording');
-                    audioBtn.innerHTML = '🎤 Аудио';
-                    audioBtn.style.background = '';
-                    audioBtn.style.animation = '';
-                    // Вернуть нормальную высоту
-                    audioBtn.style.minHeight = '';
-                }
-            });
         }
         
         /**
          * Показать уведомление
          */
-        function showNotification(message, type = 'info', duration = 3000) {
+        function showNotification(message, type, duration) {
+            type = type || 'info';
+            duration = duration || 3000;
+            
             // Удалить предыдущие уведомления
-            const existingToasts = document.querySelectorAll('.toast');
-            existingToasts.forEach(toast => toast.remove());
+            var existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(function(toast) { toast.remove(); });
             
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
             
-            const icons = {
+            var icons = {
                 success: '✓',
                 error: '✕',
                 warning: '⚠',
                 info: 'ℹ'
             };
             
-            toast.innerHTML = `
-                <span class="toast-icon">${icons[type] || icons.info}</span>
-                <span class="toast-message">${message}</span>
-            `;
+            toast.innerHTML = '<span class="toast-icon">' + (icons[type] || icons.info) + '</span><span class="toast-message">' + message + '</span>';
             
             document.body.appendChild(toast);
             
-            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(function() { toast.classList.add('show'); }, 10);
             
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
+                setTimeout(function() { toast.remove(); }, 300);
             }, duration);
         }
         
         function renderMediaPreview() {
             console.log('[Media] 🖼️ Рендеринг превью медиа');
             
-            const photoData = localStorage.getItem('currentPhoto');
-            const audioData = localStorage.getItem('currentAudio');
+            var photoData = localStorage.getItem('currentPhoto');
+            var audioData = localStorage.getItem('currentAudio');
             
-            const photoPreview = document.getElementById('photoPreview');
-            const audioPreview = document.getElementById('audioPreview');
-            const deletePhotoBtn = document.getElementById('deletePhotoBtn');
-            const deleteAudioBtn = document.getElementById('deleteAudioBtn');
+            var photoPreview = document.getElementById('photoPreview');
+            var audioPreview = document.getElementById('audioPreview');
+            var deletePhotoBtn = document.getElementById('deletePhotoBtn');
+            var deleteAudioBtn = document.getElementById('deleteAudioBtn');
             
             // === ФОТО ===
             if (photoData && photoPreview) {
@@ -1788,7 +1753,7 @@
             localStorage.removeItem('currentPhoto');
             
             // Удаляем фото из attachedMedia и синхронизируем
-            attachedMedia = attachedMedia.filter(media => media.type !== 'photo');
+            attachedMedia = attachedMedia.filter(function(media) { return media.type !== 'photo'; });
             localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
             
             renderMediaPreview();
@@ -1800,7 +1765,6 @@
         
         function removeMedia(index) {
             console.log('[Media] 🗑️ === НАЧАЛО ФУНКЦИИ removeMedia ===');
-            console.log('[Media] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
             console.log('[Media] 📊 Параметры:');
             console.log('[Media]   - Индекс:', index);
             console.log('[Media]   - Всего до удаления:', attachedMedia.length);
@@ -1811,8 +1775,8 @@
             }
             
             // Удалить из массива
-            const removed = attachedMedia.splice(index, 1);
-            console.log('[Media] ✅ Удалён файл:', removed[0]?.name || removed[0]?.type);
+            var removed = attachedMedia.splice(index, 1);
+            console.log('[Media] ✅ Удалён файл:', removed[0] ? (removed[0].name || removed[0].type) : 'unknown');
             console.log('[Media] 📊 Осталось файлов:', attachedMedia.length);
             
             // КРИТИЧЕСКИ ВАЖНО: Обновить localStorage
@@ -1834,26 +1798,20 @@
         }
         
         // Добавить CSS для анимации спиннера
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes spin {
-                to { transform: rotate(360deg); }
-            }
-        `;
+        var style = document.createElement('style');
+        style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
         document.head.appendChild(style);
         
         // ====================================
         // 🚀 ЗАПУСК ИНИЦИАЛИЗАЦИИ (дополнительные проверки)
         // ====================================
         
-        // Вариант 1: При загрузке DOM (уже обработан выше)
-        
         // Вариант 2: Если DOM уже загружен (при навигации через SPA)
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             console.log('[Init] DOM уже загружен, запуск инициализации...');
             // Проверить авторизацию перед инициализацией
-            if (isAuthenticated()) {
-                setTimeout(() => {
+            if (typeof isAuthenticated === 'function' && isAuthenticated()) {
+                setTimeout(function() {
                     if (typeof initializeCreateRequestPage === 'function') {
                         initializeCreateRequestPage();
                     }
@@ -1864,7 +1822,7 @@
         // Вариант 3: При входе на страницу через window.onload (запасной)
         window.addEventListener('load', function() {
             console.log('[Init] window.load - проверка инициализации...');
-            const mediaPreview = document.getElementById('mediaPreview');
+            var mediaPreview = document.getElementById('mediaPreview');
             if (mediaPreview && mediaPreview.children.length === 0 && attachedMedia.length > 0) {
                 console.warn('[Init] ⚠️ Медиа не отображены, повторная инициализация...');
                 renderMediaPreview();
@@ -1877,18 +1835,47 @@
             if (!document.hidden) {
                 console.log('[Init] Страница стала видимой, проверка...');
                 // Перезагрузить медиа, если они пропали
-                const mediaPreview = document.getElementById('mediaPreview');
+                var mediaPreview = document.getElementById('mediaPreview');
                 if (mediaPreview && mediaPreview.children.length === 0 && attachedMedia.length > 0) {
                     renderMediaPreview();
                 }
                 // Переинициализировать обработчики
-                setTimeout(() => {
+                setTimeout(function() {
                     initializeCreateRequestPage();
                 }, 100);
             }
         });
     </script>
     
+    <!-- Кнопка Выйти -->
+    <button class="btn-logout" onclick="window.location.href='index.html'; if(typeof logout === 'function') logout();" title="Выйти">
+        🚪 Выйти
+    </button>
+
+    <!-- Навигация -->
+    <nav class="nav">
+        <a href="payments.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div class="nav-label">Платежи</div>
+        </a>
+        <a href="meters.html" class="nav-item">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Счётчики</div>
+        </a>
+        <a href="create-request.html" class="nav-item active">
+            <div class="nav-icon">📝</div>
+            <div class="nav-label">Заявки</div>
+        </a>
+        <a href="cameras.html" class="nav-item">
+            <div class="nav-icon">📹</div>
+            <div class="nav-label">Камеры</div>
+        </a>
+        <a href="barrier.html" class="nav-item">
+            <div class="nav-icon">🚧</div>
+            <div class="nav-label">Шлагбаум</div>
+        </a>
+    </nav>
+
     <!-- Отладочная кнопка (временно, для тестирования) -->
     <button 
         onclick="initializeCreateRequestPage()" 
@@ -1899,4 +1886,3 @@
     </button>
 </body>
 </html>
-

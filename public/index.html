@@ -1493,7 +1493,13 @@
                     <label>Электричество (кВт⋅ч)</label>
                     <input type="number" step="0.01" placeholder="Введите показания" id="electricityInput">
                 </div>
-                
+
+                <!-- ГАЗ -->
+<div class="input-group">
+  <label>🔥 Газ (м³)</label>
+  <input type="number" step="0.01" placeholder="Введите показания" id="gasInput">
+  <div class="last-reading">Последние: <span id="gasLast">—</span></div>
+</div>
                 <button class="btn" onclick="submitMeterReadings()">
                     📊 Отправить показания
                 </button>
@@ -2882,7 +2888,7 @@
             const coldWater = document.getElementById('coldWaterInput').value;
             const hotWater = document.getElementById('hotWaterInput').value;
             const electricity = document.getElementById('electricityInput').value;
-            
+            const gas = parseFloat(document.getElementById('gasInput').value) || 0;
             if (!coldWater || !hotWater || !electricity) {
                 alert('❌ Заполните все показания!');
                 return;
@@ -2893,20 +2899,28 @@
                 date: new Date().toISOString(),
                 coldWater: parseFloat(coldWater),
                 hotWater: parseFloat(hotWater),
-                electricity: parseFloat(electricity)
+                electricity: electricity,
+                gas: gas
             };
             
             let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
             history.unshift(reading); // Добавить в начало
             localStorage.setItem('metersHistory', JSON.stringify(history));
+            localStorage.setItem('lastGas', gas);
+localStorage.setItem('meterGas', JSON.stringify({value: gas, date: new Date().toISOString()}));
             
-            alert('✅ Показания успешно отправлены!');
+alert('✅ Показания успешно отправлены!\n' +
+      'ХВС: ' + coldWater + ' м³\n' +
+      'ГВС: ' + hotWater + ' м³\n' +
+      'Электричество: ' + electricity + ' кВт·ч\n' +
+      'Газ: ' + gas + ' м³');
             
             // Очистить поля
             document.getElementById('coldWaterInput').value = '';
             document.getElementById('hotWaterInput').value = '';
             document.getElementById('electricityInput').value = '';
-            
+            document.getElementById('gasInput').value = '';
+
             // Обновить историю
             loadMetersHistory();
         }
@@ -4130,8 +4144,22 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         }
 
         // ===== ИНИЦИАЛИЗАЦИЯ =====
+
+        function updateLastReadings() {
+            const lastGas = localStorage.getItem('lastGas');
+            const gasLastElement = document.getElementById('gasLast');
+            
+            if (gasLastElement) {
+                if (lastGas) {
+                    gasLastElement.textContent = lastGas + ' м³';
+                } else {
+                    gasLastElement.textContent = '—';
+                }
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ DOM загружен, инициализация приложения');
+            updateLastReadings(); // Загрузить последние показания газа
             
             // Проверка localStorage
             if (typeof localStorage === 'undefined') {

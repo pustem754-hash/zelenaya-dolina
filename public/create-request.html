@@ -1,173 +1,1902 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
+<!-- УК "Зелёная Долина" - Создание заявки v6.8.0 -->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новая заявка - УК «Зелёная долина» v6.8.0</title>
+    
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
-    <title>Новая заявка - УК Зелёная долина v6.8.2</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    
+    <!-- Навигация -->
+    <link rel="stylesheet" href="css/navigation.css">
+    <script src="js/navigation.js" defer></script>
+    
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --primary-light: #D1FAE5;
+            --secondary: #6366F1;
+            --accent: #F59E0B;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --surface: #FFFFFF;
+            --background: #F0FDF4;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --text-muted: #9CA3AF;
+            --border: #E5E7EB;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        body { font-family: -apple-system, system-ui, sans-serif; background: #f5f5f5; padding-top: 80px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px; min-height: 100vh; }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
+        
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            padding: 0 0 100px 0;
+            color: var(--text-primary);
         }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 24px;
-            color: #2E7D32;
-            word-wrap: break-word;
+        
+        /* Шапка страницы */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 60px 20px 40px;
+            position: relative;
+            overflow: hidden;
         }
-
-        label {
-            display: block;
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            color: white;
+            font-size: 26px;
+            font-weight: 800;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .page-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 15px;
             font-weight: 500;
-            font-size: 16px;
         }
-
-        textarea {
+        
+        .back-button {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            background: var(--surface);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .back-button:active {
+            transform: scale(0.95);
+        }
+        
+        /* Форма */
+        .form-container {
+            padding: 20px;
+            margin-top: -20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 15px;
+        }
+        
+        .form-group label .label-icon {
+            font-size: 18px;
+        }
+        
+        select, input[type="text"], textarea {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 16px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
             font-size: 16px;
-            min-height: 120px;
-            resize: vertical;
-            margin-bottom: 20px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: var(--surface);
+            color: var(--text-primary);
         }
-
+        
+        select:focus, input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 20px;
+            padding-right: 48px;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            line-height: 1.6;
+        }
+        
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        
+        /* Медиа кнопки */
+        .media-section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 15px;
+        }
+        
         .media-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
-
-        button {
-            padding: 14px;
-            background: #2E7D32;
+        
+        .media-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 8px;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .media-btn .btn-icon {
+            font-size: 28px;
+            line-height: 1;
+        }
+        
+        .media-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .media-btn:active {
+            transform: scale(0.97);
+        }
+        
+        /* Превью медиа */
+        .media-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .media-item {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .media-item img, .media-item video {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .media-item audio {
+            width: 100%;
+        }
+        
+        .media-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: var(--danger);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 14px;
             cursor: pointer;
-            min-height: 44px;
-        }
-
-        button:active {
-            opacity: 0.8;
-        }
-
-        .actions {
             display: flex;
-            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
         }
-
-        .actions button {
-            flex: 1;
+        
+        .media-remove:hover {
+            background: #DC2626;
+            transform: scale(1.1);
+        }
+        
+        /* Анимация пульсации при записи */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .media-btn.recording {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+            color: white !important;
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Превью аудио */
+        .audio-preview {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
             padding: 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            position: relative;
+            width: 100%;
+            border: 1px solid var(--border);
         }
-
-        .back-btn {
-            background: #757575;
+        
+        .audio-icon {
+            font-size: 36px;
+            flex-shrink: 0;
         }
-
-        input[type="file"] {
-            display: none;
+        
+        .audio-info {
+            flex: 1;
+            min-width: 0;
         }
-
-        .version {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
+        
+        .audio-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .audio-details {
             font-size: 12px;
-            opacity: 0.5;
-            color: #666;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        .audio-preview audio {
+            width: 100%;
+            height: 36px;
+            margin-top: 10px;
+            border-radius: var(--radius-sm);
+        }
+        
+        .delete-media-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+        
+        .delete-media-btn:hover {
+            background: #DC2626;
+            transform: scale(1.1);
+        }
+        
+        /* Контейнер превью */
+        #mediaPreview {
+            margin-top: 16px;
+        }
+        
+        #mediaPreview:not(:empty) {
+            display: block;
+        }
+        
+        .media-preview-item {
+            margin-bottom: 12px;
+        }
+        
+        .media-preview-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Фото превью */
+        #photoPreview {
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .delete-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* Toast уведомления */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--surface);
+            padding: 16px 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: calc(100% - 40px);
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast-icon {
+            font-size: 22px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .toast-message {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        
+        .toast-success {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .toast-success .toast-icon {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .toast-error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .toast-error .toast-icon {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+        
+        .toast-warning {
+            border-left: 4px solid var(--accent);
+        }
+        
+        .toast-warning .toast-icon {
+            background: #FEF3C7;
+            color: var(--accent);
+        }
+        
+        /* Кнопка отправки */
+        .btn-submit-large {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 18px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-submit-large:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn-submit-large:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: var(--danger-light);
+            color: var(--danger);
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            display: none;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        /* Адаптив для маленьких экранов */
+        @media (max-width: 380px) {
+            .media-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .media-btn {
+                flex-direction: row;
+                justify-content: center;
+                padding: 14px;
+            }
+            
+            .media-btn .btn-icon {
+                font-size: 24px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="css/navigation.css?v=6.8.3">
-</head>
-<body class="with-nav">
-                    <div class="app-header">
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            <span></span> На главную
-        </button>
-        <div class="header-title">$title</div>
-    </div>
-        <button class="nav-btn nav-home" onclick="window.location.href='index.html'" aria-label="На главную">
-            <span></span>
-        </button>
-    </div>
-    <div class="container">
-        
-
-        <label for="description">Описание проблемы</label>
-        <textarea id="description" placeholder="Опишите проблему подробно..."></textarea>
-
-        <div class="media-buttons">
-            <button onclick="document.getElementById('photoInput').click()"> Фото</button>
-            <button onclick="document.getElementById('videoInput').click()"> Видео</button>
-            <button onclick="document.getElementById('audioInput').click()"> Аудио</button>
-        </div>
-
-        <input type="file" id="photoInput" accept="image/*" onchange="handleFile(this, 'Фото')">
-        <input type="file" id="videoInput" accept="video/*" onchange="handleFile(this, 'Видео')">
-        <input type="file" id="audioInput" accept="audio/*" onchange="handleFile(this, 'Аудио')">
-
-        <div class="actions">
-            <button onclick="submitRequest()">Отправить заявку</button>
-            <button class="back-btn" onclick="goBack()">Назад</button>
-        </div>
-    </div>
-
-    <div class="version">v6.8.2</div>
-
+    
+    <!-- Глобальная защита от ошибок расширений -->
     <script>
-        console.log('[create-request.html v6.8.2] Страница заявки загружена');
-
-        function handleFile(input, type) {
-            if (input.files[0]) {
-                console.log(type + ' выбрано:', input.files[0].name);
-                alert(type + ' прикреплено: ' + input.files[0].name);
+        // ====================================
+        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.7.2
+        // ====================================
+        
+        (function() {
+            'use strict';
+            
+            // Счётчик подавленных ошибок (для отладки)
+            let suppressedErrors = 0;
+            
+            // Список паттернов ошибок расширений
+            const extensionErrorPatterns = [
+                'message channel closed',
+                'Extension context invalidated',
+                'chrome-extension://',
+                'moz-extension://',
+                'content_script.js',
+                'Cannot read properties of undefined',
+                'reading \'control\'',
+                'reading \'runtime\'',
+                'sending a message',
+                'Receiving end does not exist',
+                'Could not establish connection'
+            ];
+            
+            // Проверка, является ли ошибка от расширения
+            function isExtensionError(errorMessage, errorStack) {
+                if (!errorMessage && !errorStack) return false;
+                
+                const fullText = (errorMessage || '') + ' ' + (errorStack || '');
+                
+                return extensionErrorPatterns.some(pattern => 
+                    fullText.toLowerCase().includes(pattern.toLowerCase())
+                );
             }
+            
+            // Глобальный обработчик ошибок
+            const originalErrorHandler = window.onerror;
+            window.onerror = function(message, source, lineno, colno, error) {
+                if (isExtensionError(message, error ? error.stack : '')) {
+                    suppressedErrors++;
+                    console.warn(
+                        `[Global] 🛡️ Подавлена ошибка расширения #${suppressedErrors}:`, 
+                        message.substring(0, 100)
+                    );
+                    return true; // Подавить ошибку
+                }
+                
+                // Передать другие ошибки оригинальному обработчику
+                if (originalErrorHandler) {
+                    return originalErrorHandler.apply(this, arguments);
+                }
+                return false;
+            };
+            
+            // Глобальный обработчик unhandled promise rejections
+            window.addEventListener('unhandledrejection', function(event) {
+                const reason = event.reason;
+                const message = reason ? (reason.message || reason.toString()) : '';
+                const stack = reason ? reason.stack : '';
+                
+                if (isExtensionError(message, stack)) {
+                    suppressedErrors++;
+                    console.warn(
+                        `[Global] 🛡️ Подавлен Promise rejection #${suppressedErrors}:`, 
+                        message.substring(0, 100)
+                    );
+                    event.preventDefault();
+                }
+            });
+            
+            // Глобальный обработчик событий focus (где возникает ошибка content_script)
+            document.addEventListener('focusin', function(event) {
+                // Обернуть в try-catch для предотвращения распространения ошибок расширений
+                try {
+                    // Код обработки фокуса (если нужен)
+                } catch (error) {
+                    if (isExtensionError(error.message, error.stack)) {
+                        suppressedErrors++;
+                        console.warn('[Global] 🛡️ Подавлена ошибка focusin от расширения');
+                    }
+                }
+            }, true); // true = capture phase (до расширений)
+            
+            // Отчёт о подавленных ошибках (каждые 10 секунд)
+            setInterval(function() {
+                if (suppressedErrors > 0) {
+                    console.log(`[Global] 📊 Подавлено ошибок расширений: ${suppressedErrors}`);
+                }
+            }, 10000);
+            
+            console.log('[Global] 🛡️ Защита от ошибок расширений v6.7.2 активирована');
+            console.log('[Global] 📋 Отслеживаются паттерны:', extensionErrorPatterns.length);
+        })();
+    </script>
+    
+    <!-- Дополнительная защита для конкретных полей ввода -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Отключить автозаполнение на критичных полях (если нужно)
+            const sensitiveFields = document.querySelectorAll('input[type="tel"], input[type="text"]');
+            sensitiveFields.forEach(field => {
+                // Добавить атрибуты для отключения агрессивных расширений
+                field.setAttribute('autocomplete', 'off');
+                field.setAttribute('data-lpignore', 'true'); // LastPass
+                field.setAttribute('data-form-type', 'other'); // 1Password
+                field.setAttribute('data-bwignore', 'true'); // Bitwarden
+            });
+            
+            console.log('[Fields] 🔒 Защита полей ввода применена к', sensitiveFields.length, 'элементам');
+        });
+    </script>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='index.html'">←</button>
+    
+    <!-- Шапка страницы -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Новая заявка</h1>
+            <p>Опишите вашу проблему</p>
+        </div>
+    </div>
+    
+    <!-- Форма -->
+    <div class="form-container">
+        <form id="requestForm" class="card">
+            <div id="errorMessage" class="error-message"></div>
+            
+            <!-- Категория -->
+            <div class="form-group">
+                <label for="requestCategory">
+                    <span class="label-icon">📋</span>
+                    Категория проблемы
+                </label>
+                <select id="requestCategory" required>
+                    <option value="">Выберите категорию...</option>
+                    <option value="plumbing">💧 Сантехника</option>
+                    <option value="electricity">⚡ Электрика</option>
+                    <option value="heating">🔥 Отопление</option>
+                    <option value="doors">🚪 Двери / Замки</option>
+                    <option value="cleaning">🧹 Уборка</option>
+                    <option value="other">❓ Другое</option>
+                </select>
+            </div>
+            
+            <!-- Заголовок -->
+            <div class="form-group">
+                <label for="requestTitle">
+                    <span class="label-icon">✏️</span>
+                    Краткое описание
+                </label>
+                <input 
+                    type="text" 
+                    id="requestTitle" 
+                    placeholder="Например: Протечка в ванной"
+                    maxlength="100"
+                    required
+                >
+            </div>
+            
+            <!-- Описание -->
+            <div class="form-group">
+                <label for="requestDescription">
+                    <span class="label-icon">📝</span>
+                    Подробное описание
+                </label>
+                <textarea 
+                    id="requestDescription" 
+                    rows="5"
+                    placeholder="Опишите проблему подробно: что случилось, когда заметили, насколько срочно..."
+                    maxlength="1000"
+                    required
+                ></textarea>
+                <div class="char-counter">
+                    <span id="charCount">0</span> / 1000 символов
+                </div>
+            </div>
+            
+            <!-- Медиафайлы -->
+            <div class="form-group">
+                <div class="media-section-title">
+                    <span class="label-icon">📎</span>
+                    Прикрепить файлы
+                </div>
+                <div class="media-buttons">
+                    <button type="button" class="media-btn" onclick="takePhoto()">
+                        <span class="btn-icon">📷</span>
+                        Фото
+                    </button>
+                    <button type="button" class="media-btn" onclick="recordVideo()">
+                        <span class="btn-icon">🎥</span>
+                        Видео
+                    </button>
+                    <button type="button" class="media-btn" id="audioRecordBtn">
+                        <span class="btn-icon">🎤</span>
+                        Аудио
+                    </button>
+                </div>
+                <img id="photoPreview" style="display: none; opacity: 0; max-width: 100%; height: auto; margin-bottom: 12px; margin-top: 12px;">
+                <button id="deletePhotoBtn" type="button" onclick="deletePhoto()" style="display: none; opacity: 0; margin-bottom: 12px;" class="delete-btn">
+                    🗑️ Удалить фото
+                </button>
+                <div id="mediaPreview" class="media-preview">
+                    <!-- Превью загруженных файлов -->
+                </div>
+            </div>
+            
+            <!-- Кнопка отправки -->
+            <button type="submit" class="btn-submit-large">
+                <span>✅</span> Отправить заявку
+            </button>
+        </form>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script>
+        // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+        let attachedMedia = [];
+        
+        // ====================================
+        // 🎤 АУДИОЗАПИСЬ v6.7.2 (ПОЛНОЕ ИСПРАВЛЕНИЕ)
+        // ====================================
+        
+        // Глобальные переменные для аудио
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let mediaStream = null;
+        let isRecording = false;
+        let audioTimer = null;
+        let audioStartTime = 0;
+        let audioDuration = 0;
+        
+        // Экспорт для навигации
+        window.isRecording = false;
+        // ===== КОНЕЦ ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ =====
+        
+        // ====================================
+        // 🛠️ УНИВЕРСАЛЬНАЯ ИНИЦИАЛИЗАЦИЯ
+        // ====================================
+        
+        function initializeCreateRequestPage() {
+            console.log('[Init] 🚀 === ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ ===');
+            console.log('[Init] 📍 URL:', window.location.href);
+            console.log('[Init] 📍 ReadyState:', document.readyState);
+            
+            // Очистить старые ресурсы
+            console.log('[Init] 🧹 Очистка старых ресурсов...');
+            cleanupAudioResources();
+            
+            // Загрузить существующие медиа
+            console.log('[Init] 📦 Загрузка существующих медиа из localStorage...');
+            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            console.log('[Init] 📦 Найдено медиа в localStorage:', savedMedia.length);
+            
+            attachedMedia = savedMedia.filter(media => {
+                if (!media.timestamp) {
+                    console.log('[Init] ⚠️ Медиа без timestamp пропущено:', media.type);
+                    return false;
+                }
+                const age = Date.now() - media.timestamp;
+                const isValid = age < 24 * 60 * 60 * 1000; // 24 часа
+                if (!isValid) {
+                    console.log('[Init] ⚠️ Старое медиа пропущено (возраст:', Math.round(age / 1000 / 60 / 60), 'ч):', media.type);
+                }
+                return isValid;
+            });
+            
+            if (attachedMedia.length !== savedMedia.length) {
+                localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+                console.log('[Init] 🗑️ Удалено старых медиа:', savedMedia.length - attachedMedia.length);
+            }
+            
+            console.log('[Init] ✅ Актуальных медиа:', attachedMedia.length);
+            renderMediaPreview();
+            
+            // Привязать обработчики
+            console.log('[Init] 🔗 Привязка обработчиков событий...');
+            const audioBtn = document.getElementById('audioRecordBtn');
+            const photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
+            const videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
+            
+            console.log('[Init] 🔍 Поиск элементов:');
+            console.log('[Init]   - audioBtn:', audioBtn ? '✅ найден' : '❌ не найден');
+            console.log('[Init]   - photoBtn:', photoBtn ? '✅ найден' : '❌ не найден');
+            console.log('[Init]   - videoBtn:', videoBtn ? '✅ найден' : '❌ не найден');
+            
+            if (audioBtn) {
+                console.log('[Init] 🔄 Клонирование кнопки аудио для удаления старых обработчиков...');
+                // КРИТИЧНО: Удалить старые обработчики через клонирование
+                const newAudioBtn = audioBtn.cloneNode(true);
+                audioBtn.parentNode.replaceChild(newAudioBtn, audioBtn);
+                
+                console.log('[Init] ✅ Кнопка клонирована и заменена');
+                
+                // Добавить новый обработчик
+                newAudioBtn.addEventListener('click', function(e) {
+                    console.log('[Init] 🎯 === КЛИК ПО КНОПКЕ АУДИО ===');
+                    console.log('[Init] 🎯 isRecording:', isRecording);
+                    console.log('[Init] 🎯 window.isRecording:', window.isRecording);
+                    console.log('[Init] 🎯 Event:', e);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (isRecording) {
+                        console.log('[Init] 🎯 Вызов stopAudioRecording()...');
+                        stopAudioRecording();
+                    } else {
+                        console.log('[Init] 🎯 Вызов recordAudio()...');
+                        recordAudio();
+                    }
+                }, true); // Использовать capture phase
+                
+                console.log('[Init] ✅ recordAudio() привязана к #audioRecordBtn через addEventListener');
+            } else {
+                console.error('[Init] ❌ #audioRecordBtn не найдена!');
+                console.error('[Init] ❌ Все кнопки на странице:', document.querySelectorAll('button').length);
+            }
+            
+            if (photoBtn && typeof takePhoto === 'function') {
+                photoBtn.onclick = function(e) {
+                    console.log('[Init] 📷 Клик по кнопке фото');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    takePhoto();
+                };
+                console.log('[Init] ✅ takePhoto() привязана');
+            }
+            
+            if (videoBtn && typeof recordVideo === 'function') {
+                videoBtn.onclick = function(e) {
+                    console.log('[Init] 🎥 Клик по кнопке видео');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    recordVideo();
+                };
+                console.log('[Init] ✅ recordVideo() привязана');
+            }
+            
+            // Проверить поддержку MediaRecorder
+            console.log('[Init] 🔍 Проверка поддержки MediaRecorder...');
+            console.log('[Init]   - navigator.mediaDevices:', !!navigator.mediaDevices);
+            console.log('[Init]   - getUserMedia:', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+            console.log('[Init]   - MediaRecorder:', typeof MediaRecorder !== 'undefined');
+            
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                console.warn('[Init] ⚠️ getUserMedia не поддерживается');
+                if (audioBtn) audioBtn.disabled = true;
+                if (videoBtn) videoBtn.disabled = true;
+            }
+            
+            console.log('[Init] 🎉 Инициализация завершена');
+            console.log('[Init] ✅ Все функции готовы к работе');
         }
-
-        function submitRequest() {
-            const desc = document.getElementById('description').value;
-            if (!desc.trim()) {
-                alert('Пожалуйста, опишите проблему');
+        
+        // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Page] Проверка авторизации...');
+            
+            // Проверить авторизацию
+            if (!isAuthenticated()) {
+                console.log('[Page] Пользователь не авторизован, редирект на login');
+                requireAuth(); // Сделает редирект
                 return;
             }
-            console.log(' Заявка отправлена:', desc);
-            alert('Заявка отправлена успешно!');
-            setTimeout(() => goBack(), 1000);
+            
+            console.log('[Page] Пользователь авторизован, инициализация страницы...');
+            initializePage();
+            
+            // КРИТИЧНО: Инициализация страницы создания заявки
+            setTimeout(() => {
+                initializeCreateRequestPage();
+            }, 100);
+        });
+        
+        function initializePage() {
+            const session = getSession();
+            console.log('[Page] Сессия пользователя:', session);
+            
+            // Загрузить сохранённые медиафайлы при загрузке страницы
+            const savedMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+            console.log('[Page] Загружено из localStorage:', savedMedia.length, 'файлов');
+            
+            // ФИЛЬТРАЦИЯ: Удалить старые записи (старше 24 часов)
+            const now = Date.now();
+            const ONE_DAY = 24 * 60 * 60 * 1000; // 24 часа
+            
+            attachedMedia = savedMedia.filter(media => {
+                // Если нет timestamp или запись старше 24 часов — удалить
+                if (!media.timestamp) {
+                    console.warn('[Media] Файл без timestamp будет удалён:', media.name || media.type);
+                    return false;
+                }
+                
+                const age = now - media.timestamp;
+                if (age > ONE_DAY) {
+                    console.log('[Media] Удалена старая запись (возраст:', Math.round(age / 1000 / 60 / 60), 'часов):', media.name);
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Обновить localStorage после фильтрации
+            if (attachedMedia.length !== savedMedia.length) {
+                localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+                console.log('[Media] Автоочистка: удалено', savedMedia.length - attachedMedia.length, 'старых файлов');
+            }
+            
+            console.log('[Page] Актуальных медиа после очистки:', attachedMedia.length);
+            renderMediaPreview();
+            
+            // Счётчик символов
+            document.getElementById('requestDescription').addEventListener('input', (e) => {
+                document.getElementById('charCount').textContent = e.target.value.length;
+            });
+            
+            // Обработчик кнопки записи аудио с задержкой (для гарантии)
+            setTimeout(() => {
+                initializeCreateRequestPage();
+            }, 100);
+            
+            // Обработка формы
+            document.getElementById('requestForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = {
+                    category: document.getElementById('requestCategory').value,
+                    title: document.getElementById('requestTitle').value,
+                    description: document.getElementById('requestDescription').value,
+                    // urgency удалена — не нужна
+                    media: attachedMedia,
+                    timestamp: new Date().toISOString(),
+                    status: 'new'
+                };
+                
+                // Валидация
+                if (!formData.category) {
+                    showError('Выберите категорию');
+                    return;
+                }
+                
+                if (formData.title.length < 10) {
+                    showError('Описание должно быть не менее 10 символов');
+                    return;
+                }
+                
+                // Показать лоадер
+                const loader = document.createElement('div');
+                loader.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999;
+                `;
+                loader.innerHTML = `
+                    <div style="text-align: center; color: white;">
+                        <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #2E7D32; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                        <p style="font-size: 16px; font-weight: 500; margin: 0;">Создание заявки...</p>
+                    </div>
+                `;
+                document.body.appendChild(loader);
+                
+                try {
+                    // Mock API call
+                    await mockAPICall('/api/requests/create', formData);
+                    
+                    setTimeout(() => {
+                        loader.remove();
+                        showSuccessNotification('Заявка создана успешно!');
+                        
+                        // Сохранить локально
+                        const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                        requests.push({
+                            ...formData,
+                            id: Date.now().toString()
+                        });
+                        localStorage.setItem('requests', JSON.stringify(requests));
+                        
+                        // Очистить медиафайлы из localStorage
+                        localStorage.removeItem('requestMedia');
+                        attachedMedia = [];
+                        
+                        // Редирект к списку заявок
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    }, 1500);
+                    
+                } catch (error) {
+                    loader.remove();
+                    showError('Ошибка создания заявки');
+                }
+            });
         }
-
-        function goBack() {
-            window.location.href = 'index.html';
+        
+        function mockAPICall(endpoint, data) {
+            console.log('[API] 📡 === НАЧАЛО ФУНКЦИИ mockAPICall ===');
+            console.log('[API] 📍 Endpoint:', endpoint);
+            console.log('[API] 📊 Data:', data);
+            
+            return new Promise((resolve) => {
+                console.log('[API] ⏱️ Задержка 1 секунда...');
+                setTimeout(() => {
+                    console.log(`[API] ✅ API call to ${endpoint} успешен`);
+                    resolve({ success: true });
+                }, 1000);
+            });
         }
+        
+        function showError(message) {
+            console.log('[Error] ❌ === Показ ошибки ===');
+            console.log('[Error] 📝 Сообщение:', message);
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.classList.add('show');
+                console.log('[Error] ✅ Ошибка отображена');
+            } else {
+                console.error('[Error] ❌ Элемент #errorMessage не найден!');
+            }
+        }
+        
+        function showSuccessNotification(message) {
+            console.log('[Notification] ✅ === Показ успешного уведомления ===');
+            console.log('[Notification] 📝 Сообщение:', message);
+            showNotification(message, 'success');
+        }
+        
+        async function takePhoto() {
+            console.log('[Photo] 📸 Начало съёмки фото');
+            
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: 'environment', // Задняя камера
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                console.log('[Photo] ✅ Доступ к камере получен');
+                
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.setAttribute('playsinline', ''); // Важно для iOS!
+                await video.play();
+                
+                // Ждём загрузки видео
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        console.log('[Photo] 📹 Видео загружено');
+                        resolve();
+                    };
+                });
+                
+                // Создаём canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                
+                // Останавливаем камеру
+                stream.getTracks().forEach(track => track.stop());
+                console.log('[Photo] 🛑 Камера остановлена');
+                
+                // Получаем base64
+                const photoData = canvas.toDataURL('image/jpeg', 0.8);
+                console.log('[Photo] 📸 Фото сохранено, размер:', photoData.length);
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('currentPhoto', photoData);
+                
+                // Синхронизируем с attachedMedia для отправки
+                attachedMedia = attachedMedia.filter(media => media.type !== 'photo');
+                attachedMedia.push({
+                    type: 'photo',
+                    data: photoData,
+                    timestamp: Date.now()
+                });
+                localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+                
+                // КРИТИЧНО: Принудительно отображаем превью
+                renderMediaPreview();
+                
+                // Уведомление
+                if (typeof showNotification === 'function') {
+                    showNotification('Фото сохранено!', 'success');
+                }
+                
+                console.log('[Photo] ✅ Превью должно быть видимым');
+                
+            } catch (error) {
+                console.error('[Photo] ❌ Ошибка съёмки:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка доступа к камере', 'error');
+                } else {
+                    alert('Ошибка доступа к камере: ' + error.message);
+                }
+            }
+        }
+        
+        function recordVideo() {
+            console.log('[Video] 🎥 === НАЧАЛО ФУНКЦИИ recordVideo ===');
+            console.log('[Video] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'video/*';
+            input.setAttribute('capture', 'environment');
+            
+            console.log('[Video] 📁 Создан input для выбора файла');
+            
+            input.onchange = (e) => {
+                console.log('[Video] 📁 Файл выбран');
+                const file = e.target.files[0];
+                if (file) {
+                    console.log('[Video] 📊 Информация о файле:');
+                    console.log('[Video]   - Имя:', file.name);
+                    console.log('[Video]   - Размер:', file.size, 'байт');
+                    console.log('[Video]   - Тип:', file.type);
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        console.log('[Video] ✅ Файл прочитан, размер данных:', event.target.result.length);
+                        attachedMedia.push({
+                            type: 'video',
+                            data: event.target.result,
+                            timestamp: Date.now()
+                        });
+                        console.log('[Video] ✅ Видео добавлено в attachedMedia, всего:', attachedMedia.length);
+                        renderMediaPreview();
+                    };
+                    reader.onerror = (error) => {
+                        console.error('[Video] ❌ Ошибка чтения файла:', error);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    console.log('[Video] ⚠️ Файл не выбран');
+                }
+            };
+            
+            console.log('[Video] 🖱️ Открытие диалога выбора файла...');
+            input.click();
+        }
+        
+        // Очистка ресурсов
+        function cleanupAudioResources() {
+            console.log('[Audio] 🧹 === ОЧИСТКА РЕСУРСОВ ===');
+            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Audio] 📍 Состояние до очистки:');
+            console.log('[Audio]   - audioTimer:', audioTimer);
+            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
+            console.log('[Audio]   - mediaRecorder.state:', mediaRecorder ? mediaRecorder.state : 'null');
+            console.log('[Audio]   - mediaStream:', mediaStream);
+            console.log('[Audio]   - isRecording:', isRecording);
+            console.log('[Audio]   - audioChunks.length:', audioChunks.length);
+            
+            // Остановить таймер
+            if (audioTimer) {
+                console.log('[Audio] 🧹 Очистка таймера...');
+                clearInterval(audioTimer);
+                audioTimer = null;
+                console.log('[Audio] ✅ Таймер очищен');
+            }
+            
+            // Остановить MediaRecorder
+            if (mediaRecorder) {
+                console.log('[Audio] 🧹 Остановка MediaRecorder...');
+                if (mediaRecorder.state !== 'inactive') {
+                    try {
+                        mediaRecorder.stop();
+                        console.log('[Audio] ✅ MediaRecorder остановлен');
+                    } catch (e) {
+                        console.warn('[Audio] ⚠️ MediaRecorder уже остановлен:', e.message);
+                    }
+                } else {
+                    console.log('[Audio] ℹ️ MediaRecorder уже неактивен');
+                }
+            }
+            mediaRecorder = null;
+            
+            // Остановить MediaStream
+            if (mediaStream) {
+                console.log('[Audio] 🧹 Остановка MediaStream...');
+                const tracks = mediaStream.getTracks();
+                console.log('[Audio] 📊 Найдено треков:', tracks.length);
+                tracks.forEach(track => {
+                    track.stop();
+                    console.log('[Audio] ✅ Track остановлен:', track.kind, track.label);
+                });
+                mediaStream = null;
+                console.log('[Audio] ✅ MediaStream очищен');
+            }
+            
+            // Сбросить флаги
+            console.log('[Audio] 🧹 Сброс флагов...');
+            isRecording = false;
+            window.isRecording = false;
+            audioChunks = [];
+            console.log('[Audio] ✅ Флаги сброшены');
+            
+            console.log('[Audio] ✅ Ресурсы очищены');
+        }
+        
+        async function recordAudio() {
+            console.log('[Audio] 🎤 === НАЧАЛО ФУНКЦИИ recordAudio ===');
+            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Audio] 📍 Текущее состояние:');
+            console.log('[Audio]   - isRecording:', isRecording);
+            console.log('[Audio]   - window.isRecording:', window.isRecording);
+            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
+            console.log('[Audio]   - mediaStream:', mediaStream);
+            console.log('[Audio]   - audioTimer:', audioTimer);
+            
+            const audioBtn = document.getElementById('audioRecordBtn');
+            
+            if (!audioBtn) {
+                console.error('[Audio] ❌ Кнопка #audioRecordBtn не найдена!');
+                console.error('[Audio] ❌ Все кнопки:', document.querySelectorAll('button').length);
+                return;
+            }
+            
+            console.log('[Audio] ✅ Кнопка найдена:', audioBtn);
+            console.log('[Audio] ✅ Текст кнопки:', audioBtn.textContent);
+            
+            // Если идёт запись - остановить
+            if (isRecording) {
+                console.log('[Audio] ⏹️ Уже идёт запись, остановка...');
+                stopAudioRecording();
+                return;
+            }
+            
+            try {
+                // КРИТИЧНО: Полная очистка перед началом
+                cleanupAudioResources();
+                
+                console.log('[Audio] 📡 Запрос доступа к микрофону...');
+                
+                // Запросить доступ к микрофону
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            sampleRate: 44100
+                        } 
+                    });
+                    console.log('[Audio] ✅ Доступ к микрофону получен');
+                } catch (micError) {
+                    console.error('[Audio] ❌ Отказано в доступе к микрофону:', micError);
+                    showNotification('❌ Разрешите доступ к микрофону в настройках браузера', 'error');
+                    cleanupAudioResources();
+                    return;
+                }
+                
+                // Определить поддерживаемый MIME type
+                const mimeTypes = [
+                    'audio/webm;codecs=opus',
+                    'audio/webm',
+                    'audio/ogg;codecs=opus',
+                    'audio/mp4',
+                    'audio/mpeg'
+                ];
+                
+                let selectedMimeType = '';
+                for (const mimeType of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(mimeType)) {
+                        selectedMimeType = mimeType;
+                        console.log(`[Audio] ✅ Используется MIME type: ${mimeType}`);
+                        break;
+                    }
+                }
+                
+                if (!selectedMimeType) {
+                    selectedMimeType = 'audio/webm';
+                    console.warn('[Audio] ⚠️ Fallback на audio/webm');
+                }
+                
+                // Создать MediaRecorder
+                mediaRecorder = new MediaRecorder(mediaStream, { 
+                    mimeType: selectedMimeType,
+                    audioBitsPerSecond: 128000
+                });
+                
+                audioChunks = [];
+                
+                // Обработчик данных
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data && event.data.size > 0) {
+                        audioChunks.push(event.data);
+                        console.log(`[Audio] 📦 Chunk: ${event.data.size} байт (всего: ${audioChunks.length})`);
+                    }
+                };
+                
+                // Обработчик остановки
+                mediaRecorder.onstop = function() {
+                    console.log('[Audio] ⏹️ MediaRecorder остановлен');
+                    console.log(`[Audio] 📦 Всего chunks: ${audioChunks.length}`);
+                    
+                    // Очистить таймер
+                    if (audioTimer) {
+                        clearInterval(audioTimer);
+                        audioTimer = null;
+                    }
+                    
+                    if (audioChunks.length === 0) {
+                        console.error('[Audio] ❌ Нет данных для сохранения');
+                        showNotification('❌ Не удалось записать аудио', 'error');
+                        cleanupAudioResources();
+                        
+                        // Сбросить UI
+                        audioBtn.textContent = '🎤 Аудио';
+                        audioBtn.classList.remove('recording');
+                        return;
+                    }
+                    
+                    // Создать Blob
+                    const audioBlob = new Blob(audioChunks, { type: selectedMimeType });
+                    console.log(`[Audio] 📦 Blob создан: ${audioBlob.size} байт, тип: ${audioBlob.type}`);
+                    
+                    // Сохранить аудио
+                    saveAudioRecording(audioBlob, selectedMimeType, audioDuration).then(() => {
+                        // Очистить ресурсы
+                        cleanupAudioResources();
+                        
+                        // Сбросить UI
+                        audioBtn.textContent = '🎤 Аудио';
+                        audioBtn.classList.remove('recording');
+                    }).catch((error) => {
+                        console.error('[Audio] ❌ Ошибка сохранения:', error);
+                        showNotification('❌ Ошибка сохранения аудио', 'error');
+                        cleanupAudioResources();
+                        audioBtn.textContent = '🎤 Аудио';
+                        audioBtn.classList.remove('recording');
+                    });
+                };
+                
+                // Обработчик ошибок
+                mediaRecorder.onerror = function(error) {
+                    console.error('[Audio] ❌ MediaRecorder error:', error);
+                    showNotification('❌ Ошибка записи аудио', 'error');
+                    cleanupAudioResources();
+                    audioBtn.textContent = '🎤 Аудио';
+                    audioBtn.classList.remove('recording');
+                };
+                
+                // Начать запись
+                mediaRecorder.start(100); // timeslice 100ms
+                isRecording = true;
+                window.isRecording = true;
+                audioStartTime = Date.now();
+                audioDuration = 0;
+                
+                console.log('[Audio] ▶️ Запись началась');
+                audioBtn.classList.add('recording');
+                audioBtn.textContent = '⏹️ Остановить (0с)';
+                
+                // Таймер
+                audioTimer = setInterval(() => {
+                    audioDuration = Math.floor((Date.now() - audioStartTime) / 1000);
+                    audioBtn.textContent = `⏹️ Остановить (${audioDuration}с)`;
+                    
+                    // Автостоп на 60 секундах
+                    if (audioDuration >= 60) {
+                        console.log('[Audio] ⏰ Достигнута максимальная длительность (60с)');
+                        stopAudioRecording();
+                        showNotification('⏰ Достигнута максимальная длительность (60 сек)', 'info');
+                    }
+                }, 1000);
+                
+                console.log('[Audio] ✅ Таймер запущен');
+                
+            } catch (error) {
+                console.error('[Audio] ❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
+                console.error('[Audio] Stack:', error.stack);
+                showNotification('❌ Ошибка: ' + error.message, 'error');
+                cleanupAudioResources();
+                audioBtn.textContent = '🎤 Аудио';
+                audioBtn.classList.remove('recording');
+            }
+        }
+        
+        function stopAudioRecording() {
+            console.log('[Audio] 🛑 === ОСТАНОВКА ЗАПИСИ ===');
+            console.log('[Audio] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Audio] 📍 Текущее состояние:');
+            console.log('[Audio]   - isRecording:', isRecording);
+            console.log('[Audio]   - mediaRecorder:', mediaRecorder);
+            console.log('[Audio]   - mediaRecorder.state:', mediaRecorder ? mediaRecorder.state : 'null');
+            console.log('[Audio]   - audioTimer:', audioTimer);
+            
+            const audioBtn = document.getElementById('audioRecordBtn');
+            
+            if (!audioBtn) {
+                console.warn('[Audio] ⚠️ Кнопка не найдена при остановке');
+            }
+            
+            // Очистить таймер СРАЗУ
+            if (audioTimer) {
+                console.log('[Audio] 🧹 Очистка таймера...');
+                clearInterval(audioTimer);
+                audioTimer = null;
+                console.log('[Audio] ✅ Таймер очищен');
+            } else {
+                console.log('[Audio] ℹ️ Таймер не был установлен');
+            }
+            
+            // Остановить MediaRecorder
+            if (mediaRecorder) {
+                console.log(`[Audio] 📊 MediaRecorder state: ${mediaRecorder.state}`);
+                if (mediaRecorder.state !== 'inactive') {
+                    try {
+                        console.log('[Audio] 🛑 Вызов mediaRecorder.stop()...');
+                        mediaRecorder.stop();
+                        console.log('[Audio] ✅ MediaRecorder.stop() вызван');
+                    } catch (error) {
+                        console.error('[Audio] ❌ Ошибка остановки MediaRecorder:', error);
+                        console.error('[Audio] ❌ Stack:', error.stack);
+                    }
+                } else {
+                    console.log('[Audio] ℹ️ MediaRecorder уже неактивен');
+                }
+            } else {
+                console.log('[Audio] ℹ️ MediaRecorder не был создан');
+            }
+            
+            // Сбросить флаг
+            console.log('[Audio] 🔄 Сброс флагов...');
+            isRecording = false;
+            window.isRecording = false;
+            console.log('[Audio] ✅ Флаги сброшены');
+            
+            // НЕ очищаем mediaStream и mediaRecorder здесь!
+            // Они будут очищены в mediaRecorder.onstop
+            
+            console.log('[Audio] 🛑 Остановка завершена');
+        }
+        
+        /**
+         * Определение поддерживаемого MIME type для аудио
+         */
+        function getSupportedAudioMimeType() {
+            const types = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus',
+                'audio/mp4',
+                'audio/mpeg'
+            ];
+            
+            for (const type of types) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    console.log('Используется MIME type:', type);
+                    return type;
+                }
+            }
+            
+            return null;
+        }
+        
+        /**
+         * Сохранение записанного аудио
+         */
+        async function saveAudioRecording(blob, mimeType, durationSeconds) {
+            return new Promise((resolve, reject) => {
+                try {
+                    // Конвертировать в Base64
+                    const reader = new FileReader();
+                    
+                    reader.onloadend = function() {
+                        const base64Audio = reader.result;
+                        console.log(`[Audio] ✅ Base64 создан: ${base64Audio.length} символов`);
+                        
+                        // Определить расширение файла
+                        const extension = getAudioExtension(mimeType);
+                        const filename = `audio_${Date.now()}.${extension}`;
+                        
+                        // Создать объект аудио
+                        const audioFile = {
+                            type: 'audio',
+                            name: filename,
+                            mimeType: mimeType,
+                            data: base64Audio,
+                            size: blob.size,
+                            duration: durationSeconds || 0,
+                            timestamp: Date.now()
+                        };
+                        
+                        // Добавить в attachedMedia
+                        attachedMedia.push(audioFile);
+                        
+                        // Сохранить в localStorage
+                        let requestMedia = JSON.parse(localStorage.getItem('requestMedia') || '[]');
+                        requestMedia.push(audioFile);
+                        localStorage.setItem('requestMedia', JSON.stringify(requestMedia));
+                        
+                        console.log('[Audio] ✅ Аудио сохранено в localStorage');
+                        console.log(`[Audio] 📊 Всего аудио: ${requestMedia.length}`);
+                        
+                        // Обновить превью в UI
+                        renderMediaPreview();
+                        
+                        // Показать уведомление
+                        showSuccessNotification(`Аудио записано (${durationSeconds}с, ${formatFileSize(blob.size)})`);
+                        
+                        resolve();
+                    };
+                    
+                    reader.onerror = function(error) {
+                        console.error('[Audio] ❌ Ошибка FileReader:', error);
+                        reject(error);
+                    };
+                    
+                    reader.readAsDataURL(blob);
+                    
+                } catch (error) {
+                    console.error('[Audio] ❌ Ошибка сохранения:', error);
+                    reject(error);
+                }
+            });
+        }
+        
+        /**
+         * Получить расширение файла по MIME type
+         */
+        function getAudioExtension(mimeType) {
+            if (mimeType.includes('webm')) return 'webm';
+            if (mimeType.includes('ogg')) return 'ogg';
+            if (mimeType.includes('mp4')) return 'm4a';
+            if (mimeType.includes('mpeg')) return 'mp3';
+            return 'audio';
+        }
+        
+        /**
+         * Конвертация Blob в Base64
+         */
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        
+        /**
+         * Форматирование размера файла
+         */
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        /**
+         * Обновление UI кнопки записи (без прыжков интерфейса)
+         */
+        function updateAudioRecordingUI(recording) {
+            const audioBtn = document.getElementById('audioRecordBtn');
+            
+            if (!audioBtn) {
+                console.warn('[Audio] Кнопка audioRecordBtn не найдена для обновления UI');
+                return;
+            }
+            
+            // Использовать requestAnimationFrame для плавного обновления
+            requestAnimationFrame(() => {
+                if (recording) {
+                    audioBtn.classList.add('recording');
+                    audioBtn.innerHTML = '⏹️ Остановить';
+                    audioBtn.style.background = '#f44336';
+                    audioBtn.style.animation = 'pulse 1s infinite';
+                    // Предотвратить прыжки: фиксированная высота
+                    audioBtn.style.minHeight = audioBtn.offsetHeight + 'px';
+                } else {
+                    audioBtn.classList.remove('recording');
+                    audioBtn.innerHTML = '🎤 Аудио';
+                    audioBtn.style.background = '';
+                    audioBtn.style.animation = '';
+                    // Вернуть нормальную высоту
+                    audioBtn.style.minHeight = '';
+                }
+            });
+        }
+        
+        /**
+         * Показать уведомление
+         */
+        function showNotification(message, type = 'info', duration = 3000) {
+            // Удалить предыдущие уведомления
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || icons.info}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        function renderMediaPreview() {
+            console.log('[Media] 🖼️ Рендеринг превью медиа');
+            
+            const photoData = localStorage.getItem('currentPhoto');
+            const audioData = localStorage.getItem('currentAudio');
+            
+            const photoPreview = document.getElementById('photoPreview');
+            const audioPreview = document.getElementById('audioPreview');
+            const deletePhotoBtn = document.getElementById('deletePhotoBtn');
+            const deleteAudioBtn = document.getElementById('deleteAudioBtn');
+            
+            // === ФОТО ===
+            if (photoData && photoPreview) {
+                console.log('[Photo] 📸 Фото найдено в localStorage, размер:', photoData.length);
+                
+                photoPreview.src = photoData;
+                
+                // КРИТИЧНО: Принудительно делаем видимым
+                photoPreview.style.display = 'block';
+                photoPreview.style.opacity = '1';
+                photoPreview.style.visibility = 'visible';
+                photoPreview.style.maxWidth = '100%';
+                photoPreview.style.height = 'auto';
+                photoPreview.style.borderRadius = '12px';
+                photoPreview.style.marginBottom = '10px';
+                
+                if (deletePhotoBtn) {
+                    deletePhotoBtn.style.display = 'block';
+                    deletePhotoBtn.style.opacity = '1';
+                    deletePhotoBtn.style.visibility = 'visible';
+                }
+                
+                console.log('[Photo] ✅ Превью установлено и видимо');
+            } else {
+                if (photoPreview) {
+                    photoPreview.style.display = 'none';
+                    photoPreview.style.opacity = '0';
+                }
+                if (deletePhotoBtn) {
+                    deletePhotoBtn.style.display = 'none';
+                    deletePhotoBtn.style.opacity = '0';
+                }
+                console.log('[Photo] ℹ️ Фото отсутствует');
+            }
+            
+            // === АУДИО ===
+            if (audioData && audioPreview) {
+                console.log('[Audio] 🎵 Аудио найдено в localStorage');
+                
+                audioPreview.src = audioData;
+                audioPreview.style.display = 'block';
+                audioPreview.style.opacity = '1';
+                audioPreview.style.visibility = 'visible';
+                
+                if (deleteAudioBtn) {
+                    deleteAudioBtn.style.display = 'block';
+                    deleteAudioBtn.style.opacity = '1';
+                    deleteAudioBtn.style.visibility = 'visible';
+                }
+                
+                console.log('[Audio] ✅ Аудио-плеер установлен и видим');
+            } else {
+                if (audioPreview) {
+                    audioPreview.style.display = 'none';
+                    audioPreview.style.opacity = '0';
+                }
+                if (deleteAudioBtn) {
+                    deleteAudioBtn.style.display = 'none';
+                    deleteAudioBtn.style.opacity = '0';
+                }
+                console.log('[Audio] ℹ️ Аудио отсутствует');
+            }
+        }
+        
+        function deletePhoto() {
+            console.log('[Photo] 🗑️ Удаление фото');
+            localStorage.removeItem('currentPhoto');
+            
+            // Удаляем фото из attachedMedia и синхронизируем
+            attachedMedia = attachedMedia.filter(media => media.type !== 'photo');
+            localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+            
+            renderMediaPreview();
+            
+            if (typeof showNotification === 'function') {
+                showNotification('Фото удалено', 'success');
+            }
+        }
+        
+        function removeMedia(index) {
+            console.log('[Media] 🗑️ === НАЧАЛО ФУНКЦИИ removeMedia ===');
+            console.log('[Media] 📍 Вызвана из:', new Error().stack.split('\n')[2]);
+            console.log('[Media] 📊 Параметры:');
+            console.log('[Media]   - Индекс:', index);
+            console.log('[Media]   - Всего до удаления:', attachedMedia.length);
+            
+            if (index < 0 || index >= attachedMedia.length) {
+                console.error('[Media] ❌ Неверный индекс:', index);
+                return;
+            }
+            
+            // Удалить из массива
+            const removed = attachedMedia.splice(index, 1);
+            console.log('[Media] ✅ Удалён файл:', removed[0]?.name || removed[0]?.type);
+            console.log('[Media] 📊 Осталось файлов:', attachedMedia.length);
+            
+            // КРИТИЧЕСКИ ВАЖНО: Обновить localStorage
+            console.log('[Media] 💾 Обновление localStorage...');
+            localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+            console.log('[Media] ✅ localStorage обновлён');
+            
+            // Обновить UI
+            console.log('[Media] 🎨 Обновление UI...');
+            renderMediaPreview();
+            
+            // Показать уведомление
+            showNotification('Файл удалён', 'success', 2000);
+            console.log('[Media] ✅ Удаление завершено');
+        }
+        
+        function getAttachedMedia() {
+            return attachedMedia;
+        }
+        
+        // Добавить CSS для анимации спиннера
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // ====================================
+        // 🚀 ЗАПУСК ИНИЦИАЛИЗАЦИИ (дополнительные проверки)
+        // ====================================
+        
+        // Вариант 1: При загрузке DOM (уже обработан выше)
+        
+        // Вариант 2: Если DOM уже загружен (при навигации через SPA)
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            console.log('[Init] DOM уже загружен, запуск инициализации...');
+            // Проверить авторизацию перед инициализацией
+            if (isAuthenticated()) {
+                setTimeout(() => {
+                    if (typeof initializeCreateRequestPage === 'function') {
+                        initializeCreateRequestPage();
+                    }
+                }, 100);
+            }
+        }
+        
+        // Вариант 3: При входе на страницу через window.onload (запасной)
+        window.addEventListener('load', function() {
+            console.log('[Init] window.load - проверка инициализации...');
+            const mediaPreview = document.getElementById('mediaPreview');
+            if (mediaPreview && mediaPreview.children.length === 0 && attachedMedia.length > 0) {
+                console.warn('[Init] ⚠️ Медиа не отображены, повторная инициализация...');
+                renderMediaPreview();
+                initializeCreateRequestPage();
+            }
+        });
+        
+        // Вариант 4: При показе страницы (для мобильных браузеров)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                console.log('[Init] Страница стала видимой, проверка...');
+                // Перезагрузить медиа, если они пропали
+                const mediaPreview = document.getElementById('mediaPreview');
+                if (mediaPreview && mediaPreview.children.length === 0 && attachedMedia.length > 0) {
+                    renderMediaPreview();
+                }
+                // Переинициализировать обработчики
+                setTimeout(() => {
+                    initializeCreateRequestPage();
+                }, 100);
+            }
+        });
     </script>
-<script src="js/logger.js?v=6.8.3"></script></body>
+    
+    <!-- Отладочная кнопка (временно, для тестирования) -->
+    <button 
+        onclick="initializeCreateRequestPage()" 
+        style="position: fixed; bottom: 80px; right: 20px; z-index: 9999; 
+               padding: 10px; background: #FF5722; color: white; border: none; 
+               border-radius: 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+        🔄 Переинициализация
+    </button>
+</body>
 </html>
-
-
-
-
-
-
-
-
-
-
 

@@ -3774,6 +3774,45 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         }
 
 
+        
+        // ====================================
+        // ВАЛИДАЦИЯ ДАННЫХ ПОЛЬЗОВАТЕЛЯ
+        // ====================================
+        (function validateUserData() {
+            try {
+                const userData = localStorage.getItem('userData');
+                const userSession = localStorage.getItem('userSession');
+                
+                // Если нет userData, но есть сессия - очистить всё и редирект
+                if (!userData && userSession) {
+                    console.warn('⚠️ Битые данные: есть сессия, но нет userData');
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Если есть userData, проверить корректность
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    if (!user.fio || !user.phone || !user.code) {
+                        console.warn('⚠️ Битые данные: userData неполный');
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    console.log('✅ Данные пользователя валидны:', user.fio);
+                }
+            } catch (error) {
+                console.error('❌ Ошибка валидации, очистка:', error);
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        })();
+
+
         function loadUserData() {
             try {
                 const userData = localStorage.getItem('userData');

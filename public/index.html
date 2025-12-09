@@ -3722,6 +3722,55 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         // ====================================
         // ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ
         // ====================================
+        
+        // ====================================
+        // ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ПОЛЬЗОВАТЕЛЯ
+        // ====================================
+        function updateUserInfoDisplay() {
+            try {
+                const userData = localStorage.getItem('userData');
+                if (!userData) {
+                    console.warn('⚠️ userData отсутствует в localStorage');
+                    return;
+                }
+
+                const user = JSON.parse(userData);
+                console.log('✅ Обновление интерфейса для:', user.fio);
+
+                // Обновить элементы с ФИО
+                const fioElements = document.querySelectorAll('[data-user-fio], #receipt-owner-name, .user-name');
+                fioElements.forEach(el => {
+                    if (el) el.textContent = user.fio;
+                });
+
+                // Обновить адрес
+                const addressElements = document.querySelectorAll('[data-user-address], .user-address');
+                addressElements.forEach(el => {
+                    if (el) el.textContent = user.address;
+                });
+
+                // Обновить квартиру
+                const apartmentElements = document.querySelectorAll('[data-user-apartment], .user-apartment');
+                apartmentElements.forEach(el => {
+                    if (el) el.textContent = user.apartment;
+                });
+
+                // Обновить кладовую
+                const storageElements = document.querySelectorAll('[data-user-storage], .user-storage');
+                storageElements.forEach(el => {
+                    if (el && user.storage && user.storage !== '0') {
+                        el.textContent = user.storage;
+                        el.style.display = 'block';
+                    }
+                });
+
+                console.log('✅ Интерфейс обновлён');
+            } catch (error) {
+                console.error('❌ Ошибка обновления интерфейса:', error);
+            }
+        }
+
+
         function loadUserData() {
             try {
                 const userData = localStorage.getItem('userData');

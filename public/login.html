@@ -1,57 +1,165 @@
-﻿<!DOCTYPE html>
-<!-- УК "Зелёная Долина" - Вход v6.8.2 -->
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Вход - УК Зелёная долина v6.8.2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Зелёная долина</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; background: #f5f5f5; }
-        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; word-wrap: break-word; text-align: center; line-height: 1.4; }
-        button { min-height: 44px; padding: 14px 20px; font-size: 16px; border-radius: 12px; border: none; cursor: pointer; transition: opacity 0.2s; width: 100%; margin-bottom: 10px; background: #2E7D32; color: white; }
-        button:active { opacity: 0.7; }
-        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
-        
-        .card { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; width: 100%; }
-        label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 20px; outline: none; }
-        input:focus { border-color: #2E7D32; }
-        .theme-toggle { position: fixed; top: 16px; left: 16px; width: auto; padding: 8px; background: transparent; color: #333; font-size: 24px; margin: 0; box-shadow: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 90%; }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; font-size: 28px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: #666; margin-bottom: 8px; font-size: 14px; }
+        input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
+        input:focus { outline: none; border-color: #667eea; }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+        button:hover { transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        .error { color: #e74c3c; font-size: 14px; margin-top: 10px; display: none; }
+        .loading { display: none; text-align: center; color: #667eea; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <button id="theme-toggle" class="theme-toggle"></button>
-    
-    <div class="card">
-        <h1> УК Зелёная долина</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 24px;">Вход в личный кабинет</p>
-        
-        <form onsubmit="event.preventDefault(); window.location.href='index.html'">
-            <label for="phone">Номер телефона</label>
-            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" required>
-            
-            <label for="code">СМС-код</label>
-            <input type="number" id="code" placeholder="1234" required>
-            
+    <div class="login-container">
+        <h1>🏡 Зелёная долина</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required>
+            </div>
+            <div class="form-group">
+                <label for="code">Код (последние 4 цифры л/с):</label>
+                <input type="text" id="code" placeholder="____" maxlength="4" required>
+            </div>
             <button type="submit">Войти</button>
+            <div class="error" id="error"></div>
+            <div class="loading" id="loading">Проверка данных...</div>
         </form>
-        
-        <p style="text-align: center; font-size: 12px; color: #999; margin-top: 16px;">Тестовый код: 1234</p>
     </div>
 
-    <div class="version">v6.8.2</div>
-
     <script>
-        console.log('[login.html v6.8.2] Loaded');
-        // Theme logic
-        const toggle = document.getElementById('theme-toggle');
-        toggle.onclick = () => {
-            document.body.style.background = document.body.style.background === 'rgb(26, 26, 26)' ? '#f5f5f5' : '#1a1a1a';
-            document.body.style.color = document.body.style.background === 'rgb(26, 26, 26)' ? '#fff' : '#000';
-        };
+        let residents = [];
+
+        // Загрузка базы жителей
+        async function loadResidents() {
+            try {
+                const response = await fetch('data/residents.json');
+                if (!response.ok) throw new Error('Не удалось загрузить базу');
+                residents = await response.json();
+                console.log('✅ База загружена:', residents.length, 'жителей');
+                return true;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки базы:', error);
+                showError('Ошибка загрузки базы данных');
+                return false;
+            }
+        }
+
+        // Нормализация телефона
+        function normalizePhone(phone) {
+            const digits = phone.replace(/\D/g, '');
+            if (digits.length === 10) return '+7' + digits;
+            if (digits.length === 11 && digits[0] === '7') return '+7' + digits.slice(1);
+            if (digits.length === 11 && digits[0] === '8') return '+7' + digits.slice(1);
+            return '+' + digits;
+        }
+
+        // Показать ошибку
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => errorEl.style.display = 'none', 5000);
+        }
+
+        // Авторизация
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phoneInput = document.getElementById('phone').value;
+            const codeInput = document.getElementById('code').value;
+            const loading = document.getElementById('loading');
+            
+            if (!codeInput || codeInput.length !== 4) {
+                showError('Код должен содержать 4 цифры');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            
+            // Загрузить базу если ещё не загружена
+            if (residents.length === 0) {
+                const loaded = await loadResidents();
+                if (!loaded) {
+                    loading.style.display = 'none';
+                    return;
+                }
+            }
+            
+            const normalizedPhone = normalizePhone(phoneInput);
+            
+            // Поиск жителя
+            const resident = residents.find(r => {
+                const residentPhone = normalizePhone(r.phone);
+                return residentPhone === normalizedPhone && r.code === codeInput;
+            });
+            
+            loading.style.display = 'none';
+            
+            if (!resident) {
+                showError('Неверный телефон или код');
+                return;
+            }
+            
+            // Сохранить данные
+            const userData = {
+                fio: resident.fio,
+                phone: resident.phone,
+                code: resident.code,
+                address: resident.address,
+                apartment: resident.apartment,
+                storage: resident.storage,
+                complex: resident.complex || 'Зелёная долина',
+                licSchet: resident.licSchet,
+                userId: resident.id
+            };
+            
+            localStorage.setItem('authToken', 'valid');
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('userPhone', resident.phone);
+            localStorage.setItem('userId', resident.id);
+            localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('userSession', JSON.stringify({
+                phone: resident.phone,
+                createdAt: Date.now(),
+                isAuthenticated: true
+            }));
+            
+            console.log('✅ Авторизация успешна:', resident.fio);
+            
+            // Редирект
+            window.location.href = 'index.html?login=success';
+        });
+        
+        // Маска телефона
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value[0] === '8') value = '7' + value.slice(1);
+                if (value[0] !== '7') value = '7' + value;
+            }
+            let formatted = '+7';
+            if (value.length > 1) formatted += ' (' + value.slice(1, 4);
+            if (value.length >= 5) formatted += ') ' + value.slice(4, 7);
+            if (value.length >= 8) formatted += '-' + value.slice(7, 9);
+            if (value.length >= 10) formatted += '-' + value.slice(9, 11);
+            e.target.value = formatted;
+        });
+        
+        // Автозагрузка базы при открытии страницы
+        loadResidents();
     </script>
-<script src="js/logger.js?v=6.8.3"></script></body>
+</body>
 </html>
-
-

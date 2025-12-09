@@ -1,146 +1,86 @@
-// ====================================
-// 🔐 МОДУЛЬ АВТОРИЗАЦИИ v6.5.0
-// ====================================
+// ===== АВТОРИЗАЦИЯ И АУТЕНТИФИКАЦИЯ =====
 
-// Глобальная переменная для отключения расширений браузера
-window.addEventListener('error', function(e) {
-    if (e.message && e.message.includes('message channel closed')) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.warn('[Auth] Игнорируем ошибку расширения браузера');
-        return false;
-    }
-});
+console.log('[Auth] 📱 Модуль авторизации загружен');
 
-// Отключить конфликтующие Promise от расширений
-window.addEventListener('unhandledrejection', function(e) {
-    if (e.reason && e.reason.message && e.reason.message.includes('message channel')) {
-        e.preventDefault();
-        console.warn('[Auth] Игнорируем unhandled rejection от расширения');
-    }
-});
-
-// ====================================
-// ПРОВЕРКА АВТОРИЗАЦИИ
-// ====================================
-
+// Проверка авторизации
 function isAuthenticated() {
     try {
-        const session = localStorage.getItem('userSession');
-        if (!session) {
-            console.log('[Auth] ❌ Сессия отсутствует');
+        const userData = localStorage.getItem('userData');
+        const authToken = localStorage.getItem('authToken');
+        
+        if (!userData || !authToken) {
+            console.log('[Auth] ❌ Нет данных авторизации');
             return false;
         }
-
-        const sessionData = JSON.parse(session);
-        const now = Date.now();
-        const sessionAge = now - sessionData.createdAt;
-        const maxAge = 24 * 60 * 60 * 1000; // 24 часа
-
-        if (sessionAge > maxAge) {
-            console.log('[Auth] ❌ Сессия истекла');
-            localStorage.removeItem('userSession');
+        
+        const user = JSON.parse(userData);
+        if (!user || !user.fio || !user.code) {
+            console.log('[Auth] ❌ Некорректные данные пользователя');
+            localStorage.clear();
             return false;
         }
-
-        console.log('[Auth] ✅ Сессия активна');
+        
+        console.log('[Auth] ✅ Пользователь авторизован:', user.fio);
         return true;
     } catch (error) {
-        console.error('[Auth] ❌ Ошибка проверки сессии:', error);
+        console.error('[Auth] ❌ Ошибка проверки авторизации:', error);
+        localStorage.clear();
         return false;
     }
 }
 
-// ====================================
-// ЗАЩИТА СТРАНИЦ
-// ====================================
-
+// Требование авторизации
 function requireAuth() {
+    console.log('[Auth] 🔍 Проверка авторизации...');
+    
     try {
-        const currentPage = window.location.pathname.split('/').pop();
-        
-        // Если уже на странице логина, не редиректить
-        if (currentPage === 'login.html') {
-            console.log('[Auth] Уже на странице логина');
-            return false;
-        }
-
-        // Проверить авторизацию
-        if (!isAuthenticated()) {
-            console.warn('[Auth] ⚠️ Доступ запрещён, редирект на login.html');
-            window.location.replace('login.html');
-            return false;
-        } else {
-            console.log('[Auth] ✅ Доступ разрешён');
+        // Если мы на странице login.html - не проверяем
+        if (window.location.pathname.includes('login.html')) {
+            console.log('[Auth] ℹ️ Страница авторизации - пропускаем проверку');
             return true;
         }
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка requireAuth:', error);
-        window.location.replace('login.html');
-        return false;
-    }
-}
-
-// ====================================
-// СОЗДАНИЕ СЕССИИ
-// ====================================
-
-function createSession(phone) {
-    try {
-        const sessionData = {
-            phone: phone,
-            createdAt: Date.now(),
-            isAuthenticated: true
-        };
         
-        localStorage.setItem('userSession', JSON.stringify(sessionData));
-        console.log('[Auth] ✅ Сессия создана для:', phone);
+        if (!isAuthenticated()) {
+            console.log('[Auth] 🚫 Не авторизован - редирект на login.html');
+            window.location.href = 'login.html';
+            return false;
+        }
+        
+        console.log('[Auth] ✅ Авторизация пройдена');
         return true;
     } catch (error) {
-        console.error('[Auth] ❌ Ошибка создания сессии:', error);
+        console.error('[Auth] ❌ Ошибка requireAuth:', error);
+        window.location.href = 'login.html';
         return false;
     }
 }
 
-// ====================================
-// ПОЛУЧЕНИЕ СЕССИИ
-// ====================================
+// Выход из системы
+function logout() {
+    console.log('[Auth] 🚪 Выход из системы');
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+}
 
-function getSession() {
+// Получение текущего пользователя
+function getCurrentUser() {
     try {
-        const session = localStorage.getItem('userSession');
-        return session ? JSON.parse(session) : null;
+        const userData = localStorage.getItem('userData');
+        if (!userData) return null;
+        return JSON.parse(userData);
     } catch (error) {
-        console.error('[Auth] ❌ Ошибка получения сессии:', error);
+        console.error('[Auth] ❌ Ошибка получения пользователя:', error);
         return null;
     }
 }
 
-// ====================================
-// ВЫХОД
-// ====================================
-
-function logout() {
-    try {
-        localStorage.removeItem('userSession');
-        console.log('[Auth] ✅ Пользователь вышел');
-        window.location.replace('login.html');
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка выхода:', error);
-        window.location.replace('login.html');
-    }
-}
-
-// ====================================
-// ЭКСПОРТ (для использования в других файлах)
-// ====================================
-
+// Экспорт функций
 if (typeof window !== 'undefined') {
     window.isAuthenticated = isAuthenticated;
     window.requireAuth = requireAuth;
-    window.createSession = createSession;
-    window.getSession = getSession;
     window.logout = logout;
+    window.getCurrentUser = getCurrentUser;
+    
+    console.log('[Auth] ✅ Функции авторизации экспортированы');
 }
-
-console.log('[Auth] 🔐 Модуль авторизации v6.5.0 загружен');

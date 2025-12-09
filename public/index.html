@@ -1481,6 +1481,10 @@
     </script>
     <script src="auth.js"></script>
     <script>
+// Проверка авторизации
+if (typeof requireAuth === "function") {
+    requireAuth();
+}
         console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.6.1');
         
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM

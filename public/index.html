@@ -2068,7 +2068,7 @@
             
             if (!isRecordingVideo) {
                 try {
-                    videoStream = await navigator.mediaDevices.getUserMedia({
+                    videoStream = navigator.mediaDevices.getUserMedia({
                         video: { facingMode: 'environment' },
                         audio: true
                     });
@@ -2084,7 +2084,7 @@
                         }
                     };
                     
-                    videoRecorder.onstop = async () => {
+                    videoRecorder.onstop = () => {
                         const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
                         
                         if (videoBlob.size > 5 * 1024 * 1024) {
@@ -2094,7 +2094,7 @@
                             return;
                         }
                         
-                        await saveVideoToStorage(videoBlob);
+                        saveVideoToStorage(videoBlob);
                         
                         videoStream.getTracks().forEach(track => track.stop());
                         
@@ -2168,7 +2168,7 @@
                 return;
             }
             
-            await saveVideoToStorage(file);
+            saveVideoToStorage(file);
             event.target.value = '';
         }
         
@@ -2298,7 +2298,7 @@
             console.log('🎥 Начало записи видео счётчика');
             
             try {
-                videoStream = await navigator.mediaDevices.getUserMedia({
+                videoStream = navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'environment' },
                     audio: true
                 });
@@ -2440,7 +2440,7 @@
                     console.log('🎤 Начинаем запись аудио...');
                     
                     // Запрос доступа к микрофону с улучшенными настройками
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                    const stream = navigator.mediaDevices.getUserMedia({ 
                         audio: {
                             echoCancellation: true,
                             noiseSuppression: true,
@@ -4008,8 +4008,8 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             console.log('📊 Загрузка данных главного экрана');
             try {
                 // TODO: Заменить на реальный API вызов
-                // const response = await fetch('/api/main-screen');
-                // const data = await response.json();
+                // const response = fetch('/api/main-screen');
+                // const data = response.json();
                 
                 // Пока используем mock данные
                 renderMainScreen(mainScreenData);
@@ -4177,7 +4177,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             
             try {
                 // TODO: Заменить на реальный API вызов
-                // const response = await fetch('/api/gate/open', {
+                // const response = fetch('/api/gate/open', {
                 //     method: 'POST',
                 //     headers: { 'Content-Type': 'application/json' },
                 //     body: JSON.stringify({ phone: mainScreenData.user.phone })

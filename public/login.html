@@ -6,31 +6,28 @@
     <title>Вход - Зелёная долина</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
         .login-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 90%; }
         h1 { color: #333; margin-bottom: 30px; text-align: center; font-size: 28px; }
         .form-group { margin-bottom: 20px; }
         label { display: block; color: #666; margin-bottom: 8px; font-size: 14px; }
         input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
-        input:focus { outline: none; border-color: #667eea; }
-        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+        input:focus { outline: none; border-color: #2ecc71; }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
         button:hover { transform: translateY(-2px); }
         button:active { transform: translateY(0); }
         .error { color: #e74c3c; font-size: 14px; margin-top: 10px; display: none; }
-        .loading { display: none; text-align: center; color: #667eea; margin-top: 10px; }
+        .loading { display: none; text-align: center; color: #2ecc71; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>🏡 Зелёная долина</h1>
+        <h1><img src="icon-192x192.png" style="width: 48px; height: 48px; margin-right: 10px; vertical-align: middle;">Зелёная долина</h1>
         <form id="loginForm">
-            <div class="form-group">
-                <label for="phone">Телефон:</label>
-                <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required>
-            </div>
+            
             <div class="form-group">
                 <label for="code">Код (последние 4 цифры л/с):</label>
-                <input type="text" id="code" placeholder="____" maxlength="4" required>
+                <input type="text" id="code" placeholder="1977" maxlength="4" required>
             </div>
             <button type="submit">Войти</button>
             <div class="error" id="error"></div>

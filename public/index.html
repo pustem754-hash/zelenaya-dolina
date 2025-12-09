@@ -1191,61 +1191,24 @@
 
     <!-- Заявки -->
     <div id="requests" class="section">
-        <!-- Табы: Новая заявка / Мои заявки -->
-        <div class="card" style="margin-bottom: 15px;">
-            <nav class="tabs" style="margin-bottom: 0;">
-                <button class="tab-btn active" onclick="showRequestSection('new', event)">📝 Новая заявка</button>
-                <button class="tab-btn" onclick="showRequestSection('list', event)">📋 Мои заявки</button>
-            </nav>
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+            <img src="icon-192x192.png" alt="Логотип" style="width: 48px; height: 48px; margin-right: 15px;">
+            <h2 style="margin: 0; color: #2c3e50;">📝 Заявки</h2>
         </div>
         
-        <!-- Секция: Новая заявка -->
-        <div id="newRequestSection" class="request-section">
-        <div class="card">
-            <h2>📝 Новая заявка</h2>
-            
-            <!-- Выбор категории -->
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;">Категория</label>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="category-btn" id="categoryRepair" onclick="selectCategory('repair', this)" style="flex: 1; min-width: 100px; padding: 12px; border: 2px solid #2E7D32; background: #f0f8f0; color: #2E7D32; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                        ремонт
-                    </button>
-                    <button class="category-btn" id="categoryCleaning" onclick="selectCategory('cleaning', this)" style="flex: 1; min-width: 100px; padding: 12px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                        уборка
-                    </button>
-                    <button class="category-btn" id="categoryOther" onclick="selectCategory('other', this)" style="flex: 1; min-width: 100px; padding: 12px; border: 2px solid #ccc; background: white; color: #666; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                        другое
-                    </button>
-                </div>
+        <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <h3 style="margin-top: 0;">Последние заявки</h3>
+            <div id="recentRequestsList">
+                <!-- Сюда рендерятся демо-заявки -->
             </div>
-            
-            <div class="input-group">
-                <label>Описание проблемы</label>
-                <textarea id="problemDescription" placeholder="Подробное описание проблемы..." rows="4"></textarea>
-            </div>
-            
-            <!-- Табы для медиа -->
-            <nav class="tabs" style="margin-top: 20px;">
-                <button class="tab-btn active" onclick="showRequestTab('photos', event)">📸 Фото</button>
-                <button class="tab-btn" onclick="showRequestTab('videos', event)">🎥 Видео</button>
-                <button class="tab-btn" onclick="showRequestTab('audio', event)">🎤 Аудио</button>
-            </nav>
-            
-            <!-- Вкладка: Фото -->
-            <div id="requestPhotosTab" class="tab-content active">
-                <h3 style="font-size: 20px; margin-bottom: 15px; color: #2E7D32;">📸 Фото проблемы</h3>
-                <p style="color: #666; margin-bottom: 15px;">Сфотографируйте проблему для наглядности</p>
-                
-                <!-- Скрытый input для камеры -->
-                <input type="file" id="photoCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="handlePhoto(event)">
-                <input type="file" id="photoGalleryInput" accept="image/*" style="display: none;" onchange="handlePhoto(event)">
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <button class="btn btn-camera" onclick="document.getElementById('photoCameraInput').click()" style="flex: 1;">📷 Камера</button>
-                    <button class="btn btn-camera" onclick="document.getElementById('photoGalleryInput').click()" style="flex: 1;">🖼️ Галерея</button>
-                </div>
-                <div id="photosContainer" class="photos-gallery" style="margin-top: 15px;"></div>
+        </div>
+        
+        <button class="btn" onclick="alert('Функция создания новой заявки будет добавлена позже')" style="width: 100%; background: #2ecc71;">
+            ➕ Создать новую заявку
+        </button>
+    </div>
+
+    <div id="photosContainer" class="photos-gallery" style="margin-top: 15px;"></div>
             </div>
             
             <!-- Вкладка: Видео -->

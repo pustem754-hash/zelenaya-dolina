@@ -1632,7 +1632,13 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (typeof event !== 'undefined' && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+            
+            if (id === 'requests' && typeof renderDemoRequests === 'function') {
+                setTimeout(function() { renderDemoRequests(); }, 100);
+            }
         }
         
         // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====

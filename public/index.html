@@ -1187,6 +1187,13 @@
     </nav>
 
     <script>
+// КРИТИЧЕСКАЯ проверка авторизации
+(function() {
+    if (!localStorage.getItem("isAuthenticated")) {
+        window.location.replace("login.html");
+        throw new Error("Not authenticated");
+    }
+})();
         // ====================================
         // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.6.1
         // ====================================
@@ -1285,6 +1292,13 @@
     
     <!-- Дополнительная защита для конкретных полей ввода -->
     <script>
+// КРИТИЧЕСКАЯ проверка авторизации
+(function() {
+    if (!localStorage.getItem("isAuthenticated")) {
+        window.location.replace("login.html");
+        throw new Error("Not authenticated");
+    }
+})();
         document.addEventListener('DOMContentLoaded', function() {
     // Проверка авторизации
     if (!localStorage.getItem("isAuthenticated")) {
@@ -1486,6 +1500,13 @@
     </script>
     <script src="auth.js"></script>
     <script>
+// КРИТИЧЕСКАЯ проверка авторизации
+(function() {
+    if (!localStorage.getItem("isAuthenticated")) {
+        window.location.replace("login.html");
+        throw new Error("Not authenticated");
+    }
+})();
 // Проверка авторизации
 if (typeof requireAuth === "function") {
     requireAuth();

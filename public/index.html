@@ -1517,7 +1517,6 @@ if (typeof requireAuth === "function") {
          * Инициализация страницы после успешной авторизации
          */
         function initializePage() {
-            console.log('[Page] Сессия пользователя:', session);
             
             // Показать информацию о пользователе
             if (typeof showUserInfo === 'function') {
@@ -1767,7 +1766,6 @@ if (typeof requireAuth === "function") {
         }
         
         function getCurrentUserId() {
-            return session ? session.userId : 'guest';
         }
         
         // Камеры

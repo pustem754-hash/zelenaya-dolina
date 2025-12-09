@@ -5935,5 +5935,24 @@
     "balance": 0,
     "licSchet": "706513",
     "area": "84.6/49.4"
+  },
+  {
+    "id": 474,
+    "fio": "ФАХРУТДИНОВ АРТУР ДМИТРИЕВИЧ",
+    "phone": "",
+    "code": "9550",
+    "address": "Зелёная долина мкр, д. 5",
+    "apartment": "142",
+    "complex": "ЖК 'ЗЕЛЁНАЯ ДОЛИНА'",
+    "licSchet": "8105059550",
+    "balance": 0,
+    "house": "5",
+    "corpus": "",
+    "entrance": "",
+    "floor": "",
+    "storage": "",
+    "parking": "",
+    "uk": "УК 'Зелёная долина'",
+    "ukPhone": ""
   }
 ]

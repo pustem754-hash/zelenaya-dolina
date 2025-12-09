@@ -908,7 +908,7 @@
                     </div>
                     <div class="receipt-info-row">
                         <span class="receipt-info-label">Собственник:</span>
-                        <span class="receipt-info-value">МИННУЛЛИНА Н. М.</span>
+                        <span class="receipt-info-value" id="receipt-owner-name"></span>
                     </div>
                     <div class="receipt-info-row">
                         <span class="receipt-info-label">Площадь:</span>
@@ -3385,7 +3385,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 doc.text('Адрес: 420000, Казань, ул. ЧИСТОПОЛЬСКАЯ, д. 5, кв. 142', 20, y);
                 y += 5;
                 doc.text('Лицевой счёт: № 8105059550', 20, y);
-                doc.text('Собственник: МИННУЛЛИНА Н. М.', 120, y);
+                doc.text('Собственник: ' + (mainScreenData.user?.name || 'Не указано'), 120, y);
                 y += 5;
                 doc.text('Площадь: 61.9 кв. м. | Проживающих: 4 чел.', 20, y);
                 y += 5;
@@ -3835,12 +3835,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 nextDeadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
                 needsSubmission: false
             },
-            user: {
-                name: 'МИННУЛЛИНА Н. М.',
-                apartment: '142',
-                phone: '+7 (XXX) XXX-XX-XX',
-                hasStorage: false
-            }
+            user: loadUserData()
         };
         
         // Загрузка данных главного экрана (имитация API)
@@ -3853,6 +3848,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 
                 // Пока используем mock данные
                 renderMainScreen(mainScreenData);
+                updateUserInfoDisplay();
             } catch (error) {
                 console.error('❌ Ошибка загрузки данных:', error);
             }

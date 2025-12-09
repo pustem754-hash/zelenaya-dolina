@@ -4,147 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Зелёная долина</title>
+    <link rel="icon" type="image/png" href="icon-192x192.png">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 90%; }
-        h1 { color: #333; margin-bottom: 30px; text-align: center; font-size: 28px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; color: #666; margin-bottom: 8px; font-size: 14px; }
-        input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
-        input:focus { outline: none; border-color: #2ecc71; }
-        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
-        button:hover { transform: translateY(-2px); }
-        button:active { transform: translateY(0); }
-        .error { color: #e74c3c; font-size: 14px; margin-top: 10px; display: none; }
-        .loading { display: none; text-align: center; color: #2ecc71; margin-top: 10px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2ecc71;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            display: none;
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            color: #2ecc71;
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1><img src="icon-192x192.png" style="width: 48px; height: 48px; margin-right: 10px; vertical-align: middle;">Зелёная долина</h1>
+        <div class="login-header">
+            <img src="icon-192x192.png" alt="Логотип" class="logo">
+            <h1>Зелёная долина</h1>
+            <p class="subtitle">Личный кабинет жильца</p>
+        </div>
+
         <form id="loginForm">
-            
             <div class="form-group">
                 <label for="code">Код (последние 4 цифры л/с):</label>
                 <input type="text" id="code" placeholder="1977" maxlength="4" required>
             </div>
-            <button type="submit">Войти</button>
+
+            <button type="submit" class="btn">Войти</button>
+
             <div class="error" id="error"></div>
             <div class="loading" id="loading">Проверка данных...</div>
         </form>
     </div>
 
     <script>
-        let residents = [];
-
-        // Загрузка базы жителей
-        async function loadResidents() {
-            try {
-                const response = await fetch('data/residents.json');
-                if (!response.ok) throw new Error('Не удалось загрузить базу');
-                residents = await response.json();
-                console.log('✅ База загружена:', residents.length, 'жителей');
-                return true;
-            } catch (error) {
-                console.error('❌ Ошибка загрузки базы:', error);
-                showError('Ошибка загрузки базы данных');
-                return false;
-            }
-        }
-
-        // Нормализация телефона
-        function normalizePhone(phone) {
-            const digits = phone.replace(/\D/g, '');
-            if (digits.length === 10) return '+7' + digits;
-            if (digits.length === 11 && digits[0] === '7') return '+7' + digits.slice(1);
-            if (digits.length === 11 && digits[0] === '8') return '+7' + digits.slice(1);
-            return '+' + digits;
-        }
-
-        // Показать ошибку
-        function showError(message) {
-            const errorEl = document.getElementById('error');
-            errorEl.textContent = message;
-            errorEl.style.display = 'block';
-            setTimeout(() => errorEl.style.display = 'none', 5000);
-        }
+        const loginForm = document.getElementById('loginForm');
+        const codeField = document.getElementById('code');
+        const errorDiv = document.getElementById('error');
+        const loadingDiv = document.getElementById('loading');
 
         // Авторизация
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const codeInput = codeField.value.trim();
             
-            const codeInput = document.getElementById('code').value;
-            const loading = document.getElementById('loading');
-            
-            if (!codeInput || codeInput.length !== 4) {
-                showError('Код должен содержать 4 цифры');
+            // Проверка длины кода
+            if (codeInput.length !== 4) {
+                errorDiv.textContent = 'Код должен содержать 4 цифры';
+                errorDiv.style.display = 'block';
                 return;
             }
             
-            loading.style.display = 'block';
+            // Показываем загрузку
+            errorDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
             
-            // Загрузить базу если ещё не загружена
-            if (residents.length === 0) {
-                const loaded = await loadResidents();
-                if (!loaded) {
-                    loading.style.display = 'none';
-                    return;
+            try {
+                // Загружаем базу данных
+                const response = await fetch('data/residents.json');
+                if (!response.ok) throw new Error('Ошибка загрузки базы данных');
+                const residents = await response.json();
+                
+                // Ищем жителя по коду
+                const resident = residents.find(r => r.code === codeInput);
+                
+                if (resident) {
+                    // Сохраняем данные пользователя
+                    const userData = {
+                        fio: resident.fio,
+                        phone: resident.phone,
+                        code: resident.code,
+                        address: resident.address,
+                        apartment: resident.apartment,
+                        storage: resident.storage,
+                        complex: resident.complex,
+                        licSchet: resident.licSchet,
+                        userId: resident.id
+                    };
+                    
+                    localStorage.setItem('authToken', 'authenticated_' + Date.now());
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('userPhone', resident.phone);
+                    localStorage.setItem('userId', resident.id);
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    // Редирект на главную
+                    window.location.href = 'index.html?login=success';
+                } else {
+                    loadingDiv.style.display = 'none';
+                    errorDiv.textContent = 'Неверный код';
+                    errorDiv.style.display = 'block';
                 }
+            } catch (error) {
+                console.error('Ошибка авторизации:', error);
+                loadingDiv.style.display = 'none';
+                errorDiv.textContent = 'Ошибка загрузки данных';
+                errorDiv.style.display = 'block';
             }
-            
-            const normalizedPhone = normalizePhone(phoneInput);
-            
-            // Поиск жителя
-            const resident = residents.find(r => {
-                const residentPhone = normalizePhone(r.phone);
-                return residentPhone === normalizedPhone && r.code === codeInput;
-            });
-            
-            loading.style.display = 'none';
-            
-            if (!resident) {
-                showError('Неверный телефон или код');
-                return;
-            }
-            
-            // Сохранить данные
-            const userData = {
-                fio: resident.fio,
-                phone: resident.phone,
-                code: resident.code,
-                address: resident.address,
-                apartment: resident.apartment,
-                storage: resident.storage,
-                complex: resident.complex || 'Зелёная долина',
-                licSchet: resident.licSchet,
-                userId: resident.id
-            };
-            
-            localStorage.setItem('authToken', 'valid');
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('userPhone', resident.phone);
-            localStorage.setItem('userId', resident.id);
-            localStorage.setItem('userData', JSON.stringify(userData));
-            localStorage.setItem('userSession', JSON.stringify({
-                phone: resident.phone,
-                createdAt: Date.now(),
-                isAuthenticated: true
-            }));
-            
-            console.log('✅ Авторизация успешна:', resident.fio);
-            
-            // Редирект
-            window.location.href = 'index.html?login=success';
         });
-        
-        // Маска телефона
-        
-        );
-        
-        // Автозагрузка базы при открытии страницы
-        loadResidents();
+
+        // Разрешить только цифры
+        codeField.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
     </script>
 </body>
 </html>

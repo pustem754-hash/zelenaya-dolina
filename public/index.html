@@ -16,9 +16,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
-    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png?v=6.8.0">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.0">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.0">
     <link rel="manifest" href="./manifest.json">
     
     <!-- jsPDF для генерации PDF -->
@@ -31,8 +28,8 @@
     
     <style>
         :root {
-            --primary-green: #27ae60;
-            --primary-green-hover: #2ecc71;
+            --primary-green: #2E7D32;
+            --primary-green-hover: #4CAF50;
             --dark-green: #1B5E20;
             --light-green: #d5f4e6;
             --text-light: #ffffff;
@@ -44,7 +41,7 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
             min-height: 100vh;
             padding: 20px 20px 100px 20px;
         }
@@ -416,7 +413,7 @@
             color: #2E7D32;
         }
         .nav-item:hover {
-            color: #27ae60;
+            color: #2E7D32;
             transform: scale(1.05);
         }
         .nav-icon {
@@ -504,12 +501,12 @@
         }
         .meters-tab:hover {
             background: #e8f5e9;
-            border-color: #27ae60;
+            border-color: #2E7D32;
         }
         .meters-tab.active {
-            background: #27ae60;
+            background: #2E7D32;
             color: white;
-            border-color: #27ae60;
+            border-color: #2E7D32;
         }
         .meters-tab-content {
             animation: fadeIn 0.3s;
@@ -653,13 +650,13 @@
             margin-bottom: 15px;
         }
         .request-item.status-created {
-            border-left-color: #3498db;
+            border-left-color: var(--primary-green);
         }
         .request-item.status-in_progress {
             border-left-color: #f39c12;
         }
         .request-item.status-completed {
-            border-left-color: #27ae60;
+            border-left-color: #2E7D32;
         }
         .request-header {
             display: flex;
@@ -793,7 +790,7 @@
         }
         .camera-status.online {
             background: rgba(76, 209, 55, 0.15);
-            color: #27ae60;
+            color: #2E7D32;
             border: 1px solid rgba(76, 209, 55, 0.35);
         }
         .camera-status.offline {
@@ -825,7 +822,7 @@
         }
         .camera-btn {
             padding: 10px 16px;
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
             border: none;
             border-radius: 10px;
             color: white;
@@ -1021,7 +1018,7 @@
                     <p style="margin-bottom: 8px;"><strong>Квартира:</strong> <span id="userApartment"></span></p>
                     <p id="userStorageInfo" style="display: none; margin-bottom: 0;"><strong>Кладовая:</strong> <span id="userStorage"></span></p>
                 </div>
-                <button class="btn" onclick="showUserForm()" style="background: #3498db;">✏️ Изменить данные</button>
+                <button class="btn" onclick="showUserForm()" style="background: var(--primary-green);">✏️ Изменить данные</button>
             </div>
         </div>
         
@@ -1041,7 +1038,7 @@
     <!-- Секция камер (Телеком Летай) -->
     <div id="cameras" class="section">
         <div class="card" style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
-            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; transition: all 0.2s;">←</button>
+            <button onclick="showSection('home')" style="background: none; border: none; color: #4CAF50; font-size: 28px; cursor: pointer; padding: 0; transition: all 0.2s;">←</button>
             <img src="icon-192x192.png?v=6.8.0" alt="Логотип" style="width: 40px; height: 40px;">
             <h2 style="margin: 0;">📹 Камеры видеонаблюдения</h2>
         </div>
@@ -1208,14 +1205,14 @@
             <div id="paymentTab" class="meters-tab-content">
                 <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
                     <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Всего к оплате:</div>
-                    <div style="font-size: 32px; font-weight: bold; color: #27ae60; margin-bottom: 5px;">10 360.02 ₽</div>
+                    <div style="font-size: 32px; font-weight: bold; color: #2E7D32; margin-bottom: 5px;">10 360.02 ₽</div>
                     <div style="font-size: 14px; color: #e74c3c; font-weight: 500;">⏰ Срок оплаты: до 28.10.2025</div>
                 </div>
                 
-                <button class="btn" style="background: #27ae60; margin-bottom: 10px;" onclick="window.location.href='payments.html'">
+                <button class="btn" style="background: #2E7D32; margin-bottom: 10px;" onclick="window.location.href='payments.html'">
                     💳 Оплатить онлайн
                 </button>
-                <button class="btn" style="background: #3498db;" onclick="generateReceiptPDF()">
+                <button class="btn" style="background: var(--primary-green);" onclick="generateReceiptPDF()">
                     📄 Скачать квитанцию PDF
                 </button>
             </div>
@@ -1244,7 +1241,7 @@
             
             <!-- 📜 ВКЛАДКА ИСТОРИЯ -->
             <div id="historyTab" class="meters-tab-content" style="display: none;">
-                <h3 style="color: #27ae60; margin-bottom: 15px;">История передачи показаний</h3>
+                <h3 style="color: #2E7D32; margin-bottom: 15px;">История передачи показаний</h3>
                 
                 <div id="metersHistory">
                     <!-- Заполнится через JavaScript -->
@@ -1253,7 +1250,7 @@
             
             <!-- 📸 ВКЛАДКА ФОТО -->
             <div id="photoTab" class="meters-tab-content" style="display: none;">
-                <h3 style="color: #27ae60; margin-bottom: 15px;">📸 Фото счётчиков</h3>
+                <h3 style="color: #2E7D32; margin-bottom: 15px;">📸 Фото счётчиков</h3>
                 <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Сфотографируйте показания счётчиков для подтверждения</p>
                 
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
@@ -1273,7 +1270,7 @@
             
             <!-- 🎥 ВКЛАДКА ВИДЕО -->
             <div id="videoTab" class="meters-tab-content" style="display: none;">
-                <h3 style="color: #27ae60; margin-bottom: 15px;">🎥 Видео счётчиков</h3>
+                <h3 style="color: #2E7D32; margin-bottom: 15px;">🎥 Видео счётчиков</h3>
                 <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Запишите видео показаний счётчиков для подтверждения</p>
                 
                 <!-- Определение платформы -->
@@ -1809,7 +1806,7 @@ if (typeof requireAuth === "function") {
                         <button class="btn" onclick="closePaymentModal(); options.onSelect('card')" style="background: #2E7D32; color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
                             💳 Банковская карта
                         </button>
-                        <button class="btn" onclick="closePaymentModal(); options.onSelect('sbp')" style="background: #3498db; color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
+                        <button class="btn" onclick="closePaymentModal(); options.onSelect('sbp')" style="background: var(--primary-green); color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
                             📱 СБП (Система быстрых платежей)
                         </button>
                         <button class="btn" onclick="closePaymentModal(); options.onSelect('bankTransfer')" style="background: #95a5a6; color: white; padding: 16px; border-radius: 12px; border: none; font-size: 16px; cursor: pointer;">
@@ -3459,7 +3456,7 @@ if (typeof requireAuth === "function") {
                 item.style.cssText = 'background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 10px;';
                 item.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <strong style="color: #27ae60;">${month} ${year}</strong>
+                        <strong style="color: #2E7D32;">${month} ${year}</strong>
                         <span style="font-size: 12px; color: #666;">${day}.${monthNum}.${year}</span>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
@@ -3671,7 +3668,7 @@ if (typeof requireAuth === "function") {
                         return `
                             <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                                 <div style="display: flex; align-items: flex-end; gap: 2px; height: 120px; width: 100%;">
-                                    <div class="history-bar" style="height: ${coldHeight}%; background: #3498db;" title="ХВС: ${item.coldWater || 0}"></div>
+                                    <div class="history-bar" style="height: ${coldHeight}%; background: var(--primary-green);" title="ХВС: ${item.coldWater || 0}"></div>
                                     <div class="history-bar" style="height: ${hotHeight}%; background: #e74c3c;" title="ГВС: ${item.hotWater || 0}"></div>
                                     <div class="history-bar" style="height: ${elecHeight}%; background: #f39c12;" title="Эл: ${item.electricity || 0}"></div>
                                 </div>
@@ -3681,7 +3678,7 @@ if (typeof requireAuth === "function") {
                     }).join('')}
                 </div>
                 <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center; font-size: 12px;">
-                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #3498db; border-radius: 2px;"></div> ХВС</div>
+                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: var(--primary-green); border-radius: 2px;"></div> ХВС</div>
                     <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #e74c3c; border-radius: 2px;"></div> ГВС</div>
                     <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #f39c12; border-radius: 2px;"></div> Электричество</div>
                 </div>

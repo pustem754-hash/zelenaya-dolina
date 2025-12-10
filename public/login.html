@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Вход - УК Зелёная долина v6.8.2</title>
+    <title>Вход - УК Зелёная долина v6.8.0</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
     <meta name="theme-color" content="#2E7D32">
     <style>
+        :root {
+            --primary-green: #2E7D32;
+            --primary-green-hover: #4CAF50;
+            --dark-green: #1B5E20;
+            --light-green: #d5f4e6;
+            --text-light: #ffffff;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-green-hover) 0%, var(--primary-green) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -49,12 +56,12 @@
         }
         input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-green-hover);
         }
         button {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-green-hover) 0%, var(--primary-green) 100%);
             color: white;
             border: none;
             border-radius: 10px;

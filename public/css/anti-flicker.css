@@ -1,0 +1,28 @@
+/* ===== УСТРАНЕНИЕ МОРГАНИЯ И МИГАНИЯ ===== */
+
+/* Отключение резких переходов при загрузке */
+.loading, .loading * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Мягкие transitions вместо резких */
+* {
+    transition-duration: 0.15s !important;
+}
+
+/* Предотвращение layout shift при обновлении данных */
+.balance-amount, .request-card, .notification {
+    will-change: auto !important;
+}
+
+/* Стабилизация шрифтов */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Предотвращение "резиновых" эффектов */
+.container, .main-content {
+    overscroll-behavior: none;
+}

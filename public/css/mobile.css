@@ -1,0 +1,58 @@
+/* Mobile-first адаптивность v6.8.2 */
+
+@media (max-width: 768px) {
+    .btn {
+        min-height: 44px;
+        width: 100%;
+    }
+    
+    .form-control {
+        min-height: 44px;
+        font-size: 16px;
+    }
+    
+    .card {
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-md);
+    }
+    
+    .nav {
+        flex-direction: column;
+    }
+    
+    .nav-item {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .grid,
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .card:hover {
+        transform: none;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+        padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+        padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

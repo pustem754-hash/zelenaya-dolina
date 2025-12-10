@@ -722,6 +722,132 @@
             font-size: 10px;
             color: #666;
         }
+        .balance {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+        }
+        .balance-amount {
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 8px;
+            transition: color 0.3s ease;
+        }
+        .balance-amount.negative {
+            color: #ff4757;
+        }
+        .balance-amount.positive {
+            color: #4cd137;
+        }
+        /* ==================== КАМЕРЫ ==================== */
+        .cameras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .camera-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+        .camera-card:hover {
+            transform: translateY(-4px);
+            border-color: #c8e6c9;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f5f6fa;
+        }
+        .camera-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .camera-status {
+            font-size: 14px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .camera-status.online {
+            background: rgba(76, 209, 55, 0.15);
+            color: #27ae60;
+            border: 1px solid rgba(76, 209, 55, 0.35);
+        }
+        .camera-status.offline {
+            background: rgba(255, 71, 87, 0.12);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        .camera-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #ecf0f1;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+        .camera-footer {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            gap: 10px;
+        }
+        .camera-info {
+            margin: 0;
+            font-size: 13px;
+            color: #7f8c8d;
+            flex: 1;
+        }
+        .camera-btn {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.35);
+        }
+        .camera-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(46, 204, 113, 0.45);
+        }
+        .camera-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #bdc3c7;
+            box-shadow: none;
+        }
+        @media (max-width: 768px) {
+            .cameras-grid {
+                grid-template-columns: 1fr;
+            }
+            .camera-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .camera-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
         /* Плавные вкладки заявок */
         .request-tab-content {
             min-height: 400px;
@@ -903,18 +1029,46 @@
     
     <!-- Секция камер (Телеком Летай) -->
     <div id="cameras" class="section">
+        <div class="card" style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; transition: all 0.2s;">←</button>
+            <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px;">
+            <h2 style="margin: 0;">📹 Камеры видеонаблюдения</h2>
+        </div>
         <div class="card">
-            <h2>📹 Видеонаблюдение (Телеком Летай)</h2>
-            <div class="stat-item">
-                <div class="stat-value" id="camerasOnline">8</div>
-                <div class="stat-label">Онлайн камер</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="camerasTotal">10</div>
-                <div class="stat-label">Всего камер</div>
-            </div>
-            <div id="camerasList" style="margin-top: 20px;">
-                <!-- Список камер заполнится через JavaScript -->
+            <div class="cameras-grid">
+                <div class="camera-card">
+                    <div class="camera-header">
+                        <h3>Камера 1: Входная группа</h3>
+                        <span class="camera-status online">🟢 Онлайн</span>
+                    </div>
+                    <img src="https://via.placeholder.com/640x360/2d3436/ffffff?text=Камера+1:+Вход" alt="Камера входная группа" class="camera-image">
+                    <div class="camera-footer">
+                        <p class="camera-info">Последнее обновление: только что</p>
+                        <button class="camera-btn" onclick="alert('Полноэкранный режим в разработке')">🔍 Увеличить</button>
+                    </div>
+                </div>
+                <div class="camera-card">
+                    <div class="camera-header">
+                        <h3>Камера 2: Парковка</h3>
+                        <span class="camera-status online">🟢 Онлайн</span>
+                    </div>
+                    <img src="https://via.placeholder.com/640x360/2d3436/ffffff?text=Камера+2:+Парковка" alt="Камера парковка" class="camera-image">
+                    <div class="camera-footer">
+                        <p class="camera-info">Последнее обновление: только что</p>
+                        <button class="camera-btn" onclick="alert('Полноэкранный режим в разработке')">🔍 Увеличить</button>
+                    </div>
+                </div>
+                <div class="camera-card">
+                    <div class="camera-header">
+                        <h3>Камера 3: Детская площадка</h3>
+                        <span class="camera-status offline">🔴 Офлайн</span>
+                    </div>
+                    <img src="https://via.placeholder.com/640x360/636e72/ffffff?text=Камера+3:+Офлайн" alt="Камера детская площадка" class="camera-image">
+                    <div class="camera-footer">
+                        <p class="camera-info">Последнее обновление: 2 часа назад</p>
+                        <button class="camera-btn" disabled>🔍 Увеличить</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1541,7 +1695,10 @@ if (typeof requireAuth === "function") {
             
             // Показать информацию о пользователе
             if (typeof showUserInfo === 'function') {
-                showUserInfo();
+                const maybePromise = showUserInfo();
+                if (maybePromise && typeof maybePromise.catch === 'function') {
+                    maybePromise.catch(err => console.error('[Page] Ошибка showUserInfo:', err));
+                }
             } else {
                 console.log('[Page] showUserInfo отсутствует, пропускаем');
             }
@@ -1549,9 +1706,48 @@ if (typeof requireAuth === "function") {
             // Здесь код инициализации конкретной страницы
         }
         
-        // Заглушка showUserInfo, чтобы избежать ошибок, если функция не определена
-        function showUserInfo() {
+        // Загрузка информации о пользователе
+        async function showUserInfo() {
             console.log('[Page] showUserInfo вызвана');
+            try {
+                const code = localStorage.getItem('authCode');
+                if (!code) {
+                    console.warn('[Profile] Код авторизации не найден');
+                    return;
+                }
+                
+                const response = await fetch('data/residents.json');
+                const residents = await response.json();
+                const user = residents.find(r => r.code === code);
+                
+                if (!user) {
+                    console.warn('[Profile] Пользователь с кодом не найден');
+                    return;
+                }
+                
+                const setText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = text;
+                };
+                
+                setText('userName', user.name || '—');
+                setText('userAddress', user.address || '—');
+                setText('userApartment', user.apartment ? `🏠 Квартира: ${user.apartment}` : '🏠 Квартира: —');
+                
+                const storageValue = user.storage !== undefined && user.storage !== null ? user.storage : '—';
+                setText('userStorage', `📦 Кладовая: ${storageValue}`);
+                
+                const balanceElement = document.getElementById('userBalance');
+                if (balanceElement) {
+                    const balance = Number(user.balance ?? 0);
+                    const formatted = `${balance < 0 ? '−' : ''}${Math.abs(balance)} ₽`;
+                    balanceElement.textContent = formatted;
+                    balanceElement.classList.remove('negative', 'positive');
+                    balanceElement.classList.add(balance < 0 ? 'negative' : 'positive');
+                }
+            } catch (error) {
+                console.error('[Profile] Ошибка загрузки профиля:', error);
+            }
         }
 
         // ========== ФУНКЦИИ ДЛЯ КНОПОК ==========
@@ -2256,10 +2452,7 @@ if (typeof requireAuth === "function") {
             const photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
             const container = document.getElementById('photosContainer');
             
-            if (!container) {
-                console.log('⚠️ Контейнер photosContainer не найден');
-                return;
-            }
+            if (!container) return;
             
             console.log('📸 Найдено фото:', photos.length);
             
@@ -2564,10 +2757,7 @@ if (typeof requireAuth === "function") {
             const videos = JSON.parse(localStorage.getItem('videos') || '[]');
             const container = document.getElementById('videosContainer');
             
-            if (!container) {
-                console.log('⚠️ Контейнер videosContainer не найден');
-                return;
-            }
+            if (!container) return;
             
             console.log('🎥 Найдено видео:', videos.length);
             
@@ -4647,3 +4837,4 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
     </script>
 </body>
 </html>
+

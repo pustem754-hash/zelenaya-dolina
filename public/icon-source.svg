@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <!-- Круговые линии -->
+  <path d="M 50,300 Q 100,100 300,50" stroke="#8BC34A" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <path d="M 550,300 Q 500,100 300,50" stroke="#8BC34A" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <ellipse cx="300" cy="380" rx="220" ry="40" fill="none" stroke="#4CAF50" stroke-width="12"/>
+  
+  <!-- Левое здание -->
+  <rect x="120" y="180" width="100" height="180" fill="#2E7D32" rx="5"/>
+  <g fill="white">
+    <rect x="130" y="190" width="15" height="15" rx="2"/>
+    <rect x="155" y="190" width="15" height="15" rx="2"/>
+    <rect x="180" y="190" width="15" height="15" rx="2"/>
+    <rect x="130" y="215" width="15" height="15" rx="2"/>
+    <rect x="155" y="215" width="15" height="15" rx="2"/>
+    <rect x="180" y="215" width="15" height="15" rx="2"/>
+    <rect x="130" y="240" width="15" height="15" rx="2"/>
+    <rect x="155" y="240" width="15" height="15" rx="2"/>
+    <rect x="180" y="240" width="15" height="15" rx="2"/>
+    <rect x="130" y="265" width="15" height="15" rx="2"/>
+    <rect x="155" y="265" width="15" height="15" rx="2"/>
+    <rect x="180" y="265" width="15" height="15" rx="2"/>
+  </g>
+  <polygon points="120,180 170,140 220,180" fill="#1B5E20"/>
+  
+  <!-- Правое здание -->
+  <rect x="280" y="120" width="120" height="240" fill="#2E7D32" rx="5"/>
+  <g fill="white">
+    <rect x="295" y="135" width="15" height="15" rx="2"/>
+    <rect x="325" y="135" width="15" height="15" rx="2"/>
+    <rect x="355" y="135" width="15" height="15" rx="2"/>
+    <rect x="295" y="165" width="15" height="15" rx="2"/>
+    <rect x="325" y="165" width="15" height="15" rx="2"/>
+    <rect x="355" y="165" width="15" height="15" rx="2"/>
+    <rect x="295" y="195" width="15" height="15" rx="2"/>
+    <rect x="325" y="195" width="15" height="15" rx="2"/>
+    <rect x="355" y="195" width="15" height="15" rx="2"/>
+    <rect x="295" y="225" width="15" height="15" rx="2"/>
+    <rect x="325" y="225" width="15" height="15" rx="2"/>
+    <rect x="355" y="225" width="15" height="15" rx="2"/>
+    <rect x="295" y="255" width="15" height="15" rx="2"/>
+    <rect x="325" y="255" width="15" height="15" rx="2"/>
+    <rect x="355" y="255" width="15" height="15" rx="2"/>
+  </g>
+  <polygon points="280,120 340,70 400,120" fill="#1B5E20"/>
+  
+  <!-- Дерево -->
+  <ellipse cx="300" cy="320" rx="60" ry="50" fill="#4CAF50" opacity="0.9"/>
+  <ellipse cx="270" cy="310" rx="45" ry="40" fill="#66BB6A" opacity="0.8"/>
+  <ellipse cx="330" cy="310" rx="45" ry="40" fill="#66BB6A" opacity="0.8"/>
+  <rect x="290" y="340" width="20" height="40" fill="#795548"/>
+  
+  <!-- Стрелка вверх -->
+  <path d="M 480,100 L 550,140 L 520,140 L 520,180 L 440,180 L 440,140 L 410,140 Z" fill="#4CAF50"/>
+  
+  <!-- Текст -->
+  <text x="300" y="480" font-family="Arial, sans-serif" font-size="45" font-weight="bold" fill="#4CAF50" text-anchor="middle">УК ЗЕЛЁНАЯ ДОЛИНА</text>
+</svg>

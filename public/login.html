@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Вход - УК Зелёная долина v6.8.0</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png?v=6.8.0">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.0">
     <meta name="theme-color" content="#2E7D32">
     <style>
         :root {
@@ -87,32 +87,43 @@
     </div>
 
     <script>
-        function checkCode() {
-            const code = document.getElementById('accessCode').value;
+        (function initLogin() {
+            const input = document.getElementById('accessCode');
+            const errorBox = document.getElementById('error');
             const validCodes = ['9550', '2364'];
-            
-            if (validCodes.includes(code)) {
+            const showError = (msg) => {
+                if (!errorBox) return;
+                errorBox.textContent = msg || 'Неверный код доступа';
+                errorBox.style.display = 'block';
+                setTimeout(() => { errorBox.style.display = 'none'; }, 3000);
+            };
+            const doLogin = () => {
+                const code = (input?.value || '').trim();
+                if (!code) {
+                    showError('Введите код');
+                    return;
+                }
+                if (!validCodes.includes(code)) {
+                    showError('Неверный код доступа');
+                    return;
+                }
                 localStorage.setItem('authCode', code);
                 localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('authToken', Date.now().toString());
                 window.location.href = 'index.html?login=success';
-            } else {
-                document.getElementById('error').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('error').style.display = 'none';
-                }, 3000);
+            };
+            if (input) {
+                input.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLogin(); });
             }
-        }
-
-        document.getElementById('accessCode').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkCode();
+            const btn = document.querySelector('button[onclick="checkCode()"], button[type="submit"]');
+            if (btn) {
+                btn.onclick = (e) => { e.preventDefault(); doLogin(); };
             }
-        });
-
-        // Если уже авторизован, редирект
-        if (localStorage.getItem('isAuthenticated') === 'true') {
-            window.location.href = 'index.html';
-        }
+            if (localStorage.getItem('isAuthenticated') === 'true') {
+                window.location.href = 'index.html';
+            }
+            window.checkCode = doLogin;
+        })();
     </script>
 </body>
 </html>

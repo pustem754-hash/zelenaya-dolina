@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<!-- УК "Зелёная Долина" - Создание заявки v6.8.2 -->
+<!-- УК "Зелёная Долина" - Создание заявки v6.8.0 -->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/design-system.css">
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/mobile.css">
-    <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=6.8.3">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.3">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.3">
-    <meta name="theme-color" content="#2E7D32">
-    <link rel="manifest" href="./manifest.json">
-    <title>Новая заявка - УК «Зелёная долина» v6.8.2</title>
+    <title>Новая заявка - УК «Зелёная долина» v6.8.0</title>
     
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
     
     <!-- Навигация -->
     <link rel="stylesheet" href="css/navigation.css">
@@ -778,9 +777,9 @@
         <div class="header-content">
             <h1>Новая заявка</h1>
             <p>Опишите вашу проблему</p>
-        </div>
-    </div>
-    
+                </div>
+            </div>
+
     <!-- Форма -->
     <div class="form-container">
         <form id="requestForm" class="card">
@@ -835,7 +834,7 @@
                     <span id="charCount">0</span> / 1000 символов
                 </div>
             </div>
-            
+
             <!-- Медиафайлы -->
             <div class="form-group">
                 <div class="media-section-title">
@@ -843,7 +842,7 @@
                     Прикрепить файлы
                 </div>
                 <div class="media-buttons">
-                    <button type="button" class="media-btn" onclick="capturePhoto()">
+                    <button type="button" class="media-btn" onclick="takePhoto()">
                         <span class="btn-icon">📷</span>
                         Фото
                     </button>
@@ -864,14 +863,14 @@
                     <!-- Превью загруженных файлов -->
                 </div>
             </div>
-            
+
             <!-- Кнопка отправки -->
             <button type="submit" class="btn-submit-large">
                 <span>✅</span> Отправить заявку
             </button>
         </form>
     </div>
-    
+
     <script src="auth.js"></script>
     <script>
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
@@ -936,7 +935,7 @@
             // Привязать обработчики
             console.log('[Init] 🔗 Привязка обработчиков событий...');
             var audioBtn = document.getElementById('audioRecordBtn');
-            var photoBtn = document.querySelector('.media-btn[onclick="capturePhoto()"]');
+            var photoBtn = document.querySelector('.media-btn[onclick="takePhoto()"]');
             var videoBtn = document.querySelector('.media-btn[onclick="recordVideo()"]');
             
             console.log('[Init] 🔍 Поиск элементов:');
@@ -976,14 +975,14 @@
                 console.error('[Init] ❌ Все кнопки на странице:', document.querySelectorAll('button').length);
             }
             
-            if (photoBtn && window.capturePhoto === 'function') {
+            if (photoBtn && typeof takePhoto === 'function') {
                 photoBtn.onclick = function(e) {
                     console.log('[Init] 📷 Клик по кнопке фото');
                     e.preventDefault();
                     e.stopPropagation();
-                    capturePhoto();
+                    takePhoto();
                 };
-                console.log('[Init] ✅ capturePhoto() привязана');
+                console.log('[Init] ✅ takePhoto() привязана');
             }
             
             if (videoBtn && typeof recordVideo === 'function') {
@@ -1078,10 +1077,10 @@
             setTimeout(function() {
                 initializeCreateRequestPage();
             }, 100);
-            
+
             // Обработка формы
             document.getElementById('requestForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
+                    e.preventDefault();
                 
                 var formData = {
                     category: document.getElementById('requestCategory').value,
@@ -1131,8 +1130,8 @@
                         
                         // Редирект к списку заявок
                         setTimeout(function() {
-                            window.location.href = 'index.html';
-                        }, 1500);
+                        window.location.href = 'index.html';
+                    }, 1500);
                     }, 1500);
                     
                 } catch (error) {
@@ -1175,6 +1174,81 @@
             showNotification(message, 'success');
         }
         
+        async function takePhoto() {
+            console.log('[Photo] 📸 Начало съёмки фото');
+            
+            try {
+                var constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                };
+                
+                var stream = await navigator.mediaDevices.getUserMedia(constraints);
+                console.log('[Photo] ✅ Доступ к камере получен');
+                
+                var video = document.createElement('video');
+                video.srcObject = stream;
+                video.setAttribute('playsinline', '');
+                await video.play();
+                
+                // Ждём загрузки видео
+                await new Promise(function(resolve) {
+                    video.onloadedmetadata = function() {
+                        console.log('[Photo] 📹 Видео загружено');
+                        resolve();
+                    };
+                });
+                
+                // Создаём canvas
+                var canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                
+                // Останавливаем камеру
+                stream.getTracks().forEach(function(track) { track.stop(); });
+                console.log('[Photo] 🛑 Камера остановлена');
+                
+                // Получаем base64
+                var photoData = canvas.toDataURL('image/jpeg', 0.8);
+                console.log('[Photo] 📸 Фото сохранено, размер:', photoData.length);
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('currentPhoto', photoData);
+                
+                // Синхронизируем с attachedMedia для отправки
+                attachedMedia = attachedMedia.filter(function(media) { return media.type !== 'photo'; });
+                attachedMedia.push({
+                    type: 'photo',
+                    data: photoData,
+                    timestamp: Date.now()
+                });
+                localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
+                
+                // КРИТИЧНО: Принудительно отображаем превью
+                renderMediaPreview();
+                
+                // Уведомление
+                if (typeof showNotification === 'function') {
+                    showNotification('Фото сохранено!', 'success');
+                }
+                
+                console.log('[Photo] ✅ Превью должно быть видимым');
+                
+            } catch (error) {
+                console.error('[Photo] ❌ Ошибка съёмки:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Ошибка доступа к камере', 'error');
+                } else {
+                    alert('Ошибка доступа к камере: ' + error.message);
+                }
+            }
+        }
         
         function recordVideo() {
             console.log('[Video] 🎥 === НАЧАЛО ФУНКЦИИ recordVideo ===');
@@ -1810,6 +1884,5 @@
                border-radius: 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
         🔄 Переинициализация
     </button>
-    <script src="./js/media-ios-fix.js" defer></script>
 </body>
 </html>

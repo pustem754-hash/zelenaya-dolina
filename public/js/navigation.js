@@ -124,7 +124,6 @@ function shouldSkipNavigationUpdate() {
 function initNavigation() {
     // Проверка: не обновлять навигацию во время записи аудио
     if (shouldSkipNavigationUpdate()) {
-        console.log('[Navigation] Пропуск обновления навигации (идёт запись аудио)');
         return;
     }
     

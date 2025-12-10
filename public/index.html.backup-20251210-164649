@@ -871,7 +871,6 @@
             visibility: visible;
         }
     </style>
-    <link rel="stylesheet" href="css/mobile-stabilizer.css">
 </head>
 <body>
     <div class="header">
@@ -4845,19 +4844,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             console.log('✅ Приложение инициализировано');
         });
     </script>
-
-<script>
-// Service Worker регистрация для PWA
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/zelenaya-dolina/sw.js", {
-            scope: "/zelenaya-dolina/"
-        })
-        .then(reg => console.log("[Index] ✅ SW зарегистрирован"))
-        .catch(err => console.error("[Index] ❌ SW ошибка:", err));
-    });
-}
-</script>
 </body>
 </html>
 

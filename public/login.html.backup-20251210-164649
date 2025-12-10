@@ -76,7 +76,6 @@
         }
     </style>
     <script src="auth.js"></script>
-    <link rel="stylesheet" href="css/mobile-stabilizer.css">
 </head>
 <body>
     <div class="login-container">
@@ -126,51 +125,5 @@
             window.checkCode = doLogin;
         })();
     </script>
-
-<script>
-// КРИТИЧЕСКИ ВАЖНЫЙ обработчик формы входа
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("[Login] 🔐 Инициализация формы входа");
-    
-    const form = document.querySelector("form");
-    const input = document.querySelector("input[type="tel"], input[type="text"], input[inputmode="numeric"]");
-    
-    if (!form || !input) {
-        console.error("[Login] ❌ Элементы формы не найдены");
-        return;
-    }
-    
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const code = (input.value || "").trim();
-        
-        if (!/^\d{4}$/.test(code)) {
-            alert("Введите 4-значный код");
-            return;
-        }
-        
-        console.log("[Login] 📥 Вход с кодом:", code);
-        
-        if (typeof saveAuth === "function") {
-            saveAuth(code);
-            window.location.href = "index.html";
-        } else {
-            console.error("[Login] ❌ saveAuth не найдена!");
-            alert("Ошибка: функция авторизации не загружена");
-        }
-    });
-});
-
-// Service Worker регистрация
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/zelenaya-dolina/sw.js", {
-            scope: "/zelenaya-dolina/"
-        })
-        .then(reg => console.log("[Login] ✅ SW зарегистрирован"))
-        .catch(err => console.error("[Login] ❌ SW ошибка:", err));
-    });
-}
-</script>
 </body>
 </html>

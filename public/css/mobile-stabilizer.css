@@ -1,0 +1,63 @@
+/* ===== УСТРАНЕНИЕ ПРЫЖКОВ И МИГАНИЯ НА МОБИЛЬНЫХ ===== */
+
+/* 1. Глобальная стабилизация */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    /* КРИТИЧНО: предотвращает "резиновый" скролл */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 2. ГЛАВНОЕ: запрет авто-зума на iPhone */
+input, select, textarea, button {
+    font-size: 16px !important; /* Меньше 16px вызывает зум */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* 3. Стабилизация viewport при открытии клавиатуры */
+body {
+    min-height: 100vh;
+    min-height: 100dvh; /* Современный стандарт */
+}
+
+/* 4. Удаление задержки тапа (300ms delay) */
+a, button, input, select, textarea {
+    touch-action: manipulation;
+}
+
+/* 5. Стабилизация контейнеров */
+.container, .main-content, .login-container, .form-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* 6. Минимальные размеры для удобного тапа */
+button, .btn, input[type="submit"] {
+    min-height: 48px;
+    min-width: 48px;
+}
+
+/* 7. Адаптивные изображения */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 8. Безопасная зона для iPhone с вырезом */
+body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}

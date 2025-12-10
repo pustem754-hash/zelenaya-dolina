@@ -30,6 +30,13 @@
     <script src="js/navigation.js" defer></script>
     
     <style>
+        :root {
+            --primary-green: #27ae60;
+            --primary-green-hover: #2ecc71;
+            --dark-green: #1B5E20;
+            --light-green: #d5f4e6;
+            --text-light: #ffffff;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -141,13 +148,13 @@
             gap: 8px;
         }
         .btn:active {
-            background: #1B5E20;
+            background: var(--dark-green);
         }
         .btn-camera {
-            background: #3498db;
+            background: var(--primary-green);
         }
         .btn-camera:active {
-            background: #2980b9;
+            background: var(--primary-green-hover);
         }
         .btn-video {
             background: #9b59b6;

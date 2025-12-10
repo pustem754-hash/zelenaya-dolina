@@ -1,29 +1,26 @@
 {
   "name": "uk-zelenaya-dolina-pwa",
-  "version": "1.0.0",
-  "description": "PWA приложение для управления ЖК и коммунальными услугами - УК Зелёная Долина",
+  "version": "6.8.3",
+  "description": "Progressive Web App для УК Зелёная Долина (664 квартиры)",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "test": "echo \"No tests specified\" && exit 0"
+    "dev": "node server.js"
   },
   "keywords": [
     "pwa",
-    "housing",
-    "management",
+    "housing-management",
     "utilities",
-    "green-valley"
+    "green-valley",
+    "russia"
   ],
   "author": "УК Зелёная Долина",
-  "license": "ISC",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {},
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "dependencies": {
-    "xlsx": "^0.18.5"
-  },
-  "devDependencies": {
-    "jest": "^30.2.0"
+    "node": ">=20.0.0"
   }
 }

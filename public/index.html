@@ -1349,7 +1349,7 @@
     }
 })();
         // ====================================
-        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.6.1
+        // 🛡️ ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК РАСШИРЕНИЙ v6.8.0
         // ====================================
         
         (function() {
@@ -1439,7 +1439,7 @@
                 }
             }, 10000);
             
-            console.log('[Global] 🛡️ Защита от ошибок расширений v6.6.1 активирована');
+            console.log('[Global] 🛡️ Защита от ошибок расширений v6.8.0 активирована');
             console.log('[Global] 📋 Отслеживаются паттерны:', extensionErrorPatterns.length);
         })();
     </script>
@@ -1473,7 +1473,7 @@
         });
 
         /* ===========================================
-           АУДИОЗАПИСЬ v6.6.1 (унифицированный override)
+           АУДИОЗАПИСЬ v6.8.0 (унифицированный override)
            =========================================== */
         // Дополнительные переменные (уникальные имена, не конфликтуют с let-объявлениями)
         let recordingTimerLegacy = null;
@@ -1665,7 +1665,7 @@
 if (typeof requireAuth === "function") {
     requireAuth();
 }
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.6.1');
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.8.0');
         
         // ВАЖНО: Проверка авторизации ТОЛЬКО после загрузки DOM
         document.addEventListener('DOMContentLoaded', () => {
@@ -1730,7 +1730,7 @@ if (typeof requireAuth === "function") {
                     if (el) el.textContent = text;
                 };
                 
-                setText('userName', user.name || '—');
+                setText('userName', user.fio || '—');
                 setText('userAddress', user.address || '—');
                 setText('userApartment', user.apartment ? `🏠 Квартира: ${user.apartment}` : '🏠 Квартира: —');
                 
@@ -2101,7 +2101,7 @@ if (typeof requireAuth === "function") {
         `;
         document.head.appendChild(style);
         
-        // ========== АУДИО ПЕРЕМЕННЫЕ v6.6.1 (унифицировано с create-request) ==========
+        // ========== АУДИО ПЕРЕМЕННЫЕ v6.8.0 (унифицировано с create-request) ==========
         let mediaStream = null;
         let mediaRecorder = null;
         let audioChunks = [];

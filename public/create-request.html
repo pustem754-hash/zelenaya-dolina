@@ -976,7 +976,7 @@
                 console.error('[Init] ❌ Все кнопки на странице:', document.querySelectorAll('button').length);
             }
             
-            if (photoBtn && typeof capturePhoto === 'function') {
+            if (photoBtn && window.capturePhoto === 'function') {
                 photoBtn.onclick = function(e) {
                     console.log('[Init] 📷 Клик по кнопке фото');
                     e.preventDefault();
@@ -1810,6 +1810,6 @@
                border-radius: 8px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
         🔄 Переинициализация
     </button>
-    <script src="./js/media-ios-fix.js"></script>
+    <script src="./js/media-ios-fix.js" defer></script>
 </body>
 </html>

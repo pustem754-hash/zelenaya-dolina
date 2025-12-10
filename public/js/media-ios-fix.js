@@ -106,3 +106,21 @@
     };
 
 })();
+
+/**
+ * Запись аудио (placeholder)
+ */
+window.recordAudio = async function() {
+    alert('⚠️ Функция записи аудио в разработке.\nИспользуйте кнопку "Выбрать файл" для загрузки аудио.');
+    return null;
+};
+
+/**
+ * Запись видео (placeholder)
+ */
+window.recordVideo = async function() {
+    alert('⚠️ Функция записи видео в разработке.\nИспользуйте кнопку "Выбрать файл" для загрузки видео.');
+    return null;
+};
+
+console.log('[Media Fix] ✅ recordAudio и recordVideo добавлены');

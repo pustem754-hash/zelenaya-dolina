@@ -1,5 +1,5 @@
-// Service Worker для УК "Зелёная долина" PWA v1.0
-const CACHE_NAME = 'zelenaya-dolina-v1.1.0-REDIRECT-FIX';
+// Service Worker для УК "Зелёная долина" PWA v1.2
+const CACHE_NAME = 'zelenaya-dolina-v1.2.0-DATA-FIX';
 const OFFLINE_URL = '/zelenaya-dolina/index.html';
 
 // Критически важные ресурсы для кэширования

@@ -15,6 +15,9 @@ function saveAuth(code) {
     // Сохранить userPhone для обратной совместимости (используем код как телефон)
     localStorage.setItem('userPhone', code);
     
+    // Сохранить userData для совместимости с loadUserData() в index.html
+    localStorage.setItem('userData', JSON.stringify(userData));
+    
     console.log('[Auth] ✅ Авторизация сохранена, код:', code);
 }
 
@@ -40,6 +43,7 @@ function logout() {
     localStorage.removeItem(AUTH_CODE_KEY);
     localStorage.removeItem(USER_DATA_KEY);
     localStorage.removeItem('userPhone'); // Очистить старый ключ
+    localStorage.removeItem('userData'); // Очистить старый ключ
     console.log('[Auth] 🚪 Выход из системы');
     window.location.href = 'login.html';
 }

@@ -59,9 +59,91 @@ function requireAuth() {
     return true;
 }
 
-// 7. Мок-данные пользователей
+// 7. Мок-данные пользователей (реальные жители из Excel)
 function getMockUserByCode(code) {
     const users = {
+        // Реальные жители из 25.xlsx
+        '2364': {
+            fio: 'Фахрутдинов Артур Дмитриевич',
+            fullName: 'Фахрутдинов Артур Дмитриевич',
+            accountNumber: '2017502364',
+            licSchet: '2017502364',
+            code: '2364',
+            phone: '+72017502364',
+            apartment: '4',
+            storage: '0',
+            address: 'Рогачева ул, д. 25, корп. 1',
+            fullAddress: 'г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 4',
+            balance: 0,
+            area: 65.0,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
+        },
+        '2355': {
+            fio: 'Обрядин Алексей Анатольевич',
+            fullName: 'Обрядин Алексей Анатольевич',
+            accountNumber: '2017502355',
+            licSchet: '2017502355',
+            code: '2355',
+            phone: '+72017502355',
+            apartment: '18',
+            storage: '1',
+            address: 'Рогачева ул, д. 25, корп. 1',
+            fullAddress: 'г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 18',
+            balance: -850.00,
+            area: 55.3,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
+        },
+        '0985': {
+            fio: 'Першина Ильсияр Зиннатовна',
+            fullName: 'Першина Ильсияр Зиннатовна',
+            accountNumber: '2017440985',
+            licSchet: '2017440985',
+            code: '0985',
+            phone: '+72017440985',
+            apartment: '1',
+            storage: '0',
+            address: 'Рогачева ул, д. 25, корп. 1',
+            fullAddress: 'г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 1',
+            balance: -1200.50,
+            area: 52.0,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
+        },
+        '9948': {
+            fio: 'Шакиров Марат Миннахметович',
+            fullName: 'Шакиров Марат Миннахметович',
+            accountNumber: '2017359948',
+            licSchet: '2017359948',
+            code: '9948',
+            phone: '+72017359948',
+            apartment: '1',
+            storage: '0',
+            address: 'Рогачева ул, д. 25, корп. 1',
+            fullAddress: 'г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 1',
+            balance: 0,
+            area: 52.0,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
+        },
+        '0994': {
+            fio: 'Шакирова Миляуша Халимовна',
+            fullName: 'Шакирова Миляуша Халимовна',
+            accountNumber: '2017440994',
+            licSchet: '2017440994',
+            code: '0994',
+            phone: '+72017440994',
+            apartment: '2',
+            storage: '0',
+            address: 'Рогачева ул, д. 25, корп. 1',
+            fullAddress: 'г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 2',
+            balance: -456.00,
+            area: 58.5,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
+        },
+        // Тестовые коды (для разработки)
         '1977': {
             fio: 'Иванов Иван Иванович',
             fullName: 'Иванов Иван Иванович',

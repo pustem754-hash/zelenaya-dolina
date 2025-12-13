@@ -10,63 +10,63 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-48x48.png",
+      "src": "/zelenaya-dolina/icon-48x48.png?v=6.8.3",
       "sizes": "48x48",
       "type": "image/png"
     },
     {
-      "src": "icon-72x72.png",
+      "src": "/zelenaya-dolina/icon-72x72.png?v=6.8.3",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "icon-96x96.png",
+      "src": "/zelenaya-dolina/icon-96x96.png?v=6.8.3",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "icon-120x120.png",
+      "src": "/zelenaya-dolina/icon-120x120.png?v=6.8.3",
       "sizes": "120x120",
       "type": "image/png"
     },
     {
-      "src": "icon-128x128.png",
+      "src": "/zelenaya-dolina/icon-128x128.png?v=6.8.3",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "icon-144x144.png",
+      "src": "/zelenaya-dolina/icon-144x144.png?v=6.8.3",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "icon-152x152.png",
+      "src": "/zelenaya-dolina/icon-152x152.png?v=6.8.3",
       "sizes": "152x152",
       "type": "image/png"
     },
     {
-      "src": "icon-167x167.png",
+      "src": "/zelenaya-dolina/icon-167x167.png?v=6.8.3",
       "sizes": "167x167",
       "type": "image/png"
     },
     {
-      "src": "icon-180x180.png",
+      "src": "/zelenaya-dolina/icon-180x180.png?v=6.8.3",
       "sizes": "180x180",
       "type": "image/png"
     },
     {
-      "src": "icon-192x192.png",
+      "src": "/zelenaya-dolina/icon-192x192.png?v=6.8.3",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icon-384x384.png",
+      "src": "/zelenaya-dolina/icon-384x384.png?v=6.8.3",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "icon-512x512.png",
+      "src": "/zelenaya-dolina/icon-512x512.png?v=6.8.3",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

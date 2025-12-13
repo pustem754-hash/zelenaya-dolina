@@ -4600,9 +4600,9 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             (async function checkUserData() {
                 await loadResidents(); // Загрузить базу жителей
                 
-                const sessionPhone = localStorage.getItem('userPhone');
-                if (!sessionPhone) {
-                    console.error('❌ Нет сессии');
+                // Проверка авторизации через новую систему
+                if (!isAuthenticated()) {
+                    console.error('❌ Нет авторизации');
                     window.location.href = 'login.html';
                     return;
                 }

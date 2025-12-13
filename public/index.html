@@ -70,7 +70,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
         .card {
             background: white;
             border-radius: 16px;
@@ -178,7 +177,6 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(1.1); }
-        }
         .btn-delete-video {
             position: absolute;
             top: 5px;
@@ -442,8 +440,6 @@
             .nav-item {
                 padding: 2px 1px;
             }
-        }
-        
         /* Для очень маленьких экранов — скрыть текст, оставить только иконки */
         @media (max-width: 340px) {
             .nav-label {
@@ -456,8 +452,6 @@
             .nav {
                 padding: 12px 4px;
             }
-        }
-        
         /* Табы */
         .tabs {
             display: flex;
@@ -516,7 +510,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s;
@@ -857,7 +850,6 @@
                 width: 100%;
                 text-align: center;
             }
-        }
         /* Плавные вкладки заявок */
         .request-tab-content {
             min-height: 400px;
@@ -1370,8 +1362,7 @@
             // Счётчик подавленных ошибок (для отладки)
             let suppressedErrors = 0;
             
-            // Список паттернов ошибок расширений
-            const extensionErrorPatterns = [
+            // extensionErrorPatterns = [
                 'message channel closed',
                 'Extension context invalidated',
                 'chrome-extension://',
@@ -1396,8 +1387,7 @@
                 );
             }
             
-            // Глобальный обработчик ошибок
-            const originalErrorHandler = window.onerror;
+            // originalErrorHandler = window.onerror;
             window.onerror = function(message, source, lineno, colno, error) {
                 if (isExtensionError(message, error ? error.stack : '')) {
                     suppressedErrors++;
@@ -1441,7 +1431,6 @@
                         suppressedErrors++;
                         console.warn('[Global] 🛡️ Подавлена ошибка focusin от расширения');
                     }
-                }
             }, true); // true = capture phase (до расширений)
             
             // Отчёт о подавленных ошибках (каждые 10 секунд)
@@ -1471,8 +1460,7 @@
         window.location.href = "login.html";
         return;
     }
-            // Отключить автозаполнение на критичных полях (если нужно)
-            const sensitiveFields = document.querySelectorAll('input[type="tel"], input[type="text"]');
+            // sensitiveFields = document.querySelectorAll('input[type="tel"], input[type="text"]');
             sensitiveFields.forEach(field => {
                 // Добавить атрибуты для отключения агрессивных расширений
                 field.setAttribute('autocomplete', 'off');
@@ -1505,13 +1493,11 @@
             }
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 try { mediaRecorder.stop(); } catch (e) { console.warn('[Audio] stop error', e); }
-            }
             mediaRecorder = null;
             if (mediaStream) {
                 try {
                     mediaStream.getTracks().forEach(t => t.stop());
                 } catch (e) { console.warn('[Audio] stream stop error', e); }
-            }
             mediaStream = null;
             if (typeof audioChunks !== 'undefined') audioChunks = [];
             if (typeof savedAudioBlob !== 'undefined') savedAudioBlob = null;
@@ -1538,8 +1524,8 @@
                 mediaRecorder.start();
                 isRecording = true;
                 recordingStartTimeLegacy = Date.now();
-                recordingTimerLegacy = // ОТКЛЮЧЕНО: setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - recordingStartTimeLegacy) / 1000);
+                                recordingTimerLegacy = null; // ОТКЛЮЧЕНО: setInterval(() => {
+                // elapsed = Math.floor((Date.now() - recordingStartTimeLegacy) / 1000);
                     audioDuration = elapsed;
                     const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
                     const s = String(elapsed % 60).padStart(2, '0');
@@ -1561,8 +1547,6 @@
                 showNotification('❌ Ошибка доступа к микрофону: ' + err.message, 'error');
                 cleanupAudioResources();
             }
-        }
-
         function stopAudioRecording() {
             console.log('[Audio] 🛑 stop record (override)');
             if (recordingTimerLegacy) {
@@ -1633,8 +1617,6 @@
                 if (audioBtn) { audioBtn.style.opacity = '1'; audioBtn.style.pointerEvents = 'auto'; }
                 if (audioControls) { audioControls.style.display = 'none'; }
                 if (audioPreview) { audioPreview.style.display = 'none'; audioPreview.style.opacity = '0'; audioPreview.style.pointerEvents = 'none'; }
-            }
-            
             const btn = document.getElementById('audioBtn');
             if (btn) {
                 btn.removeEventListener('click', toggleAudio);
@@ -1760,8 +1742,6 @@ if (typeof requireAuth === "function") {
             } catch (error) {
                 console.error('[Profile] Ошибка загрузки профиля:', error);
             }
-        }
-
         // ========== ФУНКЦИИ ДЛЯ КНОПОК ==========
         // Оплата онлайн
         function handlePaymentClick() {
@@ -1779,7 +1759,6 @@ if (typeof requireAuth === "function") {
                     } else {
                         showBankDetails(amount);
                     }
-                }
             });
         }
         
@@ -1934,8 +1913,7 @@ if (typeof requireAuth === "function") {
         }
         
         function markPaymentAsPaid() {
-            // Сохранить информацию об оплате
-            const payment = {
+            // payment = {
                 date: new Date().toISOString(),
                 amount: 10360.02,
                 status: 'paid'
@@ -1982,7 +1960,6 @@ if (typeof requireAuth === "function") {
                     button.disabled = false;
                     button.textContent = 'Нажмите для открытия';
                 }
-            }
         }
         
         function mockAPICall(endpoint, data) {
@@ -2008,8 +1985,6 @@ if (typeof requireAuth === "function") {
             if (confirm('Вы уверены, что хотите выйти?')) {
                 logout();
             }
-        }
-        
         // Лоадер
         function showLoader(message = 'Загрузка...') {
             const loader = document.createElement('div');
@@ -2104,12 +2079,10 @@ if (typeof requireAuth === "function") {
             showNotification(message, 'warning', 4000);
         }
         
-        // Добавить CSS для анимации спиннера
-        const style = document.createElement('style');
+        // style = document.createElement('style');
         style.textContent = `
             @keyframes spin {
                 to { transform: rotate(360deg); }
-            }
         `;
         document.head.appendChild(style);
         
@@ -2148,8 +2121,6 @@ if (typeof requireAuth === "function") {
                     }
                 }, 150);
             }
-        }
-        
         // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====
         // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК СЧЁТЧИКОВ ==========
         function showMetersTab(tabName) {
@@ -2163,8 +2134,7 @@ if (typeof requireAuth === "function") {
                 btn.classList.remove('active');
             });
             
-            // Показать выбранную вкладку
-            const tabMap = {
+            // tabMap = {
                 'payment': 'paymentTab',
                 'meters': 'metersTab',
                 'history': 'historyTab',
@@ -2178,8 +2148,7 @@ if (typeof requireAuth === "function") {
                 tab.style.display = 'block';
             }
             
-            // Добавить активный класс к кнопке
-            const activeBtn = document.querySelector(`.meters-tab[data-tab="${tabName}"]`);
+            // activeBtn = document.querySelector(`.meters-tab[data-tab="${tabName}"]`);
             if (activeBtn) {
                 activeBtn.classList.add('active');
             }
@@ -2192,13 +2161,10 @@ if (typeof requireAuth === "function") {
             } else if (tabName === 'video') {
                 loadMeterVideosFromStorage();
             }
-        }
-        
         function showTab(tabName, event) {
             console.log('📑 Переключение вкладки:', tabName);
             
-            // Скрыть все вкладки
-            const tabs = document.querySelectorAll('.tab-content');
+            // tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => {
                 const tabElement = document.getElementById(tab.id);
                 if (tabElement) {
@@ -2207,12 +2173,10 @@ if (typeof requireAuth === "function") {
                 }
             });
             
-            // Убрать активный класс у кнопок
-            const btns = document.querySelectorAll('.tab-btn');
+            // btns = document.querySelectorAll('.tab-btn');
             btns.forEach(btn => btn.classList.remove('active'));
             
-            // Показать выбранную вкладку
-            const targetTab = document.getElementById(tabName + 'Tab');
+            // targetTab = document.getElementById(tabName + 'Tab');
             if (targetTab) {
                 targetTab.style.display = 'block';
                 targetTab.classList.add('active');
@@ -2227,18 +2191,14 @@ if (typeof requireAuth === "function") {
             if (tabName === 'videos') {
                 renderCounterVideos();
             }
-        }
-        
         // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ В ЗАЯВКАХ =====
         function showRequestTab(tabName, event) {
             console.log('📑 Переключение вкладки заявки:', tabName);
             
-            // Найти родительский контейнер (секция заявок)
-            const requestsSection = document.getElementById('requests');
+            // requestsSection = document.getElementById('requests');
             if (!requestsSection) return;
             
-            // Скрыть все вкладки в секции заявок
-            const tabs = requestsSection.querySelectorAll('.tab-content');
+            // tabs = requestsSection.querySelectorAll('.tab-content');
             tabs.forEach(tab => {
                 const tabElement = document.getElementById(tab.id);
                 if (tabElement) {
@@ -2248,12 +2208,10 @@ if (typeof requireAuth === "function") {
                 }
             });
             
-            // Убрать активный класс у кнопок
-            const btns = requestsSection.querySelectorAll('.tab-btn');
+            // btns = requestsSection.querySelectorAll('.tab-btn');
             btns.forEach(btn => btn.classList.remove('active'));
             
-            // Показать выбранную вкладку
-            const tabId = 'request' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'Tab';
+            // tabId = 'request' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'Tab';
             const targetTab = document.getElementById(tabId);
             if (targetTab) {
                 targetTab.classList.add('active');
@@ -2276,14 +2234,11 @@ if (typeof requireAuth === "function") {
                 // КРИТИЧНО: Инициализация аудио при показе вкладки
                 initializeAudioTab();
             }
-        }
-
         // ===== ФОТО ГАЛЕРЕЯ: ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ =====
         function initPhotoGallery() {
             console.log('📸 Инициализация фото галереи');
             
-            // Кнопки для заявок
-            const photoBtn = document.getElementById('photoBtn');
+            // photoBtn = document.getElementById('photoBtn');
             if (photoBtn) {
                 photoBtn.addEventListener('click', function() {
                     console.log('📸 Кнопка "Камера" нажата');
@@ -2305,8 +2260,7 @@ if (typeof requireAuth === "function") {
                 });
             }
             
-            // Input для камеры заявок
-            const photoCameraInput = document.getElementById('photoCameraInput');
+            // photoCameraInput = document.getElementById('photoCameraInput');
             if (photoCameraInput) {
                 photoCameraInput.addEventListener('change', function(e) {
                     console.log('📸 Файл выбран из камеры:', e.target.files[0]?.name);
@@ -2319,8 +2273,7 @@ if (typeof requireAuth === "function") {
                 });
             }
             
-            // Input для галереи заявок
-            const photoGalleryInput = document.getElementById('photoGalleryInput');
+            // photoGalleryInput = document.getElementById('photoGalleryInput');
             if (photoGalleryInput) {
                 photoGalleryInput.addEventListener('change', function(e) {
                     console.log('🖼️ Файл выбран из галереи:', e.target.files[0]?.name);
@@ -2332,8 +2285,7 @@ if (typeof requireAuth === "function") {
                 });
             }
             
-            // Кнопки для счётчиков
-            const counterPhotoBtn = document.getElementById('counterPhotoBtn');
+            // counterPhotoBtn = document.getElementById('counterPhotoBtn');
             if (counterPhotoBtn) {
                 counterPhotoBtn.addEventListener('click', function() {
                     console.log('📸 Кнопка "Камера счётчика" нажата');
@@ -2355,8 +2307,7 @@ if (typeof requireAuth === "function") {
                 });
             }
             
-            // Input для камеры счётчиков
-            const counterPhotoCameraInput = document.getElementById('counterPhotoCameraInput');
+            // counterPhotoCameraInput = document.getElementById('counterPhotoCameraInput');
             if (counterPhotoCameraInput) {
                 counterPhotoCameraInput.addEventListener('change', function(e) {
                     console.log('📸 Файл выбран из камеры счётчика:', e.target.files[0]?.name);
@@ -2368,8 +2319,7 @@ if (typeof requireAuth === "function") {
                 });
             }
             
-            // Input для галереи счётчиков
-            const counterPhotoGalleryInput = document.getElementById('counterPhotoGalleryInput');
+            // counterPhotoGalleryInput = document.getElementById('counterPhotoGalleryInput');
             if (counterPhotoGalleryInput) {
                 counterPhotoGalleryInput.addEventListener('change', function(e) {
                     console.log('🖼️ Файл выбран из галереи счётчика:', e.target.files[0]?.name);
@@ -2402,8 +2352,7 @@ if (typeof requireAuth === "function") {
                 img.onload = function() {
                     console.log('📸 Изображение загружено, размеры:', img.width, 'x', img.height);
                     
-                    // Сжатие изображения до 1024px
-                    const canvas = document.createElement('canvas');
+                    // canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
                     let width = img.width;
@@ -2424,8 +2373,7 @@ if (typeof requireAuth === "function") {
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Сохранение в localStorage
-                    const compressed = canvas.toDataURL('image/jpeg', 0.8);
+                    // compressed = canvas.toDataURL('image/jpeg', 0.8);
                     const storageKey = type === 'counter' ? 'counterPhotos' : 'requestPhotos';
                     const photos = JSON.parse(localStorage.getItem(storageKey) || '[]');
                     
@@ -2557,16 +2505,12 @@ if (typeof requireAuth === "function") {
                 fullPhoto.src = dataUrl;
                 viewer.classList.add('active');
             }
-        }
-
         function closePhotoViewer() {
             console.log('❌ Закрытие просмотра фото');
             const viewer = document.getElementById('photoViewer');
             if (viewer) {
                 viewer.classList.remove('active');
             }
-        }
-
         // ===== ВИДЕО ФУНКЦИОНАЛ =====
         function initVideoGallery() {
             console.log('🎥 Инициализация видео галереи');
@@ -2594,9 +2538,7 @@ if (typeof requireAuth === "function") {
                                 if (!MediaRecorder.isTypeSupported(videoMimeType)) {
                                     videoMimeType = ''; // Используем формат по умолчанию браузера
                                 }
-                            }
                         }
-                    }
                     console.log('🎥 Используемый video mimeType:', videoMimeType || 'default');
                     
                     const options = videoMimeType ? { mimeType: videoMimeType } : {};
@@ -2656,9 +2598,9 @@ if (typeof requireAuth === "function") {
                     statusDiv.style.pointerEvents = 'auto';
                     
                     // Таймер
-                    videoTimer = // ОТКЛЮЧЕНО: setInterval(() => {
-                        const elapsed = Math.round((Date.now() - videoStartTime) / 1000);
-                        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                                        // Таймер отключен
+                    videoTimer = null; // ОТКЛЮЧЕНО: setInterval(() => {
+                    // minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
                         const seconds = (elapsed % 60).toString().padStart(2, '0');
                         document.getElementById('videoTimer').textContent = `${minutes}:${seconds}`;
                         
@@ -2678,7 +2620,6 @@ if (typeof requireAuth === "function") {
                 if (videoRecorder && videoRecorder.state === 'recording') {
                     videoRecorder.stop();
                 }
-            }
         }
         
         function resetVideoRecording() {
@@ -2758,8 +2699,6 @@ if (typeof requireAuth === "function") {
                 console.error('Ошибка сохранения видео:', error);
                 alert('Ошибка сохранения видео');
             }
-        }
-
         // ===== ВИДЕО ЗАПИСЬ (СТАРАЯ ФУНКЦИЯ handleVideoRecording() УДАЛЕНА) =====
         // Теперь используется toggleVideoRecording() и handleVideoFile()
 
@@ -2829,8 +2768,6 @@ if (typeof requireAuth === "function") {
             } else {
                 stopCounterVideoRecording();
             }
-        }
-        
         async function startCounterVideoRecording() {
             console.log('🎥 Начало записи видео счётчика');
             
@@ -2883,8 +2820,6 @@ if (typeof requireAuth === "function") {
                 console.error('❌ Ошибка доступа к камере:', error);
                 alert('Ошибка доступа к камере: ' + error.message);
             }
-        }
-        
         function stopCounterVideoRecording() {
             console.log('⏹️ Остановка записи видео счётчика');
             
@@ -2897,8 +2832,6 @@ if (typeof requireAuth === "function") {
                 counterVideoBtn.textContent = '🎥 Записать видео счётчика';
                 counterVideoBtn.classList.remove('recording');
             }
-        }
-        
         function deleteCounterVideo(id) {
             console.log('🗑️ Удаление видео счётчика ID:', id);
             if (!confirm('Удалить это видео?')) {
@@ -2946,8 +2879,6 @@ if (typeof requireAuth === "function") {
                 fullVideo.src = videoSrc;
                 viewer.classList.add('active');
             }
-        }
-
         function closeVideoViewer() {
             console.log('❌ Закрытие просмотра видео');
             const viewer = document.getElementById('videoViewer');
@@ -2959,8 +2890,6 @@ if (typeof requireAuth === "function") {
                 fullVideo.pause();
                 fullVideo.src = '';
             }
-        }
-
         // ========== АУДИО ЗАПИСЬ (скопировано из create-request) ==========
         let savedAudioBlob = null;
         let audioTimer = null;
@@ -2980,13 +2909,11 @@ if (typeof requireAuth === "function") {
             }
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 try { mediaRecorder.stop(); } catch (e) { console.warn('[Audio] stop error', e); }
-            }
             mediaRecorder = null;
             if (mediaStream) {
                 try {
                     mediaStream.getTracks().forEach(t => t.stop());
                 } catch (e) { console.warn('[Audio] stream stop error', e); }
-            }
             mediaStream = null;
             audioChunks = [];
             isRecording = false;
@@ -3010,7 +2937,6 @@ if (typeof requireAuth === "function") {
                         if (!MediaRecorder.isTypeSupported(mimeType)) {
                             mimeType = '';
                         }
-                    }
                 }
                 console.log('[Audio] mimeType:', mimeType || 'default');
                 
@@ -3057,8 +2983,7 @@ if (typeof requireAuth === "function") {
                 }
                 
                 const timerEl = document.getElementById('recordingTimer');
-                recordingTimer = // ОТКЛЮЧЕНО: setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - audioStartTime) / 1000);
+                recordingTimer = // elapsed = Math.floor((Date.now() - audioStartTime) / 1000);
                     audioDuration = elapsed;
                     const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
                     const s = String(elapsed % 60).padStart(2, '0');
@@ -3074,8 +2999,6 @@ if (typeof requireAuth === "function") {
                 showNotification('❌ Ошибка доступа к микрофону: ' + error.message, 'error');
                 cleanupAudioResources();
             }
-        }
-        
         function stopAudioRecording() {
             console.log('[Audio] 🛑 stop record');
             if (recordingTimer) {
@@ -3094,8 +3017,6 @@ if (typeof requireAuth === "function") {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
             }
-        }
-        
         function saveAudioRecording(blob, durationSeconds) {
             console.log('[Audio] 💾 save recording');
             const audioUrl = URL.createObjectURL(blob);
@@ -3185,8 +3106,6 @@ if (typeof requireAuth === "function") {
                 if (audioBtn) { audioBtn.style.opacity = '1'; audioBtn.style.pointerEvents = 'auto'; }
                 if (audioControls) { audioControls.style.display = 'none'; }
                 if (audioPreview) { audioPreview.style.display = 'none'; }
-            }
-            
             const btn = document.getElementById('audioBtn');
             if (btn) {
                 const newBtn = btn.cloneNode(true);
@@ -3258,13 +3177,11 @@ if (typeof requireAuth === "function") {
             currentAudioElement = new Audio(audio.data);
             currentAudioId = id;
             
-            // Показать модальное окно
-            const modal = document.getElementById('audioModal');
+            // modal = document.getElementById('audioModal');
             if (modal) {
                 modal.style.display = 'flex';
                 
-                // Обновить время
-                const updateTime = () => {
+                // updateTime = () => {
                     if (!currentAudioElement) return;
                     
                     const current = Math.floor(currentAudioElement.currentTime);
@@ -3310,8 +3227,6 @@ if (typeof requireAuth === "function") {
                 currentAudioElement.play();
                 document.getElementById('audioPlayPauseBtn').textContent = '⏸';
             }
-        }
-        
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
@@ -3347,8 +3262,6 @@ if (typeof requireAuth === "function") {
             if (currentAudioId === id) {
                 closeAudioModal();
             }
-        }
-
         // ===== ВЫБОР КАТЕГОРИИ =====
         let selectedCategory = null;
         
@@ -3411,8 +3324,7 @@ if (typeof requireAuth === "function") {
                 return;
             }
             
-            // Сохранить в историю
-            const reading = {
+            // reading = {
                 date: new Date().toISOString(),
                 coldWater: parseFloat(coldWater),
                 hotWater: parseFloat(hotWater),
@@ -3567,8 +3479,7 @@ if (typeof requireAuth === "function") {
                 return;
             }
             
-            // Сохранить в историю
-            const history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
+            // history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
             const currentDate = new Date();
             const month = currentDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
             
@@ -3583,8 +3494,7 @@ if (typeof requireAuth === "function") {
                 photos: photos.length
             });
             
-            // Оставить только последние 12 месяцев
-            const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
             const last12Months = sortedHistory.slice(0, 12);
             localStorage.setItem('countersHistory', JSON.stringify(last12Months));
             
@@ -3603,20 +3513,16 @@ if (typeof requireAuth === "function") {
             if (document.getElementById('historyTab')?.style.display !== 'none') {
                 renderHistory();
             }
-        }
-        
         // ===== ИСТОРИЯ ПОКАЗАНИЙ =====
         function renderHistory() {
             console.log('📈 Рендеринг истории показаний');
             const history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
             const period = parseInt(document.getElementById('historyPeriod')?.value || '3');
             
-            // Отсортировать по дате (новые первые)
-            const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
             const filteredHistory = sortedHistory.slice(0, period);
             
-            // Рендеринг таблицы
-            const tableBody = document.getElementById('historyTableBody');
+            // tableBody = document.getElementById('historyTableBody');
             if (tableBody) {
                 if (filteredHistory.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Нет данных за выбранный период</td></tr>';
@@ -3644,8 +3550,6 @@ if (typeof requireAuth === "function") {
                         `;
                     }).join('');
                 }
-            }
-            
             // Рендеринг графика
             renderHistoryChart(filteredHistory);
         }
@@ -3715,8 +3619,6 @@ if (typeof requireAuth === "function") {
                 reminderDays.style.color = '#c62828';
                 reminderDays.style.fontWeight = '600';
             }
-        }
-        
         // ===== УПРАВЛЕНИЕ ЗАЯВКАМИ =====
         function showRequestSection(section, event) {
             console.log('📋 Переключение секции заявок:', section);
@@ -3739,8 +3641,6 @@ if (typeof requireAuth === "function") {
             if (event && event.target) {
                 event.target.classList.add('active');
             }
-        }
-        
         function submitRequest() {
             console.log('📤 Отправка заявки');
             
@@ -3760,8 +3660,7 @@ if (typeof requireAuth === "function") {
                 'other': 'другое'
             };
             
-            // Сохранить заявку
-            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            // requests = JSON.parse(localStorage.getItem('requests') || '[]');
             const newRequest = {
                 id: Date.now(),
                 category: selectedCategory,
@@ -3988,7 +3887,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                             data.cell.styles.fontStyle = 'bold';
                             data.cell.styles.fontSize = 10;
                         }
-                    }
                 });
                 
                 y = doc.lastAutoTable.finalY + 10;
@@ -4029,7 +3927,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                         4: { cellWidth: 25, halign: 'right' },
                         5: { cellWidth: 25 },
                         6: { cellWidth: 20, halign: 'right' }
-                    }
                 });
                 
                 y = doc.lastAutoTable.finalY + 10;
@@ -4052,10 +3949,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 console.error('❌ Ошибка генерации PDF:', error);
                 alert('Ошибка генерации PDF: ' + error.message);
             }
-        }
-
-        // ===== ДАННЫЕ ЖИЛЫХ КОМПЛЕКСОВ =====
-        const complexes = {
+        // complexes = {
             mayak: [
                 { 
                     address: "ул. Рогачёва, д. 25, корп. 1", 
@@ -4152,8 +4046,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             if (!checked) {
                 storageInput.value = '';
             }
-        }
-        
         function saveUserData() {
             const complex = document.getElementById('complexSelect').value;
             const houseIndex = document.getElementById('houseSelect').value;
@@ -4224,14 +4116,11 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 document.getElementById('userFormCard').style.display = 'none';
                 userInfoCard.style.display = 'block';
             }
-        }
-        
         function showUserForm() {
             document.getElementById('userInfoCard').style.display = 'none';
             document.getElementById('userFormCard').style.display = 'block';
             
-            // Загрузить сохранённые данные в форму
-            const saved = localStorage.getItem('userData');
+            // saved = localStorage.getItem('userData');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
@@ -4250,7 +4139,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 } catch (e) {
                     console.error('Ошибка загрузки данных в форму:', e);
                 }
-            }
         }
         
         function hideUserForm() {
@@ -4357,20 +4245,17 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             console.log('📊 Загрузка данных главного экрана');
             try {
                 // TODO: Заменить на реальный API вызов
-                // const response = await fetch('/api/main-screen');
-                // const data = await response.json();
+                // response = await fetch('/api/main-screen');
+                // data = await response.json();
                 
                 // Пока используем mock данные
                 renderMainScreen(mainScreenData);
             } catch (error) {
                 console.error('❌ Ошибка загрузки данных:', error);
             }
-        }
-        
         // Рендеринг главного экрана
         function renderMainScreen(data) {
-            // Обновление статуса платежа
-            const paymentStatus = document.getElementById('paymentStatus');
+            // paymentStatus = document.getElementById('paymentStatus');
             if (paymentStatus) {
                 if (data.payment.status === 'paid') {
                     paymentStatus.textContent = 'Оплачено';
@@ -4385,10 +4270,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                     paymentStatus.style.background = '#fff3cd';
                     paymentStatus.style.color = '#856404';
                 }
-            }
-            
-            // Обновление статуса шлагбаума
-            const gateIcon = document.getElementById('gateIcon');
+            // gateIcon = document.getElementById('gateIcon');
             const gateStatus = document.getElementById('gateStatus');
             if (gateIcon && gateStatus) {
                 gateIcon.textContent = data.gateStatus.isOpen ? '🚪' : '🔒';
@@ -4399,14 +4281,12 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                         : 'Нет доступа';
             }
             
-            // Обновление статуса камер
-            const camerasStatus = document.getElementById('camerasStatus');
+            // camerasStatus = document.getElementById('camerasStatus');
             if (camerasStatus) {
                 camerasStatus.textContent = `${data.cameras.online}/${data.cameras.total} онлайн${data.cameras.recentActivity ? ' • Активность' : ''}`;
             }
             
-            // Обновление статуса счетчиков
-            const metersStatus = document.getElementById('metersStatus');
+            // metersStatus = document.getElementById('metersStatus');
             if (metersStatus) {
                 if (data.meters.needsSubmission) {
                     metersStatus.textContent = '⚠️ Требуется передача';
@@ -4416,10 +4296,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                     metersStatus.textContent = `Передано ${lastDate}`;
                     metersStatus.style.color = '#666';
                 }
-            }
-            
-            // Обновление статуса заявок
-            const requestsStatus = document.getElementById('requestsStatus');
+            // requestsStatus = document.getElementById('requestsStatus');
             const activeRequestsCount = document.getElementById('activeRequestsCount');
             if (requestsStatus) {
                 requestsStatus.textContent = `${data.vskRequests.active} активных`;
@@ -4431,8 +4308,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             // Рендеринг списка заявок
             renderRecentRequests(data.vskRequests.recent);
             
-            // Обновление уведомлений
-            const unreadNotificationsCount = document.getElementById('unreadNotificationsCount');
+            // unreadNotificationsCount = document.getElementById('unreadNotificationsCount');
             if (unreadNotificationsCount) {
                 unreadNotificationsCount.textContent = data.notifications.unread;
             }
@@ -4525,7 +4401,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             
             try {
                 // TODO: Заменить на реальный API вызов
-                // const response = await fetch('/api/gate/open', {
+                // response = await fetch('/api/gate/open', {
                 //     method: 'POST',
                 //     headers: { 'Content-Type': 'application/json' },
                 //     body: JSON.stringify({ phone: mainScreenData.user.phone })
@@ -4559,8 +4435,6 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 console.error('❌ Ошибка открытия шлагбаума:', error);
                 alert('Ошибка открытия шлагбаума. Попробуйте позже.');
             }
-        }
-        
         // Отметить уведомление как прочитанное
         function markNotificationRead(id) {
             const notification = mainScreenData.notifications.items.find(n => n.id === id);
@@ -4569,14 +4443,11 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 mainScreenData.notifications.unread--;
                 renderMainScreen(mainScreenData);
             }
-        }
-        
         // Показать детали заявки
         function showRequestDetails(id) {
             const request = mainScreenData.vskRequests.recent.find(r => r.id === id);
             if (!request) {
-                // Попробовать найти в localStorage
-                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                // requests = JSON.parse(localStorage.getItem('requests') || '[]');
                 const localRequest = requests.find(r => r.id === id);
                 if (localRequest) {
                     showRequestDetailsLocal(localRequest);
@@ -4655,8 +4526,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         // ===== ИНИЦИАЛИЗАЦИЯ =====
         // === СБП-ОПЛАТА С ВЫБОРОМ БАНКА ===
 
-        // Список банков с deep links
-        const SBP_BANKS = [
+        // SBP_BANKS = [
             { name: 'Сбербанк', icon: '🟢', scheme: 'sberbank://', package: 'ru.sberbankmobile' },
             { name: 'Т-Банк (Тинькофф)', icon: '🟡', scheme: 'tinkoffbank://', package: 'com.idamob.tinkoff.android' },
             { name: 'ВТБ', icon: '🔵', scheme: 'vtb://', package: 'ru.vtb.mobilebanking.android' },
@@ -4671,9 +4541,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             { name: 'Почта Банк', icon: '🔵', scheme: 'pochtabank://', package: 'ru.pochtabank.mobile' }
         ];
 
-        // Сумма к оплате (можно сделать динамической)
-        const PAYMENT_AMOUNT = 5000; // 5000 рублей
-        const MERCHANT_ID = 'uk_zelenaya_dolina'; // ID вашей организации
+        // PAYMENT_AMOUNT = 5000; // MERCHANT_ID = 'uk_zelenaya_dolina'; // ID вашей организации
 
         function showSbpBankSelection() {
             console.log('[Payment] 💳 Открытие выбора банка для СБП');
@@ -4714,13 +4582,10 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 modal.style.display = 'none';
                 console.log('[Payment] ✅ Модал закрыт');
             }
-        }
-
         function openBankApp(bank) {
             console.log(`[Payment] 🏦 Попытка открыть ${bank.name}`);
             
-            // Генерируем СБП deep link
-            const sbpUrl = `${bank.scheme}qr?amount=${PAYMENT_AMOUNT}&merchant=${MERCHANT_ID}`;
+            // sbpUrl = `${bank.scheme}qr?amount=${PAYMENT_AMOUNT}&merchant=${MERCHANT_ID}`;
             
             // Попытка открыть приложение банка
             window.location.href = sbpUrl;
@@ -4766,8 +4631,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             renderAudioList();
             renderCounterVideos();
             
-            // Определить платформу для видео в заявках
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            // isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             const isMediaRecorderSupported = typeof MediaRecorder !== 'undefined';
             
             if (isIOS || !isMediaRecorderSupported) {
@@ -4789,8 +4653,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             // Загрузить данные главного экрана
             loadMainScreenData();
             
-            // Рендеринг камер при открытии секции
-            const camerasSection = document.getElementById('cameras');
+            // camerasSection = document.getElementById('cameras');
             if (camerasSection) {
                 const observer = new MutationObserver(function(mutations) {
                     if (camerasSection.classList.contains('active')) {
@@ -4805,8 +4668,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 audioBtn.addEventListener('click', toggleAudio);
             }
             
-            // Закрытие модального окна по клику вне его
-            const audioModal = document.getElementById('audioModal');
+            // audioModal = document.getElementById('audioModal');
             if (audioModal) {
                 audioModal.addEventListener('click', function(e) {
                     if (e.target === audioModal) {
@@ -4815,8 +4677,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 });
             }
             
-            // Выбрать категорию "ремонт" по умолчанию
-            const repairBtn = document.getElementById('categoryRepair');
+            // repairBtn = document.getElementById('categoryRepair');
             if (repairBtn) {
                 selectCategory('repair', repairBtn);
             }
@@ -4862,4 +4723,8 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+
+
+
+
 

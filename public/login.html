@@ -2,52 +2,59 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Вход - УК Зелёная долина</title>
-    
-    <!-- PWA Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=6.8.2">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.2">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.2">
     <meta name="theme-color" content="#2E7D32">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-192x192.png">
-    
-    <!-- CSS для стабилизации -->
-    <link rel="stylesheet" href="css/mobile-stabilizer.css">
-    <link rel="stylesheet" href="css/mobile-fix.css">
+    <title>Вход - УК «Зелёная долина» v6.8.2</title>
     
     <style>
         :root {
-            --primary-green: #2E7D32;
-            --primary-green-hover: #4CAF50;
-            --text-light: #ffffff;
+            --brand-green: #4CAF50;
+            --brand-green-hover: #45a049;
+            --brand-green-light: #66BB6A;
+            --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, var(--primary-green-hover) 0%, var(--primary-green) 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--brand-green-light) 0%, var(--brand-green) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0;
+            padding: 20px;
         }
         
         .login-container {
+            width: 100%;
+            max-width: 440px;
+        }
+        
+        .login-card {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 24px;
+            padding: 48px 32px;
+            box-shadow: var(--card-shadow);
             text-align: center;
         }
         
         .logo-container {
+            margin-bottom: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 16px;
-            margin-bottom: 20px;
         }
         
         .logo-icon {
@@ -57,126 +64,145 @@
             object-fit: contain;
         }
         
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #333;
+        .company-name {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
         
-        p {
-            color: #666;
-            margin-bottom: 30px;
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+            font-weight: 400;
         }
         
-        input {
+        #accessCode {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px !important; /* КРИТИЧНО для iOS - запрет зума */
-            margin-bottom: 20px;
+            padding: 20px;
+            border: 2px solid #e8f5e8;
+            border-radius: 16px;
+            font-size: 24px !important;
+            font-weight: 500;
             text-align: center;
-            letter-spacing: 2px;
+            letter-spacing: 8px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            background: #f8fdf8;
         }
         
-        button {
+        #accessCode:focus {
+            outline: none;
+            border-color: var(--brand-green);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+        }
+        
+        .login-btn {
             width: 100%;
-            padding: 15px;
-            background: var(--primary-green);
+            padding: 20px;
+            background: var(--brand-green);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
-            min-height: 48px;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        button:hover {
-            background: var(--primary-green-hover);
+        .login-btn:hover {
+            background: var(--brand-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
         }
         
-        button:active {
-            transform: scale(0.98);
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 40px 24px;
+                border-radius: 20px;
+            }
+            
+            .company-name {
+                font-size: 28px;
+            }
+            
+            #accessCode {
+                font-size: 20px !important;
+                letter-spacing: 6px;
+            }
         }
     </style>
-    
-    <script src="auth.js"></script>
 </head>
 <body>
     <div class="login-container">
-        <div class="logo-container">
-            <img src="icon-192x192.png" alt="УК Зелёная долина" class="logo-icon">
-            <h1>УК «Зелёная долина»</h1>
+        <div class="login-card">
+            <div class="logo-container">
+                <img src="icon-192x192.png" alt="УК Зелёная долина" class="logo-icon">
+                <h1 class="company-name">Зелёная долина</h1>
+            </div>
+            
+            <p class="login-subtitle">Код (последние 4 цифры л/с)</p>
+            
+            <form id="loginForm">
+                <input type="tel" 
+                       id="accessCode" 
+                       placeholder="1977" 
+                       maxlength="4" 
+                       pattern="[0-9]*" 
+                       inputmode="numeric" 
+                       autocomplete="one-time-code"
+                       required 
+                       autofocus>
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
         </div>
-        <p>Введите 4-значный код для входа</p>
-        
-        <form id="loginForm">
-            <input type="tel" 
-                   id="accessCode" 
-                   placeholder="0000" 
-                   maxlength="4" 
-                   pattern="[0-9]*" 
-                   inputmode="numeric" 
-                   autocomplete="one-time-code"
-                   required 
-                   autofocus>
-            <button type="submit">ВОЙТИ</button>
-        </form>
     </div>
-
+    
+    <script src="auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[Login] 🔐 Инициализация новой системы входа');
-            
-            // КРИТИЧНО: Очистка старых ключей для разрыва цикла
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('authCode');
-            localStorage.removeItem('authToken');
-            
-            const form = document.getElementById('loginForm');
-            const input = document.getElementById('accessCode');
-            
-            if (!form || !input) {
-                console.error('[Login] ❌ Элементы формы не найдены');
-                return;
-            }
-            
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const code = (input.value || '').trim();
-                
-                if (!/^\d{4}$/.test(code)) {
-                    alert('Введите 4-значный код');
-                    return;
-                }
-                
-                console.log('[Login] 📥 Вход с кодом:', code);
-                
-                // Проверка доступности saveAuth
-                if (typeof saveAuth === 'function') {
-                    saveAuth(code);
-                    console.log('[Login] ✅ Авторизация сохранена, редирект...');
-                    window.location.replace('index.html'); // replace вместо href
-                } else {
-                    console.error('[Login] ❌ КРИТИЧЕСКАЯ ОШИБКА: saveAuth не найдена!');
-                    alert('Ошибка: функция авторизации не загружена. Обновите страницу.');
-                }
-            });
-            
-            console.log('[Login] ✅ Обработчик формы установлен (без старого кода)');
-        });
-
-        // Service Worker регистрация
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/zelenaya-dolina/sw.js', {
-                    scope: '/zelenaya-dolina/'
-                })
-                .then(reg => console.log('[Login] ✅ SW зарегистрирован'))
-                .catch(err => console.error('[Login] ❌ SW ошибка:', err));
-            });
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const input = document.querySelector('input[type="tel"], input[type="text"], input[inputmode="numeric"]');
+    
+    if (!form || !input) {
+        console.error('[Login] Элементы формы не найдены');
+        return;
+    }
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = (input.value || '').trim();
+        
+        if (!/^\d{4}$/.test(code)) {
+            alert('Введите 4-значный код');
+            return;
         }
+        
+        saveAuth(code);
+        window.location.href = 'index.html';
+    });
+});
     </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/zelenaya-dolina/sw.js', {
+      scope: '/zelenaya-dolina/'
+    }).catch(err => console.error('[SW] Ошибка регистрации:', err));
+  });
+}
+</script>
 </body>
 </html>
+
+

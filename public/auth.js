@@ -59,50 +59,70 @@ function requireAuth() {
 function getMockUserByCode(code) {
     const users = {
         '1977': {
-            account_number: '25-0-1977',
-            full_name: 'Иванов Иван Иванович',
-            apartment: {
-                complex_name: 'ЖК Маяк',
-                building_number: '25',
-                apartment_number: '45',
-                balance: -1540.00,
-                area: 65.5
-            }
+            fio: 'Иванов Иван Иванович',
+            fullName: 'Иванов Иван Иванович',
+            accountNumber: '25-0-1977',
+            licSchet: '25-0-1977',
+            code: '1977',
+            phone: '+7 (960) 000-1977',
+            apartment: '45',
+            storage: '—',
+            address: 'ЖК Маяк, д. 25, кв. 45',
+            fullAddress: 'г. Зеленодольск, ЖК Маяк, д. 25, кв. 45',
+            balance: -1540.00,
+            area: 65.5,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
         },
         '0123': {
-            account_number: '1-7-0-0123',
-            full_name: 'Петрова Анна Сергеевна',
-            apartment: {
-                complex_name: 'ЖК Зелёная долина',
-                building_number: '3',
-                apartment_number: '12',
-                balance: -890.00,
-                area: 52.3
-            }
+            fio: 'Петрова Анна Сергеевна',
+            fullName: 'Петрова Анна Сергеевна',
+            accountNumber: '1-7-0-0123',
+            licSchet: '1-7-0-0123',
+            code: '0123',
+            phone: '+7 (960) 000-0123',
+            apartment: '12',
+            storage: '—',
+            address: 'ЖК Зелёная долина, д. 3, кв. 12',
+            fullAddress: 'г. Зеленодольск, ЖК Зелёная долина, д. 3, кв. 12',
+            balance: -890.00,
+            area: 52.3,
+            complex_name: 'ЖК Зелёная долина',
+            building_number: '3'
         },
         '1234': {
-            account_number: '25-0-1234',
-            full_name: 'Сидоров Петр Васильевич',
-            apartment: {
-                complex_name: 'ЖК Маяк',
-                building_number: '25',
-                apartment_number: '78',
-                balance: 250.00,
-                area: 75.2
-            }
+            fio: 'Сидоров Петр Васильевич',
+            fullName: 'Сидоров Петр Васильевич',
+            accountNumber: '25-0-1234',
+            licSchet: '25-0-1234',
+            code: '1234',
+            phone: '+7 (960) 000-1234',
+            apartment: '78',
+            storage: '15',
+            address: 'ЖК Маяк, д. 25, кв. 78',
+            fullAddress: 'г. Зеленодольск, ЖК Маяк, д. 25, кв. 78',
+            balance: 250.00,
+            area: 75.2,
+            complex_name: 'ЖК Маяк',
+            building_number: '25'
         }
     };
     
     return users[code] || {
-        account_number: `DEMO-${code}`,
-        full_name: 'Демо Пользователь',
-        apartment: {
-            complex_name: 'ЖК Демо',
-            building_number: '1',
-            apartment_number: '1',
-            balance: 0,
-            area: 50.0
-        }
+        fio: 'Демо Пользователь',
+        fullName: 'Демо Пользователь',
+        accountNumber: `DEMO-${code}`,
+        licSchet: `DEMO-${code}`,
+        code: code,
+        phone: `+7 (960) 000-${code}`,
+        apartment: '1',
+        storage: '—',
+        address: 'ЖК Демо, д. 1, кв. 1',
+        fullAddress: 'г. Зеленодольск, ЖК Демо, д. 1, кв. 1',
+        balance: 0,
+        area: 50.0,
+        complex_name: 'ЖК Демо',
+        building_number: '1'
     };
 }
 

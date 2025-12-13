@@ -4085,7 +4085,13 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         // Загрузка данных пользователя из localStorage
         function loadUserData() {
             try {
-                const userData = localStorage.getItem('userData');
+                // Попробовать новую систему (zd_user_data)
+                let userData = localStorage.getItem('zd_user_data');
+                // Fallback на старую систему (userData)
+                if (!userData) {
+                    userData = localStorage.getItem('userData');
+                }
+                
                 if (!userData) {
                     console.error('❌ Данные пользователя отсутствуют');
                     window.location.href = 'login.html';

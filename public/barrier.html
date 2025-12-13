@@ -5,314 +5,88 @@
     <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=6.8.3">
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.3">
     <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.3">
-    <meta name="theme-color" content="#2E7D32">
-    <meta name="viewport" content="width=device_width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4CAF50">
+    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="./css/design-system.css">
     <link rel="stylesheet" href="./css/components.css">
     <link rel="stylesheet" href="./css/mobile.css">
-    <title>Шлагбаум - УК Зелёная долина v6.8.2</title>
-    <link rel="stylesheet" href="css/navigation.css?v=6.8.3">
+    <title>Шлагбаум - УК Зелёная долина v6.8.3</title>
     <style>
-        :root {
-            --primary-green: #2E7D32;
-            --primary-green-hover: #4CAF50;
-            --dark-green: #1B5E20;
-            --light-green: #d5f4e6;
-            --text-light: #ffffff;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-            padding-top: 80px;
-            padding-bottom: 80px;
-            padding-left: 20px;
-            padding-right: 20px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
             min-height: 100vh;
-        }
-        /* Навигация внизу страницы */
-        .nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            background: white;
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            padding: 8px 4px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            max-height: 70px;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 4px 2px;
-            flex: 1;
-            max-width: 80px;
-            min-width: 50px;
-            border: none;
-            background: none;
-            font-size: 12px;
-        }
-        .nav-item.active {
-            color: #2E7D32;
-        }
-        .nav-item:hover {
-            color: #2E7D32;
-            transform: scale(1.05);
-        }
-        .nav-icon {
-            font-size: 24px;
-            margin-bottom: 2px;
-        }
-        .nav-label {
-            font-size: 10px;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-        /* Кнопка Выйти */
-        .btn-logout {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 12px;
-            padding: 10px 16px;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 1001;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        .btn-logout:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
-        .btn-logout:active {
-            transform: scale(0.95);
-        }
-        /* Заголовок */
-        .app-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            z-index: 1000;
-        }
-        .back-btn {
-            background: none;
-            border: none;
-            font-size: 16px;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 8px;
-            font-weight: 600;
-            border-radius: 8px;
-        }
-        .back-btn:active {
-            background: rgba(255,255,255,0.1);
-        }
-        .header-title {
-            flex: 1;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 600;
-            color: white;
-            margin-right: 40px;
-        }
-        /* Контент */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+            padding: 96px 20px 24px;
         }
         .card {
             background: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .card h2 {
-            color: #2E7D32;
-            font-size: 20px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn-barrier {
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, #2E7D32 0%, #2E7D32 100%);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
-            transition: all 0.3s;
-        }
-        .btn-barrier:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
-        }
-        .status-info {
-            text-align: center;
-            padding: 16px;
-            background: #f8f9fa;
             border-radius: 12px;
-            margin-top: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 16px;
         }
-        .status-info p {
-            margin: 4px 0;
-            color: #666;
-            font-size: 14px;
+        .card h2 { margin: 0 0 10px; font-size: 18px; color: #2E7D32; }
+        .card p { margin: 0 0 16px; color: #555; }
+        .btn-primary {
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 6px 12px rgba(46,125,50,0.2);
+            transition: all 0.2s ease;
         }
-        .status-info .status-value {
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(46,125,50,0.25); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(0,0,0,0.12); }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             font-weight: 600;
             color: #2E7D32;
-            font-size: 16px;
+            margin-bottom: 12px;
         }
-        .version {
-            position: fixed;
-            bottom: 90px;
-            right: 16px;
-            font-size: 12px;
-            opacity: 0.5;
-            color: white;
-        }
+        .status.offline { color: #f44336; }
     </style>
-    <script src="auth.js"></script>
-    <link rel="stylesheet" href="css/mobile-stabilizer.css">
-    <link rel="stylesheet" href="css/mobile-fix.css">
 </head>
 <body>
-    <!-- Кнопка Выйти -->
-    <button class="btn-logout" onclick="window.location.href='index.html'; if(typeof logout === 'function') logout();" title="Выйти">
-        🚪 Выйти
-    </button>
-
-    <!-- Навигация -->
-    <div class="app-header">
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            <span>←</span> На главную
-        </button>
-        <div class="header-title">Шлагбаум</div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <h2>🚧 Управление шлагбаумом</h2>
-            <p style="color: #666; margin-bottom: 20px;">Откройте шлагбаум для въезда на территорию</p>
-            
-            <button class="btn-barrier" onclick="openBarrier()">
-                <span style="font-size: 32px;">🚧</span>
-                <span>Открыть шлагбаум</span>
-            </button>
-
-            <div class="status-info">
-                <p>Статус: <span class="status-value">Готов к открытию</span></p>
-                <p style="margin-top: 8px; font-size: 12px;">Последнее открытие: —</p>
+    <div class="page-header" style="background: linear-gradient(135deg, #2E7D32, #4CAF50); padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 12px rgba(46,125,50,0.2); position: fixed; top: 0; left: 0; right: 0;">
+        <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; width: 48px; height: 48px; border-radius: 12px; cursor: pointer; transition: all 0.3s;">←</button>
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+            <img src="icon-192x192.svg?v=6.8.3" alt="УК Зелёная долина" style="width: 48px; height: 48px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            <div style="color: white;">
+                <div style="font-size: 20px; font-weight: 600;">Зелёная долина</div>
+                <div style="font-size: 14px; opacity: 0.9;">Управление шлагбаумом</div>
             </div>
         </div>
-
-        <div class="card">
-            <h2>📋 Информация</h2>
-            <p style="color: #666; line-height: 1.6;">
-                Шлагбаум открывается автоматически при нажатии кнопки. 
-                Время открытия составляет несколько секунд. 
-                После проезда шлагбаум закроется автоматически.
-            </p>
-        </div>
     </div>
 
-    <div class="version">v6.8.2</div>
-
-    <!-- Навигация -->
-    <nav class="nav">
-        <a href="payments.html" class="nav-item">
-            <div class="nav-icon">💳</div>
-            <div class="nav-label">Платежи</div>
-        </a>
-        <a href="meters.html" class="nav-item">
-            <div class="nav-icon">📊</div>
-            <div class="nav-label">Счётчики</div>
-        </a>
-        <a href="create-request.html" class="nav-item">
-            <div class="nav-icon">📝</div>
-            <div class="nav-label">Заявки</div>
-        </a>
-        <a href="cameras.html" class="nav-item">
-            <div class="nav-icon">📹</div>
-            <div class="nav-label">Камеры</div>
-        </a>
-        <a href="barrier.html" class="nav-item active">
-            <div class="nav-icon">🚧</div>
-            <div class="nav-label">Шлагбаум</div>
-        </a>
-    </nav>
+    <div class="card">
+        <h2>🚧 Шлагбаум</h2>
+        <div class="status" id="barrierStatus"><span>🟢</span> Статус: Открыто</div>
+        <p>Управляйте доступом для жителей и гостей.</p>
+        <button class="btn-primary" onclick="toggleBarrier()">Открыть / закрыть</button>
+    </div>
 
     <script>
-        function openBarrier() {
-            // Симуляция открытия шлагбаума
-            const btn = event.target.closest('.btn-barrier');
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<span style="font-size: 32px;">⏳</span><span>Открывается...</span>';
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            
-            setTimeout(() => {
-                alert('✅ Шлагбаум открыт!');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                
-                // Обновить статус
-                const statusValue = document.querySelector('.status-value');
-                if (statusValue) {
-                    statusValue.textContent = 'Открыт';
-                    setTimeout(() => {
-                        statusValue.textContent = 'Готов к открытию';
-                    }, 5000);
-                }
-            }, 2000);
+        function toggleBarrier() {
+            const status = document.getElementById('barrierStatus');
+            const isOpen = status?.textContent.includes('Открыто');
+            if (status) {
+                status.innerHTML = isOpen ? '<span>🔴</span> Статус: Закрыто' : '<span>🟢</span> Статус: Открыто';
+                status.classList.toggle('offline', isOpen);
+            }
+            alert(isOpen ? 'Шлагбаум закрыт' : 'Шлагбаум открыт');
         }
     </script>
 </body>
 </html>
-
-
 

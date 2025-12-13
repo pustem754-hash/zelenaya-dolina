@@ -12,6 +12,9 @@ function saveAuth(code) {
     const userData = getMockUserByCode(code);
     localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
     
+    // Сохранить userPhone для обратной совместимости (используем код как телефон)
+    localStorage.setItem('userPhone', code);
+    
     console.log('[Auth] ✅ Авторизация сохранена, код:', code);
 }
 
@@ -36,6 +39,7 @@ function logout() {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem(AUTH_CODE_KEY);
     localStorage.removeItem(USER_DATA_KEY);
+    localStorage.removeItem('userPhone'); // Очистить старый ключ
     console.log('[Auth] 🚪 Выход из системы');
     window.location.href = 'login.html';
 }

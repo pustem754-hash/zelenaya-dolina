@@ -42,6 +42,21 @@
             text-align: center;
         }
         
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        
         h1 {
             font-size: 24px;
             margin-bottom: 10px;
@@ -90,7 +105,10 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>🏡 УК «Зелёная долина»</h1>
+        <div class="logo-container">
+            <img src="icon-192x192.png" alt="УК Зелёная долина" class="logo-icon">
+            <h1>УК «Зелёная долина»</h1>
+        </div>
         <p>Введите 4-значный код для входа</p>
         
         <form id="loginForm">

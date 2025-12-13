@@ -1,36 +1,33 @@
 <!DOCTYPE html>
-<!-- УК "Зелёная Долина" - Создание заявки v6.8.0 -->
+<!-- УК "Зелёная Долина" - Создание заявки v6.8.2 -->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=6.8.2">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.2">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.2">
+    <meta name="theme-color" content="#4CAF50">
+    <link rel="manifest" href="manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новая заявка - УК «Зелёная долина» v6.8.0</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2E7D32">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
-    
-    <!-- Навигация -->
+    <link rel="stylesheet" href="./css/design-system.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/mobile.css">
     <link rel="stylesheet" href="css/navigation.css">
-    <script src="js/navigation.js" defer></script>
+    <title>Новая заявка - УК «Зелёная долина» v6.8.3</title>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
         
         :root {
-            --primary: #10B981;
-            --primary-dark: #059669;
-            --primary-light: #D1FAE5;
+            --primary: #4CAF50;
+            --primary-dark: #2E7D32;
+            --primary-light: #C8E6C9;
             --secondary: #6366F1;
             --accent: #F59E0B;
             --danger: #EF4444;
             --danger-light: #FEE2E2;
             --surface: #FFFFFF;
-            --background: #F0FDF4;
+            --background: #F1F8E9;
             --text-primary: #1F2937;
             --text-secondary: #6B7280;
             --text-muted: #9CA3AF;
@@ -693,13 +690,14 @@
     </script>
 </head>
 <body>
-    <button class="back-button" onclick="window.location.href='index.html'">←</button>
-    
-    <!-- Шапка страницы -->
-    <div class="page-header">
-        <div class="header-content">
-            <h1>Новая заявка</h1>
-            <p>Опишите вашу проблему</p>
+    <div class="page-header" style="background: linear-gradient(135deg, #2E7D32, #4CAF50); padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 12px rgba(46,125,50,0.2);">
+        <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; width: 48px; height: 48px; border-radius: 12px; cursor: pointer; transition: all 0.3s;">←</button>
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+            <img src="icon-192x192.png" alt="Логотип" style="width: 48px; height: 48px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            <div style="color: white;">
+                <div style="font-size: 20px; font-weight: 600;">УК «Зелёная долина»</div>
+                <div style="font-size: 14px; opacity: 0.9;">Создать заявку</div>
+            </div>
         </div>
     </div>
     
@@ -795,6 +793,7 @@
     </div>
     
     <script src="auth.js"></script>
+    <script src="./js/media-ios-fix.js"></script>
     <script>
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
         let attachedMedia = [];
@@ -1115,73 +1114,75 @@
         }
         
         async function takePhoto() {
-            console.log('[Photo] 📸 Начало съёмки фото');
-            
             try {
-                const constraints = {
-                    video: {
-                        facingMode: 'environment', // Задняя камера
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
+                let dataUrl = null;
+
+                // iOS / универсальный безопасный захват
+                if (typeof window.capturePhotoSafe === 'function') {
+                    dataUrl = await window.capturePhotoSafe({ preferFront: false });
+                }
+
+                // Fallback на mediaFixed (если определён)
+                if (!dataUrl && window.mediaFixed?.capturePhotoFlow) {
+                    try {
+                        dataUrl = await mediaFixed.capturePhotoFlow();
+                    } catch (err) {
+                        console.warn('[Photo] mediaFixed fallback error', err);
                     }
-                };
-                
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                console.log('[Photo] ✅ Доступ к камере получен');
-                
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.setAttribute('playsinline', ''); // Важно для iOS!
-                await video.play();
-                
-                // Ждём загрузки видео
-                await new Promise(resolve => {
-                    video.onloadedmetadata = () => {
-                        console.log('[Photo] 📹 Видео загружено');
-                        resolve();
-                    };
-                });
-                
-                // Создаём canvas
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0);
-                
-                // Останавливаем камеру
-                stream.getTracks().forEach(track => track.stop());
-                console.log('[Photo] 🛑 Камера остановлена');
-                
-                // Получаем base64
-                const photoData = canvas.toDataURL('image/jpeg', 0.8);
-                console.log('[Photo] 📸 Фото сохранено, размер:', photoData.length);
-                
+                }
+
+                // Если не удалось — пробуем input[type=file]
+                if (!dataUrl) {
+                    dataUrl = await new Promise((resolve, reject) => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.capture = 'environment';
+                        input.onchange = async (e) => {
+                            const file = e.target.files && e.target.files[0];
+                            if (!file) {
+                                resolve(null);
+                                return;
+                            }
+                            try {
+                                const reader = new FileReader();
+                                reader.onload = () => resolve(reader.result);
+                                reader.onerror = (er) => reject(er);
+                                reader.readAsDataURL(file);
+                            } catch (er) {
+                                reject(er);
+                            }
+                        };
+                        input.click();
+                    });
+                }
+
+                if (!dataUrl) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Не удалось получить фото', 'error');
+                    }
+                    return;
+                }
+
                 // Сохраняем в localStorage
-                localStorage.setItem('currentPhoto', photoData);
-                
-                // Синхронизируем с attachedMedia для отправки
+                localStorage.setItem('currentPhoto', dataUrl);
+
+                // Синхронизируем с attachedMedia
                 attachedMedia = attachedMedia.filter(media => media.type !== 'photo');
                 attachedMedia.push({
                     type: 'photo',
-                    data: photoData,
+                    data: dataUrl,
                     timestamp: Date.now()
                 });
                 localStorage.setItem('requestMedia', JSON.stringify(attachedMedia));
-                
-                // КРИТИЧНО: Принудительно отображаем превью
+
                 renderMediaPreview();
-                
-                // Уведомление
+
                 if (typeof showNotification === 'function') {
                     showNotification('Фото сохранено!', 'success');
                 }
-                
-                console.log('[Photo] ✅ Превью должно быть видимым');
-                
             } catch (error) {
-                console.error('[Photo] ❌ Ошибка съёмки:', error);
+                console.error('[Photo] Ошибка съёмки:', error);
                 if (typeof showNotification === 'function') {
                     showNotification('Ошибка доступа к камере', 'error');
                 } else {
@@ -1780,6 +1781,12 @@
                     deleteAudioBtn.style.opacity = '0';
                 }
                 console.log('[Audio] ℹ️ Аудио отсутствует');
+            }
+
+            const previewContainer = document.getElementById('mediaPreview');
+            if (previewContainer) {
+                const hasContent = !!photoData || !!audioData || (attachedMedia && attachedMedia.length > 0);
+                previewContainer.classList.toggle('visible', hasContent);
             }
         }
         

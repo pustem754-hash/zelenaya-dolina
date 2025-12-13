@@ -1,20 +1,23 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>УК «Зелёная долина» v6.8.2</title>
+    <link rel="stylesheet" href="./css/design-system.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/mobile.css">
+    <title>УК «Зелёная долина» v6.8.3</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2E7D32">
+    <meta name="theme-color" content="#4CAF50">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
-    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=6.8.2">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=6.8.2">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=6.8.2">
+    <link rel="manifest" href="manifest.json">
     
     <!-- jsPDF для генерации PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -364,31 +367,185 @@
         #audioRecordingStatus[style*="opacity: 0"] {
             pointer-events: none;
         }
-        .nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+        .header {
+            background: #2E7D32;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .nav-item {
-            padding: 14px 5px;
-            text-align: center;
+        .header-left .logo {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-logout {
+            background: #dc3545;
+            color: white;
             border: none;
-            background: none;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            color: #666;
+            font-size: 14px;
         }
-        .nav-item.active {
+        .btn-logout:hover {
+            background: #c82333;
+        }
+        .quick-actions h3,
+        .profile-section h2,
+        .requests-section h3,
+        .news-section h3,
+        .notifications-section h3 {
+            margin: 0 0 12px 0;
             color: #2E7D32;
         }
-        .nav-icon {
-            font-size: 28px;
-            margin-bottom: 4px;
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .action-btn {
+            background: white;
+            border: 2px solid #2E7D32;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            color: #2E7D32;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .action-btn:hover {
+            background: #2E7D32;
+            color: white;
+        }
+        .action-icon {
+            font-size: 20px;
+        }
+        .meters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        @media (max-width: 1024px) {
+            .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .meters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .meters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .notifications-list {
+            margin-top: 10px;
+        }
+        .notification-card {
+            background: white;
+            border-left: 4px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        .notification-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        .notification-card.info { border-left-color: #2196F3; }
+        .notification-card.success { border-left-color: #4CAF50; }
+        .notification-card.warning { border-left-color: #FF9800; }
+        .notification-card.error { border-left-color: #F44336; }
+        .notification-icon { font-size: 32px; flex-shrink: 0; }
+        .notification-content h4 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .notification-content p {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        .notification-date {
+            font-size: 12px;
+            color: #999;
+        }
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 12px;
+        }
+        .news-card h4 { margin: 0 0 8px 0; color: #333; }
+        .news-card p { margin: 0 0 8px 0; color: #555; }
+        .news-date { font-size: 12px; color: #888; }
+        /* Быстрые показания */
+        .meters-quick {
+            margin-top: 10px;
+        }
+        .meters-quick h3 {
+            color: #2E7D32;
+            margin-bottom: 12px;
+        }
+        .meter-input {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .meter-input label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2E7D32;
+            margin-bottom: 8px;
+        }
+        .meter-input input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .last-reading {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
         }
         
         /* Табы */
@@ -667,77 +824,151 @@
         }
     </style>
 </head>
-<body>
-<button id="theme-toggle" style="position: fixed; top: 10px; left: 10px; z-index: 9999; font-size: 24px; background: none; border: none; cursor: pointer;">🌓</button>
-    <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.body.classList.add(`theme-${currentTheme}`);
-    themeToggle.addEventListener('click', () => {
-      const newTheme = document.body.classList.contains('theme-light') ? 'dark' : 'light';
-      document.body.classList.remove('theme-light', 'theme-dark');
-      document.body.classList.add(`theme-${newTheme}`);
-      localStorage.setItem('theme', newTheme);
-      console.log(` Тема изменена на: ${newTheme}`);
-    });
-    </script>
-    <style>
-    body.theme-dark { background: #1a1a1a; color: #f5f5f5; }
-    body.theme-dark button { background: #2E7D32; color: #fff; }
-    body.theme-dark input, body.theme-dark textarea { background: #2a2a2a; color: #f5f5f5; border: 1px solid #444; }
-    </style>
-    <div class="header">
-        <h1>🏡 УК «Зелёная долина»</h1>
-        <p style="font-size: 14px; margin-top: 5px; opacity: 0.9;">Жилищная компания</p>
-        <div class="version">v6.8.2</div>
-    </div>
+<body class="theme-light" style="margin:0; padding:0 0 80px 0;">
+    <header class="header">
+        <div class="header-left">
+            <span class="logo" style="display: inline-flex; align-items: center; gap: 8px;">
+                <img src="icon-original.png" alt="Логотип ЖК Зелёная долина" style="height: 28px; width: 28px; border-radius: 6px;">
+                ЖК Зелёная долина
+            </span>
+        </div>
+        <div class="header-right">
+            <span class="version">v6.8.2</span>
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </div>
+    </header>
 
-    <!-- Главная -->
-    <div id="home" class="section active">
-        <!-- Статистика платежей -->
-        <div class="card" style="border-left: 4px solid #2E7D32;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 style="margin: 0;">💳 К оплате</h2>
-                <span id="paymentStatus" style="padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #fff3cd; color: #856404;">Ожидает оплаты</span>
-            </div>
-            <div class="stat-value" style="font-size: 36px; color: #2E7D32; margin-bottom: 10px;">10 360.02 ₽</div>
-            <p style="color: #666; margin-bottom: 15px;">Срок оплаты: до 28.10.2025</p>
-            <button class="btn btn-pay" onclick="showSection('payments')" style="margin-top: 0;">💳 Оплатить онлайн</button>
+    <div id="home" class="section active" style="padding: 16px;">
+        <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
+            <img src="icon-192x192.svg?v=6.8.3" alt="УК Зелёная долина" style="width: 48px; height: 48px; margin-right: 15px;">
+            <h1 style="margin: 0; color: #4CAF50; font-size: 20px;">Зелёная долина</h1>
         </div>
-        
-        <!-- Быстрые действия - интеграция всех систем -->
-        <div class="card">
-            <h2 style="margin-bottom: 15px;">⚡ Быстрые действия</h2>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                <!-- PAL Gate - Шлагбаум -->
-                <div class="quick-action-card" onclick="openGate()" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
-                    <div style="font-size: 32px; margin-bottom: 8px;" id="gateIcon">🔒</div>
-                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Шлагбаум</div>
-                    <div style="font-size: 12px; color: #666;" id="gateStatus">Закрыт</div>
-                </div>
-                
-                <!-- Телеком Летай - Камеры -->
-                <div class="quick-action-card" onclick="showSection('cameras')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">📹</div>
-                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Камеры</div>
-                    <div style="font-size: 12px; color: #666;" id="camerasStatus">8/10 онлайн</div>
-                </div>
-                
-                <!-- ЕРЦ Форма 4.0 - Счетчики -->
-                <div class="quick-action-card" onclick="showSection('counters')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">🔢</div>
-                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Счетчики</div>
-                    <div style="font-size: 12px; color: #666;" id="metersStatus">Передано</div>
-                </div>
-                
-                <!-- VSK Desk - Заявки -->
-                <div class="quick-action-card" onclick="showSection('requests')" style="background: white; border-radius: 12px; padding: 15px; text-align: center; border: 2px solid #e0e0e0; cursor: pointer;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">📝</div>
-                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Заявки</div>
-                    <div style="font-size: 12px; color: #666;" id="requestsStatus">3 активных</div>
+
+        <!-- Профиль -->
+        <section class="profile-section">
+            <div class="card">
+                <h2 id="userName">👤 Загрузка...</h2>
+                <p id="userAddress">📍 Загрузка...</p>
+                <p id="userApartment">🏠 Квартира: —</p>
+                <p id="userStorage">📦 Кладовая: —</p>
+                <div class="balance">
+                    <strong>Баланс:</strong>
+                    <span id="userBalance" class="balance-amount">— ₽</span>
                 </div>
             </div>
+        </section>
+
+        <!-- Показания счетчиков -->
+        <section id="metersTab" class="section" style="margin-top: 10px;">
+            <h3>📊 Показания счётчиков</h3>
+            <p class="subtitle">Передайте показания счётчиков до 25 числа</p>
+            <div class="meters-grid">
+                <div class="input-group">
+                    <label>❄️ Холодная вода (м³)</label>
+                    <input type="number" step="0.01" id="coldWaterInput" placeholder="Введите показания">
+                    <div class="last-reading">Последние: <span id="coldWaterLast">—</span></div>
+                </div>
+                <div class="input-group">
+                    <label>🔥 Горячая вода (м³)</label>
+                    <input type="number" step="0.01" id="hotWaterInput" placeholder="Введите показания">
+                    <div class="last-reading">Последние: <span id="hotWaterLast">—</span></div>
+                </div>
+                <div class="input-group">
+                    <label>⚡ Электричество (кВт·ч)</label>
+                    <input type="number" step="0.01" id="electricityInput" placeholder="Введите показания">
+                    <div class="last-reading">Последние: <span id="electricityLast">—</span></div>
+                </div>
+                <div class="input-group">
+                    <label>🔥 Газ (м³)</label>
+                    <input type="number" step="0.01" id="gasInput" placeholder="Введите показания">
+                    <div class="last-reading">Последние: <span id="gasLast">—</span></div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="submitMeterReadings()">📤 Отправить показания</button>
+            <div id="metersHistory" style="margin-top: 20px;"></div>
+        </section>
+
+        <!-- Уведомления -->
+        <section class="notifications-section">
+            <h3>🔔 Уведомления</h3>
+            <div id="notificationsList" class="notifications-list">
+                <div class="notification-card info">
+                    <div class="notification-icon">📊</div>
+                    <div class="notification-content">
+                        <h4>Передайте показания счётчиков</h4>
+                        <p>Не забудьте передать показания до 25 числа текущего месяца</p>
+                        <span class="notification-date">Сегодня</span>
+                    </div>
+                </div>
+                <div class="notification-card success">
+                    <div class="notification-icon">✅</div>
+                    <div class="notification-content">
+                        <h4>Ваша заявка №1234 выполнена</h4>
+                        <p>Замена лампочки в подъезде завершена</p>
+                        <span class="notification-date">Вчера, 14:30</span>
+                    </div>
+                </div>
+                <div class="notification-card warning">
+                    <div class="notification-icon">⚠️</div>
+                    <div class="notification-content">
+                        <h4>Плановое отключение воды</h4>
+                        <p>10 декабря с 09:00 до 18:00 будет отключена холодная вода</p>
+                        <span class="notification-date">5 декабря</span>
+                    </div>
+                </div>
+                <div class="notification-card info">
+                    <div class="notification-icon">💳</div>
+                    <div class="notification-content">
+                        <h4>Начислена квитанция за ноябрь</h4>
+                        <p>Сумма к оплате: 4 500 ₽. Оплатите до 10 декабря</p>
+                        <span class="notification-date">1 декабря</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="loadMoreNotifications()">Показать ещё</button>
+        </section>
+
+        <!-- Карточка: Шлагбаум -->
+        <div class="card" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0; color: #2c3e50;">🚧 Шлагбаум</h2>
+            <p style="color: #7f8c8d; margin-bottom: 15px;">Откройте шлагбаум удалённо</p>
+            <button class="btn" onclick="openGate()" style="width: 100%;">🚧 Открыть шлагбаум</button>
         </div>
+
+        <!-- Карточка: Камеры -->
+        <div class="card" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0; color: #2c3e50;">📹 Камеры видеонаблюдения</h2>
+            <p style="color: #7f8c8d; margin-bottom: 15px;">Просмотр камер вашего дома</p>
+            <button class="btn" onclick="alert('Функция просмотра камер будет добавлена в следующей версии')" style="width: 100%;">📹 Смотреть камеры</button>
+        </div>
+
+        <!-- Карточка: Счётчики -->
+        <div class="card" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0; color: #2c3e50;">📊 Показания счётчиков</h2>
+            <p style="color: #7f8c8d; margin-bottom: 15px;">Передать показания газа, воды, электричества</p>
+            <button class="btn" onclick="showSection('counters')" style="width: 100%;">📊 Перейти к счётчикам</button>
+        </div>
+
+        <!-- Активные заявки -->
+        <section class="requests-section">
+            <h3>📋 Активные заявки</h3>
+            <div id="activeRequests">
+                <p style="text-align: center; color: #666;">У вас нет активных заявок</p>
+            </div>
+        </section>
+
+        <!-- Новости -->
+        <section class="news-section">
+            <h3>📰 Новости</h3>
+            <div id="newsFeed">
+                <div class="news-card">
+                    <h4>Благоустройство территории</h4>
+                    <p>В декабре планируется установка новых детских площадок</p>
+                    <span class="news-date">5 декабря 2025</span>
+                </div>
+            </div>
+        </section>
+    </div>
         
         <!-- Активные заявки из VSK Desk -->
         <div class="card">
@@ -801,16 +1032,41 @@
                     <input type="text" id="storageInput" placeholder="Номер кладовой" style="display: none; width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
                 </div>
                 
+                <!-- Новые поля профиля -->
+                <div class="input-group" id="additionalFieldsGroup" style="display: none;">
+                    <label>📋 Номер лицевого счёта:</label>
+                    <input type="text" id="accountNumberInput" placeholder="Например: 123456789" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                
+                <div class="input-group" id="nameGroup" style="display: none;">
+                    <label>👤 ФИО жильца:</label>
+                    <input type="text" id="fullNameInput" placeholder="Иванов Иван Иванович" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                
+                <div class="input-group" id="areaGroup" style="display: none;">
+                    <label>📐 Площадь квартиры (м²):</label>
+                    <input type="number" step="0.1" id="apartmentAreaInput" placeholder="Например: 52.5" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                
+                <div class="input-group" id="residentsGroup" style="display: none;">
+                    <label>👥 Количество прописанных:</label>
+                    <input type="number" min="1" id="residentsCountInput" placeholder="Количество человек" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                
                 <button class="btn" onclick="saveUserData()" style="margin-top: 15px;">💾 Сохранить мои данные</button>
             </div>
             
             <!-- Сохранённые данные пользователя -->
             <div id="userInfoCard" style="display: none;">
                 <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                    <p style="margin-bottom: 8px;"><strong>ЖК:</strong> <span id="userComplex"></span></p>
-                    <p style="margin-bottom: 8px;"><strong>Дом:</strong> <span id="userHouse"></span></p>
-                    <p style="margin-bottom: 8px;"><strong>Квартира:</strong> <span id="userApartment"></span></p>
-                    <p id="userStorageInfo" style="display: none; margin-bottom: 0;"><strong>Кладовая:</strong> <span id="userStorage"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>📋 Лицевой счёт:</strong> <span id="userAccountNumber"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>👤 ФИО:</strong> <span id="userFullName"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>🏘️ ЖК:</strong> <span id="userComplex"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>🏠 Дом:</strong> <span id="userHouse"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>🚪 Квартира:</strong> <span id="userApartment"></span></p>
+                    <p style="margin-bottom: 8px;"><strong>📐 Площадь:</strong> <span id="userArea"></span> м²</p>
+                    <p style="margin-bottom: 8px;"><strong>👥 Прописано:</strong> <span id="userResidents"></span> чел.</p>
+                    <p id="userStorageInfo" style="display: none; margin-bottom: 0;"><strong>📦 Кладовая:</strong> <span id="userStorage"></span></p>
                 </div>
                 <button class="btn" onclick="showUserForm()" style="background: #3498db;">✏️ Изменить данные</button>
             </div>
@@ -859,6 +1115,11 @@
 
     <!-- Платежи -->
     <div id="payments" class="section">
+        <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
+            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; margin-right: 15px; transition: all 0.2s;">←</button>
+            <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px; margin-right: 10px;">
+            <h1 style="margin: 0; color: #2c3e50; font-size: 18px;">💳 Платежи</h1>
+        </div>
         <div class="card">
             <h2>💳 Квитанция за сентябрь 2025</h2>
             
@@ -878,7 +1139,7 @@
                     </div>
                     <div class="receipt-info-row">
                         <span class="receipt-info-label">Собственник:</span>
-                        <span class="receipt-info-value">МИННУЛЛИНА Н. М.</span>
+                        <span class="receipt-info-value" id="receipt-owner-name"></span>
                     </div>
                     <div class="receipt-info-row">
                         <span class="receipt-info-label">Площадь:</span>
@@ -1158,6 +1419,11 @@
 
     <!-- Заявки -->
     <div id="requests" class="section">
+        <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
+            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; margin-right: 15px; transition: all 0.2s;">←</button>
+            <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px; margin-right: 10px;">
+            <h1 style="margin: 0; color: #2c3e50; font-size: 18px;">📝 Заявки</h1>
+        </div>
         <!-- Табы: Новая заявка / Мои заявки -->
         <div class="card" style="margin-bottom: 15px;">
             <nav class="tabs" style="margin-bottom: 0;">
@@ -1363,8 +1629,6 @@
                 <video id="fullVideo" controls></video>
                 <button class="btn-close-photo" onclick="closeVideoViewer()">✕</button>
             </div>
-            
-            <button class="btn" onclick="submitRequest()" style="margin-top: 20px;">Отправить заявку</button>
         </div>
         </div>
         
@@ -1404,6 +1668,11 @@
 
     <!-- Счётчики -->
     <div id="counters" class="section">
+        <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
+            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; margin-right: 15px; transition: all 0.2s;">←</button>
+            <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px; margin-right: 10px;">
+            <h1 style="margin: 0; color: #2c3e50; font-size: 18px;">📊 Счётчики</h1>
+        </div>
         <div class="card">
             <h2>📊 Передать показания</h2>
             
@@ -1448,22 +1717,30 @@
             <div id="metersTab" class="meters-tab-content" style="display: none;">
                 <p style="color: #666; margin-bottom: 15px;">Передайте показания счётчиков до 25.10.2025</p>
                 
-                <div class="input-group">
-                    <label>Холодная вода (м³)</label>
-                    <input type="number" step="0.01" placeholder="Введите показания" id="coldWaterInput">
+                <div class="meters-quick">
+                    <div class="meter-input">
+                        <label>❄️ Холодная вода (м³)</label>
+                        <input type="number" step="0.01" id="coldWaterInput" placeholder="Введите показания">
+                        <div class="last-reading">Последние: <span id="coldWaterLast">—</span></div>
+                    </div>
+                    <div class="meter-input">
+                        <label>🔥 Горячая вода (м³)</label>
+                        <input type="number" step="0.01" id="hotWaterInput" placeholder="Введите показания">
+                        <div class="last-reading">Последние: <span id="hotWaterLast">—</span></div>
+                    </div>
+                    <div class="meter-input">
+                        <label>⚡ Электричество (кВт·ч)</label>
+                        <input type="number" step="0.01" id="electricityInput" placeholder="Введите показания">
+                        <div class="last-reading">Последние: <span id="electricityLast">—</span></div>
+                    </div>
+                    <!-- ГАЗ -->
+                    <div class="meter-input">
+                        <label>🔥 Газ (м³)</label>
+                        <input type="number" step="0.01" id="gasInput" placeholder="Введите показания">
+                        <div class="last-reading">Последние: <span id="gasLast">—</span></div>
+                    </div>
+                    <button class="btn-submit" onclick="submitQuickMeters()">Сохранить показания</button>
                 </div>
-                <div class="input-group">
-                    <label>Горячая вода (м³)</label>
-                    <input type="number" step="0.01" placeholder="Введите показания" id="hotWaterInput">
-                </div>
-                <div class="input-group">
-                    <label>Электричество (кВт⋅ч)</label>
-                    <input type="number" step="0.01" placeholder="Введите показания" id="electricityInput">
-                </div>
-                
-                <button class="btn" onclick="submitMeterReadings()">
-                    📊 Отправить показания
-                </button>
             </div>
             
             <!-- 📜 ВКЛАДКА ИСТОРИЯ -->
@@ -1551,34 +1828,6 @@
         </div>
     </div>
 
-    <!-- Навигация -->
-    <nav class="nav">
-        <button class="nav-item active" onclick="showSection('home')">
-            <div class="nav-icon">🏠</div>
-            <div>Главная</div>
-        </button>
-        <button class="nav-item" onclick="showSection('apartments')">
-            <div class="nav-icon">🏢</div>
-            <div>Квартиры</div>
-        </button>
-        <button class="nav-item" onclick="showSection('payments')">
-            <div class="nav-icon">💳</div>
-            <div>Платежи</div>
-        </button>
-        <button class="nav-item" onclick="showSection('requests')">
-            <div class="nav-icon">📝</div>
-            <div>Заявки</div>
-        </button>
-        <button class="nav-item" onclick="showSection('notifications')">
-            <div class="nav-icon">🔔</div>
-            <div>Уведомления</div>
-        </button>
-        <button class="nav-item" onclick="showSection('counters')">
-            <div class="nav-icon">🔢</div>
-            <div>Счётчики</div>
-        </button>
-    </nav>
-
     <script>
         console.log('🚀 Инициализация приложения УК «Зелёная долина» v6.8.2');
         
@@ -1598,9 +1847,10 @@
         function showSection(id) {
             console.log('📱 Переключение секции:', id);
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            const section = document.getElementById(id);
+            if (section) {
+                section.classList.add('active');
+            }
         }
         
         // ===== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====
@@ -1645,6 +1895,11 @@
             } else if (tabName === 'video') {
                 loadMeterVideosFromStorage();
             }
+        }
+        
+        function loadMeterVideosFromStorage() {
+            console.log('📹 Загрузка видео счётчиков из хранилища (функция в разработке)');
+            // TODO: реализовать загрузку видео из localStorage
         }
         
         function showTab(tabName, event) {
@@ -2822,12 +3077,85 @@
         }
 
         // ========== ФУНКЦИИ ДЛЯ СЧЁТЧИКОВ ==========
+        function submitQuickMeters() {
+            const coldWater = parseFloat(document.getElementById('coldWaterInput').value) || 0;
+            const hotWater = parseFloat(document.getElementById('hotWaterInput').value) || 0;
+            const electricity = parseFloat(document.getElementById('electricityInput').value) || 0;
+            const gas = parseFloat(document.getElementById('gasInput').value) || 0;
+            
+            if (coldWater === 0 && hotWater === 0 && electricity === 0 && gas === 0) {
+                alert('❌ Введите хотя бы одно показание');
+                return;
+            }
+            
+            const reading = {
+                date: new Date().toISOString(),
+                coldWater,
+                hotWater,
+                electricity,
+                gas
+            };
+            
+            // История (до 50 записей)
+            let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
+            history.unshift(reading);
+            if (history.length > 50) history = history.slice(0, 50);
+            localStorage.setItem('metersHistory', JSON.stringify(history));
+            
+            // Последние показания
+            localStorage.setItem('lastColdWater', coldWater);
+            localStorage.setItem('lastHotWater', hotWater);
+            localStorage.setItem('lastElectricity', electricity);
+            localStorage.setItem('lastGas', gas);
+            localStorage.setItem('meterGas', JSON.stringify({ value: gas, date: new Date().toISOString() }));
+            
+            // Очистить поля
+            document.getElementById('coldWaterInput').value = '';
+            document.getElementById('hotWaterInput').value = '';
+            document.getElementById('electricityInput').value = '';
+            document.getElementById('gasInput').value = '';
+            
+            // Обновить отображение
+            updateLastReadings();
+            loadMetersHistory();
+            
+            alert('✅ Показания сохранены!\nХВС: ' + coldWater + ' м³\nГВС: ' + hotWater + ' м³\nЭлектричество: ' + electricity + ' кВт·ч\nГаз: ' + gas + ' м³');
+        }
+        
+        function updateLastReadings() {
+            const lastColdWater = localStorage.getItem('lastColdWater');
+            const lastHotWater = localStorage.getItem('lastHotWater');
+            const lastElectricity = localStorage.getItem('lastElectricity');
+            const lastGas = localStorage.getItem('lastGas');
+            
+            if (lastColdWater) {
+                const el = document.getElementById('coldWaterLast');
+                if (el) el.textContent = lastColdWater + ' м³';
+            }
+            if (lastHotWater) {
+                const el = document.getElementById('hotWaterLast');
+                if (el) el.textContent = lastHotWater + ' м³';
+            }
+            if (lastElectricity) {
+                const el = document.getElementById('electricityLast');
+                if (el) el.textContent = lastElectricity + ' кВт·ч';
+            }
+            if (lastGas) {
+                const el = document.getElementById('gasLast');
+                if (el) el.textContent = lastGas + ' м³';
+            } else {
+                const el = document.getElementById('gasLast');
+                if (el) el.textContent = '—';
+            }
+        }
+        
         function submitMeterReadings() {
             const coldWater = document.getElementById('coldWaterInput').value;
             const hotWater = document.getElementById('hotWaterInput').value;
             const electricity = document.getElementById('electricityInput').value;
+            const gas = document.getElementById('gasInput').value;
             
-            if (!coldWater || !hotWater || !electricity) {
+            if (!coldWater || !hotWater || !electricity || !gas) {
                 alert('❌ Заполните все показания!');
                 return;
             }
@@ -2837,19 +3165,30 @@
                 date: new Date().toISOString(),
                 coldWater: parseFloat(coldWater),
                 hotWater: parseFloat(hotWater),
-                electricity: parseFloat(electricity)
+                electricity: parseFloat(electricity),
+                gas: parseFloat(gas)
             };
             
             let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
             history.unshift(reading); // Добавить в начало
             localStorage.setItem('metersHistory', JSON.stringify(history));
+            localStorage.setItem('lastGas', gas ? parseFloat(gas) : 0);
+            localStorage.setItem('meterGas', JSON.stringify({ value: gas ? parseFloat(gas) : 0, date: new Date().toISOString() }));
             
-            alert('✅ Показания успешно отправлены!');
+            alert('✅ Показания успешно отправлены!\n' +
+                'ХВС: ' + coldWater + ' м³\n' +
+                'ГВС: ' + hotWater + ' м³\n' +
+                'Электричество: ' + electricity + ' кВт·ч\n' +
+                'Газ: ' + gas + ' м³');
             
             // Очистить поля
             document.getElementById('coldWaterInput').value = '';
             document.getElementById('hotWaterInput').value = '';
             document.getElementById('electricityInput').value = '';
+            document.getElementById('gasInput').value = '';
+            
+            // Обновить последние показания газа
+            updateGasLastReading();
             
             // Обновить историю
             loadMetersHistory();
@@ -2887,11 +3226,32 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
                         <div>Хол. вода: <strong>${reading.coldWater} м³</strong></div>
                         <div>Гор. вода: <strong>${reading.hotWater} м³</strong></div>
+                        <div>Газ: <strong>${reading.gas ?? '—'} м³</strong></div>
                         <div style="grid-column: 1 / -1;">Электричество: <strong>${reading.electricity} кВт⋅ч</strong></div>
                     </div>
                 `;
                 historyContainer.appendChild(item);
             });
+        }
+        
+        // Последние показания газа
+        function updateGasLastReading() {
+            const targets = [
+                document.getElementById('meterGasLast'),
+                document.getElementById('gasLast')
+            ].filter(Boolean);
+            if (!targets.length) return;
+            try {
+                const saved = JSON.parse(localStorage.getItem('meterGas') || '{}');
+                if (saved && typeof saved.value !== 'undefined') {
+                    targets.forEach(el => el.textContent = `${saved.value}`);
+                } else {
+                    targets.forEach(el => el.textContent = '—');
+                }
+            } catch (e) {
+                console.error('Ошибка чтения meterGas:', e);
+                targets.forEach(el => el.textContent = '—');
+            }
         }
         
         // ========== ФОТО СЧЁТЧИКОВ ==========
@@ -3348,7 +3708,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 doc.text('Адрес: 420000, Казань, ул. ЧИСТОПОЛЬСКАЯ, д. 5, кв. 142', 20, y);
                 y += 5;
                 doc.text('Лицевой счёт: № 8105059550', 20, y);
-                doc.text('Собственник: МИННУЛЛИНА Н. М.', 120, y);
+                doc.text('Собственник: ' + (mainScreenData.user?.name || '—'), 120, y);
                 y += 5;
                 doc.text('Площадь: 61.9 кв. м. | Проживающих: 4 чел.', 20, y);
                 y += 5;
@@ -3475,6 +3835,38 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             }
         }
 
+        // Загрузка данных жителей
+        let allResidents = [];
+        
+        async function loadResidents() {
+            try {
+                const response = await fetch('data/residents.json', { cache: 'no-cache' });
+                if (!response.ok) throw new Error('Не удалось загрузить данные');
+                allResidents = await response.json();
+                console.log('✅ Загружено жителей:', allResidents.length);
+                return allResidents;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки residents.json:', error);
+                return [];
+            }
+        }
+        
+        function findResidentByPhone(phone) {
+            const cleanPhone = (phone || '').replace(/\D/g, '');
+            const resident = allResidents.find(r => {
+                const cleanResidentPhone = (r.phone || '').replace(/\D/g, '');
+                return cleanResidentPhone === cleanPhone;
+            });
+            
+            if (resident) {
+                console.log('✅ Житель найден:', resident.fio || resident.fullName || resident.name);
+                return resident;
+            } else {
+                console.warn('⚠️ Житель не найден для телефона:', phone);
+                return null;
+            }
+        }
+        
         // ===== ДАННЫЕ ЖИЛЫХ КОМПЛЕКСОВ =====
         const complexes = {
             mayak: [
@@ -3604,6 +3996,12 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 return;
             }
             
+            // Получаем новые данные
+            const accountNumber = document.getElementById('accountNumberInput')?.value || '';
+            const fullName = document.getElementById('fullNameInput')?.value || '';
+            const apartmentArea = document.getElementById('apartmentAreaInput')?.value || '';
+            const residentsCount = document.getElementById('residentsCountInput')?.value || '';
+            
             const userData = {
                 complex: complex === 'mayak' ? 'ЖК «Маяк»' : 'ЖК «Зелёная Долина»',
                 complexKey: complex,
@@ -3612,6 +4010,10 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 apartment: apartment,
                 storage: storage,
                 fullAddress: house.fullAddress,
+                accountNumber: accountNumber,
+                fullName: fullName,
+                apartmentArea: apartmentArea,
+                residentsCount: residentsCount,
                 savedAt: new Date().toISOString()
             };
             
@@ -3679,6 +4081,36 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         }
 
         // ===== ИНТЕГРАЦИЯ ВСЕХ СИСТЕМ =====
+        
+        // Загрузка данных пользователя из localStorage
+        function loadUserData() {
+            try {
+                const userData = localStorage.getItem('userData');
+                if (!userData) {
+                    console.error('❌ Данные пользователя отсутствуют');
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                
+                const user = JSON.parse(userData);
+                console.log('✅ Данные пользователя загружены:', user);
+                
+                return {
+                    name: user.fio || user.fullName || user.name || '—',
+                    apartment: user.apartment || '—',
+                    storage: user.storage || '',
+                    phone: user.phone || '',
+                    address: user.address || user.fullAddress || '',
+                    code: user.code || '',
+                    licSchet: user.licSchet || user.accountNumber || '',
+                    hasStorage: user.storage && user.storage !== '—' && user.storage !== '0'
+                };
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
         
         // Данные главного экрана (имитация API)
         let mainScreenData = {
@@ -3765,16 +4197,19 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 nextDeadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
                 needsSubmission: false
             },
-            user: {
-                name: 'МИННУЛЛИНА Н. М.',
-                apartment: '142',
-                phone: '+7 (XXX) XXX-XX-XX',
-                hasStorage: false
-            }
+            user: loadUserData()
         };
         
+        let isLoadingData = false;
         // Загрузка данных главного экрана (имитация API)
         async function loadMainScreenData() {
+            // Предотвращение многократных параллельных вызовов
+            if (isLoadingData) {
+                console.log('⏸️ Загрузка уже идёт, пропускаем повторный вызов');
+                return;
+            }
+            isLoadingData = true;
+            
             console.log('📊 Загрузка данных главного экрана');
             try {
                 // TODO: Заменить на реальный API вызов
@@ -3783,9 +4218,22 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 
                 // Пока используем mock данные
                 renderMainScreen(mainScreenData);
+                updateUserInfoDisplay();
             } catch (error) {
                 console.error('❌ Ошибка загрузки данных:', error);
+            } finally {
+                isLoadingData = false;
             }
+        }
+        
+        function updateUserInfoDisplay() {
+            const userData = mainScreenData.user;
+            if (!userData) return;
+            
+            const receiptName = document.getElementById('receipt-owner-name');
+            if (receiptName) receiptName.textContent = userData.name || '—';
+            
+            console.log('✅ Интерфейс обновлён для:', userData.name);
         }
         
         // Рендеринг главного экрана
@@ -4110,6 +4558,8 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             if (document.getElementById('historyTab')) {
                 renderHistory();
             }
+            updateGasLastReading();
+            updateLastReadings();
             
             // Загрузить данные главного экрана
             loadMainScreenData();
@@ -4147,16 +4597,61 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             }
             
             // Проверка сохранённых данных при загрузке
-            (function checkUserData() {
+            (async function checkUserData() {
+                await loadResidents(); // Загрузить базу жителей
+                
+                const sessionPhone = localStorage.getItem('userPhone');
+                if (!sessionPhone) {
+                    console.error('❌ Нет сессии');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
                 const saved = localStorage.getItem('userData');
+                let data = null;
                 if (saved) {
                     try {
-                        const data = JSON.parse(saved);
-                        displayUserInfo(data);
+                        data = JSON.parse(saved);
                     } catch (e) {
-                        console.error('Ошибка загрузки данных пользователя:', e);
-                        document.getElementById('userFormCard').style.display = 'block';
+                        console.error('Ошибка парсинга userData:', e);
                     }
+                }
+                
+                if (!data) {
+                    const resident = findResidentByPhone(sessionPhone);
+                    if (!resident) {
+                        console.error('❌ Житель не найден');
+                        alert('Ошибка: данные не найдены');
+                        return;
+                    }
+                    
+                    const addressFromParts = [resident.street, resident.house].filter(Boolean).join(', ');
+                    const fullAddress = resident.address || addressFromParts || '—';
+                    const complexName = resident.complex || 'ЖК «Зелёная Долина»';
+                    const complexKey = complexName.toLowerCase().includes('маяк') ? 'mayak' : 'zelenaya';
+                    
+                    data = {
+                        complex: complexName,
+                        complexKey,
+                        house: fullAddress,
+                        houseIndex: 0,
+                        apartment: resident.apartment || '—',
+                        storage: resident.storage && resident.storage !== '—' ? resident.storage : '',
+                        fullAddress: fullAddress,
+                        accountNumber: resident.accountNumber || resident.licSchet || '',
+                        fullName: resident.fullName || resident.fio || '',
+                        apartmentArea: resident.area || resident.apartmentArea || '',
+                        residentsCount: resident.registeredPeople || resident.residents || '',
+                        phone: resident.phone,
+                        savedAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('userData', JSON.stringify(data));
+                    console.log('✅ Данные жителя загружены:', data);
+                }
+                
+                if (data) {
+                    displayUserInfo(data);
                 } else {
                     document.getElementById('userFormCard').style.display = 'block';
                 }
@@ -4172,6 +4667,19 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             console.log('✅ Приложение инициализировано');
         });
     </script>
+    <script src="auth.js"></script>
+    <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/zelenaya-dolina/sw.js', {
+      scope: '/zelenaya-dolina/'
+    })
+    .then(reg => console.log('[Index] ✅ SW зарегистрирован'))
+    .catch(err => console.error('[Index] ❌ SW ошибка:', err));
+  });
+}
+    </script>
 </body>
 </html>
+
 

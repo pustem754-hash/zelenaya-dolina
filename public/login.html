@@ -8,14 +8,14 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=7.0">
     <meta name="theme-color" content="#2E7D32">
     <link rel="manifest" href="manifest.json?v=7.0">
-    <title>Вход - УК «Зелёная долина» v7.1.1</title>
+    <title>Вход - УК «Зелёная долина» v7.2.3 ✅</title>
     
     <style>
         :root {
             --brand-green: #4CAF50;
             --brand-green-hover: #45a049;
             --brand-green-light: #66BB6A;
-            --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --card-shadow: 0 12px 40px rgba(76, 175, 80, 0.25);
             --text-primary: #2c3e50;
             --text-secondary: #7f8c8d;
         }
@@ -28,25 +28,65 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, var(--brand-green-light) 0%, var(--brand-green) 100%);
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, var(--brand-green) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Анимированный фон */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: backgroundMove 20s linear infinite;
+        }
+        
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(360deg); }
         }
         
         .login-container {
             width: 100%;
             max-width: 440px;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s cubic-bezier(0.05, 0.7, 0.1, 1.0);
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .login-card {
-            background: white;
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
             padding: 48px 32px;
             box-shadow: var(--card-shadow);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--brand-green) 0%, var(--brand-green-light) 100%);
         }
         
         .logo-container {
@@ -56,74 +96,120 @@
             align-items: center;
             justify-content: center;
             gap: 16px;
+            animation: fadeIn 0.8s ease-out 0.3s backwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .logo-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+            width: 96px;
+            height: 96px;
+            border-radius: 24px;
             object-fit: contain;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+            animation: logoFloat 3s ease-in-out infinite, logoRotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s backwards;
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes logoRotate {
+            from { transform: rotate(-180deg) scale(0); }
+            to { transform: rotate(0) scale(1); }
         }
         
         .company-name {
-            font-size: 28px;
-            font-weight: 600;
+            font-size: 32px;
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 8px;
             letter-spacing: -0.5px;
+            animation: fadeIn 0.8s ease-out 0.6s backwards;
         }
         
         .login-subtitle {
             color: var(--text-secondary);
-            font-size: 16px;
+            font-size: 15px;
             margin-bottom: 32px;
             font-weight: 400;
+            animation: fadeIn 0.8s ease-out 0.7s backwards;
         }
         
         #accessCode {
             width: 100%;
-            padding: 20px;
-            border: 2px solid #e8f5e8;
+            padding: 22px;
+            border: 3px solid #e8f5e8;
             border-radius: 16px;
             font-size: 24px !important;
-            font-weight: 500;
+            font-weight: 600;
             text-align: center;
             letter-spacing: 8px;
             margin-bottom: 24px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: #f8fdf8;
+            animation: fadeIn 0.8s ease-out 0.8s backwards;
         }
         
         #accessCode:focus {
             outline: none;
             border-color: var(--brand-green);
             background: white;
-            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        #accessCode:not(:placeholder-shown) {
+            background: white;
+            border-color: var(--brand-green-light);
         }
         
         .login-btn {
             width: 100%;
-            padding: 18px;
-            background: var(--brand-green);
+            padding: 20px;
+            background: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-green-hover) 100%);
             color: white;
             border: none;
             border-radius: 16px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            animation: fadeIn 0.8s ease-out 0.9s backwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
         
         .login-btn:hover {
-            background: var(--brand-green-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(76, 175, 80, 0.5);
+        }
+        
+        .login-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .login-btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
         }
         
         .version {
@@ -234,7 +320,7 @@ window.requireAuth = requireAuth;
     </script>
     <script>
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🔐 Инициализация страницы входа v7.1.1 FORCE REFRESH');
+    console.log('🔐 Инициализация страницы входа v7.2.3 ✅');
     
     const form = document.getElementById('loginForm');
     const input = document.getElementById('accessCode');

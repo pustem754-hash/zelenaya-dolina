@@ -1,5 +1,5 @@
 // Service Worker для УК "Зелёная долина" PWA
-const CACHE_NAME = 'zelenaya-dolina-v7.1.1-force-login-refresh';
+const CACHE_NAME = 'zelenaya-dolina-v7.2.3-final-fix';
 const OFFLINE_URL = '/zelenaya-dolina/index.html';
 
 // Критически важные файлы для кэширования (login.html ИСКЛЮЧЁН!)

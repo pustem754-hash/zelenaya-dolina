@@ -1798,7 +1798,10 @@
             localStorage.removeItem(AUTH_STORAGE_KEY);
             localStorage.removeItem(AUTH_CODE_KEY);
             localStorage.removeItem(USER_DATA_KEY);
-            window.location.href = 'login.html';
+            localStorage.removeItem('userPhone');
+            localStorage.removeItem('userData');
+            console.log('🚪 Выход...');
+            window.location.href = 'login.html?logout=true';
         }
 
         function requireAuth() {

@@ -257,12 +257,12 @@
                 <button type="submit" class="login-btn">Войти</button>
             </form>
             
-            <div class="version">Версия 7.1.1</div>
+            <div class="version">Версия 7.2.3 ✅</div>
         </div>
     </div>
     
     <script>
-// ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.1.1 - ФИНАЛЬНЫЙ FORCE REFRESH
+// ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.2.3 ✅
 const AUTH_STORAGE_KEY = 'zd_isAuthenticated';
 const AUTH_CODE_KEY = 'zd_login_code';
 const USER_DATA_KEY = 'zd_user_data';
@@ -291,7 +291,9 @@ function logout() {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem(AUTH_CODE_KEY);
     localStorage.removeItem(USER_DATA_KEY);
-    window.location.href = 'login.html';
+    localStorage.removeItem('userPhone');
+    localStorage.removeItem('userData');
+    console.log('✅ Выход выполнен');
 }
 
 function requireAuth() {
@@ -322,6 +324,14 @@ window.requireAuth = requireAuth;
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔐 Инициализация страницы входа v7.2.3 ✅');
     
+    // Проверка параметра logout
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'true') {
+        logout();
+        console.log('🚪 Выход выполнен, очищен кеш');
+        window.history.replaceState({}, '', 'login.html');
+    }
+    
     const form = document.getElementById('loginForm');
     const input = document.getElementById('accessCode');
     
@@ -330,8 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Проверка уже авторизованного пользователя
-    if (typeof isAuthenticated === 'function' && isAuthenticated()) {
+    // Проверка уже авторизованного пользователя (только если НЕ logout)
+    if (!urlParams.get('logout') && typeof isAuthenticated === 'function' && isAuthenticated()) {
         console.log('✅ Пользователь уже авторизован, перенаправление...');
         window.location.replace('index.html');
         return;

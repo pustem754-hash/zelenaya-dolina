@@ -1,57 +1,297 @@
-﻿<!DOCTYPE html>
-<!-- УК "Зелёная Долина" - Вход v6.8.2 -->
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Вход - УК Зелёная долина v6.8.2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=7.0">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=7.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=7.0">
+    <meta name="theme-color" content="#2E7D32">
+    <link rel="manifest" href="manifest.json?v=7.0">
+    <title>Вход - УК «Зелёная долина» v7.1.1</title>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; background: #f5f5f5; }
-        h1 { font-size: 20px; margin-bottom: 24px; color: #2E7D32; word-wrap: break-word; text-align: center; line-height: 1.4; }
-        button { min-height: 44px; padding: 14px 20px; font-size: 16px; border-radius: 12px; border: none; cursor: pointer; transition: opacity 0.2s; width: 100%; margin-bottom: 10px; background: #2E7D32; color: white; }
-        button:active { opacity: 0.7; }
-        .version { position: fixed; bottom: 16px; right: 16px; font-size: 12px; opacity: 0.5; color: #666; pointer-events: none; }
+        :root {
+            --brand-green: #4CAF50;
+            --brand-green-hover: #45a049;
+            --brand-green-light: #66BB6A;
+            --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
         
-        .card { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; width: 100%; }
-        label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; margin-bottom: 20px; outline: none; }
-        input:focus { border-color: #2E7D32; }
-        .theme-toggle { position: fixed; top: 16px; left: 16px; width: auto; padding: 8px; background: transparent; color: #333; font-size: 24px; margin: 0; box-shadow: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--brand-green-light) 0%, var(--brand-green) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 32px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+        
+        .logo-container {
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            object-fit: contain;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .company-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+        
+        #accessCode {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #e8f5e8;
+            border-radius: 16px;
+            font-size: 24px !important;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            background: #f8fdf8;
+        }
+        
+        #accessCode:focus {
+            outline: none;
+            border-color: var(--brand-green);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--brand-green);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .login-btn:hover {
+            background: var(--brand-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .version {
+            margin-top: 24px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 36px 24px;
+            }
+            
+            .company-name {
+                font-size: 24px;
+            }
+            
+            #accessCode {
+                font-size: 20px !important;
+                padding: 16px;
+            }
+        }
     </style>
 </head>
 <body>
-    <button id="theme-toggle" class="theme-toggle"></button>
-    
-    <div class="card">
-        <h1> УК Зелёная долина</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 24px;">Вход в личный кабинет</p>
-        
-        <form onsubmit="event.preventDefault(); window.location.href='index.html'">
-            <label for="phone">Номер телефона</label>
-            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" required>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-container">
+                <img src="icon-192x192.png?v=7.0" alt="УК Зелёная долина" class="logo-icon">
+                <h1 class="company-name">Зелёная долина</h1>
+            </div>
             
-            <label for="code">СМС-код</label>
-            <input type="number" id="code" placeholder="1234" required>
+            <p class="login-subtitle">Введите код доступа<br>(последние 4 цифры л/с)</p>
             
-            <button type="submit">Войти</button>
-        </form>
-        
-        <p style="text-align: center; font-size: 12px; color: #999; margin-top: 16px;">Тестовый код: 1234</p>
+            <form id="loginForm">
+                <input type="tel" 
+                       id="accessCode" 
+                       placeholder="••••" 
+                       maxlength="4" 
+                       pattern="[0-9]*" 
+                       inputmode="numeric" 
+                       autocomplete="one-time-code"
+                       required 
+                       autofocus>
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
+            
+            <div class="version">Версия 7.1.1</div>
+        </div>
     </div>
-
-    <div class="version">v6.8.2</div>
-
+    
     <script>
-        console.log('[login.html v6.8.2] Loaded');
-        // Theme logic
-        const toggle = document.getElementById('theme-toggle');
-        toggle.onclick = () => {
-            document.body.style.background = document.body.style.background === 'rgb(26, 26, 26)' ? '#f5f5f5' : '#1a1a1a';
-            document.body.style.color = document.body.style.background === 'rgb(26, 26, 26)' ? '#fff' : '#000';
-        };
+// ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.1.1 - ФИНАЛЬНЫЙ FORCE REFRESH
+const AUTH_STORAGE_KEY = 'zd_isAuthenticated';
+const AUTH_CODE_KEY = 'zd_login_code';
+const USER_DATA_KEY = 'zd_user_data';
+
+function saveAuth(code) {
+    localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+    localStorage.setItem(AUTH_CODE_KEY, code);
+    const userData = getMockUserByCode(code);
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+}
+
+function isAuthenticated() {
+    return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+}
+
+function getLoginCode() {
+    return localStorage.getItem(AUTH_CODE_KEY);
+}
+
+function getUserData() {
+    const data = localStorage.getItem(USER_DATA_KEY);
+    return data ? JSON.parse(data) : null;
+}
+
+function logout() {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(AUTH_CODE_KEY);
+    localStorage.removeItem(USER_DATA_KEY);
+    window.location.href = 'login.html';
+}
+
+function requireAuth() {
+    if (!isAuthenticated()) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
+function getMockUserByCode(code) {
+    const users = {
+        '1977': { account_number: '25-0-1977', full_name: 'Иванов Иван Иванович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '45', balance: -1540.00, area: 65.5 } },
+        '0123': { account_number: '1-7-0-0123', full_name: 'Петрова Анна Сергеевна', apartment: { complex_name: 'ЖК Зелёная долина', building_number: '3', apartment_number: '12', balance: -890.00, area: 52.3 } },
+        '1234': { account_number: '25-0-1234', full_name: 'Сидоров Петр Васильевич', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '78', balance: 0, area: 75.2 } }
+    };
+    return users[code] || { account_number: `DEMO-${code}`, full_name: 'Демо Пользователь', apartment: { complex_name: 'ЖК Демо', building_number: '1', apartment_number: '1', balance: 0, area: 50.0 } };
+}
+
+window.saveAuth = saveAuth;
+window.isAuthenticated = isAuthenticated;
+window.getLoginCode = getLoginCode;
+window.getUserData = getUserData;
+window.logout = logout;
+window.requireAuth = requireAuth;
     </script>
-<script src="js/logger.js?v=6.8.3"></script></body>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔐 Инициализация страницы входа v7.1.1 FORCE REFRESH');
+    
+    const form = document.getElementById('loginForm');
+    const input = document.getElementById('accessCode');
+    
+    if (!form || !input) {
+        console.error('[Login] Элементы формы не найдены');
+        return;
+    }
+    
+    // Проверка уже авторизованного пользователя
+    if (typeof isAuthenticated === 'function' && isAuthenticated()) {
+        console.log('✅ Пользователь уже авторизован, перенаправление...');
+        window.location.replace('index.html');
+        return;
+    }
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = (input.value || '').trim();
+        
+        console.log('🔍 Попытка входа с кодом:', code);
+        
+        if (!/^\d{4}$/.test(code)) {
+            alert('Введите 4-значный код');
+            input.focus();
+            return;
+        }
+        
+        if (typeof saveAuth !== 'function') {
+            console.error('❌ Функция saveAuth не найдена!');
+            alert('Ошибка загрузки системы авторизации. Обновите страницу.');
+            return;
+        }
+        
+        saveAuth(code);
+        console.log('✅ Авторизация сохранена, перенаправление...');
+        window.location.href = 'index.html';
+    });
+    
+    // Автофокус на поле ввода
+    setTimeout(() => {
+        input.focus();
+    }, 100);
+});
+    </script>
+    <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/zelenaya-dolina/sw.js', {
+      scope: '/zelenaya-dolina/'
+    }).then(registration => {
+      console.log('[Login] ✅ SW зарегистрирован');
+    }).catch(error => {
+      console.error('[Login] ❌ SW ошибка:', error);
+    });
+  });
+}
+    </script>
+</body>
 </html>
-
-

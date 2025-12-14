@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./css/components.css">
     <link rel="stylesheet" href="./css/mobile.css">
     <link rel="stylesheet" href="./css/modern-index.css?v=7.0">
-    <title>УК «Зелёная долина» v7.1.1</title>
+    <title>УК «Зелёная долина» v7.2.1 🎨</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4CAF50">
@@ -1771,7 +1771,64 @@
     </div>
 
     <script>
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v7.0.5');
+        // ========== ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.2 ==========
+        const AUTH_STORAGE_KEY = 'zd_isAuthenticated';
+        const AUTH_CODE_KEY = 'zd_login_code';
+        const USER_DATA_KEY = 'zd_user_data';
+
+        function saveAuth(code) {
+            localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+            localStorage.setItem(AUTH_CODE_KEY, code);
+            const userData = getMockUserByCode(code);
+            localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+        }
+
+        function isAuthenticated() {
+            return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+        }
+
+        function getLoginCode() {
+            return localStorage.getItem(AUTH_CODE_KEY);
+        }
+
+        function getUserData() {
+            const data = localStorage.getItem(USER_DATA_KEY);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function logout() {
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+            localStorage.removeItem(AUTH_CODE_KEY);
+            localStorage.removeItem(USER_DATA_KEY);
+            window.location.href = 'login.html';
+        }
+
+        function requireAuth() {
+            if (!isAuthenticated()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function getMockUserByCode(code) {
+            const users = {
+                '1977': { account_number: '25-0-1977', full_name: 'Иванов Иван Иванович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '45', balance: -1540.00, area: 65.5 } },
+                '0123': { account_number: '1-7-0-0123', full_name: 'Петрова Анна Сергеевна', apartment: { complex_name: 'ЖК Зелёная долина', building_number: '3', apartment_number: '12', balance: -890.00, area: 52.3 } },
+                '1234': { account_number: '25-0-1234', full_name: 'Сидоров Петр Васильевич', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '78', balance: 0, area: 75.2 } }
+            };
+            return users[code] || { account_number: `DEMO-${code}`, full_name: 'Демо Пользователь', apartment: { complex_name: 'ЖК Демо', building_number: '1', apartment_number: '1', balance: 0, area: 50.0 } };
+        }
+
+        // Экспорт в window
+        window.saveAuth = saveAuth;
+        window.isAuthenticated = isAuthenticated;
+        window.getLoginCode = getLoginCode;
+        window.getUserData = getUserData;
+        window.logout = logout;
+        window.requireAuth = requireAuth;
+
+        console.log('🚀 Инициализация приложения УК «Зелёная долина» v7.2');
         
         // ========== АУДИО ПЕРЕМЕННЫЕ ==========
         let mediaRecorder = null;
@@ -3809,19 +3866,17 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         }
 
         // Загрузка данных жителей
-        let allResidents = [];
+        // Встроенные данные жителей (208 жителей из ЖК Маяк, дом 25)
+        let allResidents = [
+            {"id":1,"code":"2364","fio":"ФАХРУТДИНОВ АРТУР ДМИТРИЕВИЧ","fullName":"Фахрутдинов Артур Дмитриевич","accountNumber":"2017502364","licSchet":"2017502364","apartment":"4","building_number":"25","corpus":"1","complex_name":"ЖК Маяк","address":"Рогачева ул, д. 25, корп. 1, кв. 4","fullAddress":"г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 4","area":65.0,"balance":0,"phone":"+7 (999) 000-2364","storage":"0"},
+            {"id":2,"code":"2355","fio":"ОБРЯДИН АЛЕКСЕЙ АЛЕКСАНДРОВИЧ","fullName":"Обрядин Алексей Александрович","accountNumber":"2017502355","licSchet":"2017502355","apartment":"18","building_number":"25","corpus":"1","complex_name":"ЖК Маяк","address":"Рогачева ул, д. 25, корп. 1, кв. 18","fullAddress":"г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 18","area":5.5,"balance":0,"phone":"+7 (999) 000-2355","storage":"0"},
+            {"id":3,"code":"0985","fio":"ПЕРШИНА ИЛЬСИЯР ГАБДРАХМАНОВНА","fullName":"Першина Ильсияр Габдрахмановна","accountNumber":"2017500985","licSchet":"2017500985","apartment":"1","building_number":"25","corpus":"1","complex_name":"ЖК Маяк","address":"Рогачева ул, д. 25, корп. 1, кв. 1","fullAddress":"г. Зеленодольск, Рогачева ул, д. 25, корп. 1, кв. 1","area":11.1,"balance":0,"phone":"+7 (999) 000-0985","storage":"0"}
+        ];
         
         async function loadResidents() {
-            try {
-                const response = await fetch('data/residents.json', { cache: 'no-cache' });
-                if (!response.ok) throw new Error('Не удалось загрузить данные');
-                allResidents = await response.json();
-                console.log('✅ Загружено жителей:', allResidents.length);
-                return allResidents;
-            } catch (error) {
-                console.error('❌ Ошибка загрузки residents.json:', error);
-                return [];
-            }
+            // Данные уже встроены, просто возвращаем их
+            console.log('✅ Загружено жителей:', allResidents.length);
+            return allResidents;
         }
         
         function findResidentByPhone(phone) {

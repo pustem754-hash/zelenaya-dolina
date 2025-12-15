@@ -300,7 +300,12 @@ function getMockUserByCode(code) {
     const users = {
         '1977': { account_number: '25-0-1977', full_name: 'Иванов Иван Иванович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '45', balance: -1540.00, area: 65.5 } },
         '0123': { account_number: '1-7-0-0123', full_name: 'Петрова Анна Сергеевна', apartment: { complex_name: 'ЖК Зелёная долина', building_number: '3', apartment_number: '12', balance: -890.00, area: 52.3 } },
-        '1234': { account_number: '25-0-1234', full_name: 'Сидоров Петр Васильевич', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '78', balance: 0, area: 75.2 } }
+        '1234': { account_number: '25-0-1234', full_name: 'Сидоров Петр Васильевич', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '78', balance: 0, area: 75.2 } },
+        '2364': { account_number: '25-2-2364', full_name: 'Фахрутдинов Артур Маратович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '4', balance: -2150.00, area: 58.3 } },
+        '2355': { account_number: '25-1-2355', full_name: 'Обрядин Алексей Владимирович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '18', balance: -890.50, area: 45.2 } },
+        '0985': { account_number: '25-0-0985', full_name: 'Першина Ильсияр Рафаиловна', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '1', balance: 0, area: 62.1 } },
+        '9948': { account_number: '25-1-9948', full_name: 'Шакиров Марат Рашидович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '1', balance: -450.00, area: 70.5 } },
+        '0994': { account_number: '25-0-0994', full_name: 'Шакирова Миляуша Ильгизовна', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '2', balance: -1200.00, area: 55.8 } }
     };
     return users[code] || { account_number: `DEMO-${code}`, full_name: 'Демо Пользователь', apartment: { complex_name: 'ЖК Демо', building_number: '1', apartment_number: '1', balance: 0, area: 50.0 } };
 }

@@ -318,17 +318,26 @@ window.logout = logout;
 window.requireAuth = requireAuth;
     </script>
     <script>
+// FIX FLICKERING: Hide body before auth check
+document.documentElement.style.visibility = 'hidden';
+
 // Проверка параметра logout СРАЗУ, ДО отрисовки
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('logout') === 'true') {
     logout();
     console.log('🚪 Выход выполнен');
     window.history.replaceState({}, '', 'login.html');
+    document.documentElement.style.visibility = 'visible'; // Show if logout
 }
 // Проверка авторизации СРАЗУ, ДО отрисовки
 else if (typeof isAuthenticated === 'function' && isAuthenticated()) {
     console.log('✅ Уже авторизован, редирект...');
     window.location.replace('index.html');
+    // Keep hidden during redirect
+}
+else {
+    // Not authenticated - show login form
+    document.documentElement.style.visibility = 'visible';
 }
 
 document.addEventListener('DOMContentLoaded', () => {

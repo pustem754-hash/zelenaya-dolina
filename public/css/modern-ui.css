@@ -1,0 +1,181 @@
+/* Modern UI tokens & components */
+
+:root {
+    --btn-height: 52px;
+}
+
+.btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 14px 22px;
+    min-height: var(--btn-height);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    background: var(--color-bg-light);
+    color: var(--color-text-main);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    overflow: hidden;
+}
+
+.btn:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+}
+
+.btn-secondary {
+    background: var(--color-bg-light);
+    color: var(--color-text-main);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid rgba(46, 125, 50, 0.25);
+}
+
+.btn-icon {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.btn-loading::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+.card-modern {
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card-glass {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(18px);
+}
+
+.input-modern,
+.select-modern,
+.textarea-modern {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    background: var(--color-bg-light);
+    font-size: 15px;
+    color: var(--color-text-main);
+    transition: all var(--transition-fast);
+}
+
+.input-modern:focus,
+.select-modern:focus,
+.textarea-modern:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-dark);
+}
+
+.stat-card {
+    display: grid;
+    gap: 6px;
+    padding: 16px;
+    background: linear-gradient(135deg, #F4FBF6 0%, #E7F5EC 100%);
+    border: 1px solid rgba(46, 125, 50, 0.12);
+    border-radius: var(--radius-lg);
+}
+
+.media-preview {
+    min-height: 240px;
+    background: var(--color-bg-light);
+    border: 1px dashed rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.media-preview.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.quick-action {
+    padding: 14px;
+    border-radius: var(--radius-md);
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.quick-action:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.toast {
+    animation: fadeInUp 0.25s ease;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+
+
+

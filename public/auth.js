@@ -1,146 +1,111 @@
-// ====================================
-// 🔐 МОДУЛЬ АВТОРИЗАЦИИ v6.5.0
-// ====================================
+// auth.js - Система авторизации УК "Зелёная долина" v2.0
 
-// Глобальная переменная для отключения расширений браузера
-window.addEventListener('error', function(e) {
-    if (e.message && e.message.includes('message channel closed')) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.warn('[Auth] Игнорируем ошибку расширения браузера');
-        return false;
-    }
-});
+// Ключи для localStorage  
+const AUTH_STORAGE_KEY = 'zd_isAuthenticated';
+const AUTH_CODE_KEY = 'zd_login_code';
+const USER_DATA_KEY = 'zd_user_data';
 
-// Отключить конфликтующие Promise от расширений
-window.addEventListener('unhandledrejection', function(e) {
-    if (e.reason && e.reason.message && e.reason.message.includes('message channel')) {
-        e.preventDefault();
-        console.warn('[Auth] Игнорируем unhandled rejection от расширения');
-    }
-});
+// Сохранить успешный вход
+function saveAuth(code) {
+    localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+    localStorage.setItem(AUTH_CODE_KEY, code);
+    
+    // Получить и сохранить данные пользователя
+    const userData = getMockUserByCode(code);
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+}
 
-// ====================================
-// ПРОВЕРКА АВТОРИЗАЦИИ
-// ====================================
-
+// Проверить авторизацию
 function isAuthenticated() {
-    try {
-        const session = localStorage.getItem('userSession');
-        if (!session) {
-            console.log('[Auth] ❌ Сессия отсутствует');
-            return false;
-        }
-
-        const sessionData = JSON.parse(session);
-        const now = Date.now();
-        const sessionAge = now - sessionData.createdAt;
-        const maxAge = 24 * 60 * 60 * 1000; // 24 часа
-
-        if (sessionAge > maxAge) {
-            console.log('[Auth] ❌ Сессия истекла');
-            localStorage.removeItem('userSession');
-            return false;
-        }
-
-        console.log('[Auth] ✅ Сессия активна');
-        return true;
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка проверки сессии:', error);
-        return false;
-    }
+    return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
 }
 
-// ====================================
-// ЗАЩИТА СТРАНИЦ
-// ====================================
-
-function requireAuth() {
-    try {
-        const currentPage = window.location.pathname.split('/').pop();
-        
-        // Если уже на странице логина, не редиректить
-        if (currentPage === 'login.html') {
-            console.log('[Auth] Уже на странице логина');
-            return false;
-        }
-
-        // Проверить авторизацию
-        if (!isAuthenticated()) {
-            console.warn('[Auth] ⚠️ Доступ запрещён, редирект на login.html');
-            window.location.replace('login.html');
-            return false;
-        } else {
-            console.log('[Auth] ✅ Доступ разрешён');
-            return true;
-        }
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка requireAuth:', error);
-        window.location.replace('login.html');
-        return false;
-    }
+// Получить сохраненный код
+function getLoginCode() {
+    return localStorage.getItem(AUTH_CODE_KEY);
 }
 
-// ====================================
-// СОЗДАНИЕ СЕССИИ
-// ====================================
-
-function createSession(phone) {
-    try {
-        const sessionData = {
-            phone: phone,
-            createdAt: Date.now(),
-            isAuthenticated: true
-        };
-        
-        localStorage.setItem('userSession', JSON.stringify(sessionData));
-        console.log('[Auth] ✅ Сессия создана для:', phone);
-        return true;
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка создания сессии:', error);
-        return false;
-    }
+// Получить данные пользователя
+function getUserData() {
+    const data = localStorage.getItem(USER_DATA_KEY);
+    return data ? JSON.parse(data) : null;
 }
 
-// ====================================
-// ПОЛУЧЕНИЕ СЕССИИ
-// ====================================
-
-function getSession() {
-    try {
-        const session = localStorage.getItem('userSession');
-        return session ? JSON.parse(session) : null;
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка получения сессии:', error);
-        return null;
-    }
-}
-
-// ====================================
-// ВЫХОД
-// ====================================
-
+// Выйти из системы
 function logout() {
-    try {
-        localStorage.removeItem('userSession');
-        console.log('[Auth] ✅ Пользователь вышел');
-        window.location.replace('login.html');
-    } catch (error) {
-        console.error('[Auth] ❌ Ошибка выхода:', error);
-        window.location.replace('login.html');
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(AUTH_CODE_KEY);
+    localStorage.removeItem(USER_DATA_KEY);
+    window.location.href = 'login.html';
+}
+
+// Защита страниц
+function requireAuth() {
+    if (!isAuthenticated()) {
+        window.location.href = 'login.html';
+        return false;
     }
+    return true;
 }
 
-// ====================================
-// ЭКСПОРТ (для использования в других файлах)
-// ====================================
+// Мок-данные пользователей
+function getMockUserByCode(code) {
+    const users = {
+        '1977': {
+            account_number: '25-0-1977',
+            full_name: 'Иванов Иван Иванович',
+            apartment: {
+                complex_name: 'ЖК Маяк',
+                building_number: '25',
+                apartment_number: '45',
+                balance: -1540.00,
+                area: 65.5
+            }
+        },
+        '0123': {
+            account_number: '1-7-0-0123',
+            full_name: 'Петрова Анна Сергеевна',
+            apartment: {
+                complex_name: 'ЖК Зелёная долина',
+                building_number: '3',
+                apartment_number: '12',
+                balance: -890.00,
+                area: 52.3
+            }
+        },
+        '1234': {
+            account_number: '25-0-1234',
+            full_name: 'Сидоров Петр Васильевич',
+            apartment: {
+                complex_name: 'ЖК Маяк',
+                building_number: '25',
+                apartment_number: '78',
+                balance: 0,
+                area: 75.2
+            }
+        }
+    };
+    
+    return users[code] || {
+        account_number: `DEMO-${code}`,
+        full_name: 'Демо Пользователь',
+        apartment: {
+            complex_name: 'ЖК Демо',
+            building_number: '1',
+            apartment_number: '1',
+            balance: 0,
+            area: 50.0
+        }
+    };
+}
 
+// Экспорт функций в глобальную область
 if (typeof window !== 'undefined') {
+    window.saveAuth = saveAuth;
     window.isAuthenticated = isAuthenticated;
-    window.requireAuth = requireAuth;
-    window.createSession = createSession;
-    window.getSession = getSession;
+    window.getLoginCode = getLoginCode;
+    window.getUserData = getUserData;
     window.logout = logout;
+    window.requireAuth = requireAuth;
 }
 
-console.log('[Auth] 🔐 Модуль авторизации v6.5.0 загружен');

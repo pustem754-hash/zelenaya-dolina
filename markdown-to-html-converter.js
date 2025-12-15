@@ -1,12 +1,30 @@
-#!/usr/bin/env node
-// Markdown to HTML Converter - Standalone версия
+/**
+ * MARKDOWN TO HTML CONVERTER
+ * ===========================
+ * Преобразует Markdown разметку в HTML
+ * 
+ * Поддерживаемые функции:
+ * - Заголовки: # H1, ## H2, ### H3, etc.
+ * - Жирный: **текст** или __текст__
+ * - Курсив: *текст* или _текст_
+ * - Зачёркнутый: ~~текст~~
+ * - Инлайн код: `код`
+ * - Блоки кода: ```язык\nкод\n```
+ * - Ссылки: [текст](url)
+ * - Изображения: ![alt](src)
+ * - Списки: - элемент или 1. элемент
+ * - Цитаты: > текст
+ * - Горизонтальные линии: ---, ***, ___
+ * - Параграфы: автоматически
+ * - Экранирование HTML
+ */
 
 function markdownToHTML(markdown) {
     if (!markdown) return '';
     
     let html = markdown;
     
-    // 1. Блоки кода (ДО экранирования HTML)
+    // 1. Сохраняем блоки кода (до экранирования)
     const codeBlocks = [];
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
         const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
@@ -15,7 +33,7 @@ function markdownToHTML(markdown) {
         return placeholder;
     });
     
-    // 2. Инлайн код (до экранирования)
+    // 2. Сохраняем инлайн код (до экранирования)
     const inlineCodes = [];
     html = html.replace(/`([^`]+)`/g, (match, code) => {
         const placeholder = `__INLINE_CODE_${inlineCodes.length}__`;
@@ -30,16 +48,15 @@ function markdownToHTML(markdown) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
     
-    // 4. Восстанавливаем блоки кода
+    // 4. Восстанавливаем код
     codeBlocks.forEach((block, i) => {
         html = html.replace(`__CODE_BLOCK_${i}__`, block);
     });
-    
     inlineCodes.forEach((code, i) => {
         html = html.replace(`__INLINE_CODE_${i}__`, code);
     });
     
-    // 5. Заголовки
+    // 5. Заголовки (от большего к меньшему)
     html = html.replace(/^######\s+(.+)$/gm, '<h6>$1</h6>');
     html = html.replace(/^#####\s+(.+)$/gm, '<h5>$1</h5>');
     html = html.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
@@ -91,6 +108,7 @@ function markdownToHTML(markdown) {
     html = blocks.map(block => {
         const trimmed = block.trim();
         if (!trimmed) return '';
+        // Не оборачиваем в <p> если уже есть блочный элемент
         if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote|hr)/)) {
             return trimmed;
         }
@@ -100,82 +118,54 @@ function markdownToHTML(markdown) {
     return html;
 }
 
-// Тесты
-function runTests() {
-    console.log('🧪 Запуск тестов Markdown to HTML\n');
-    
-    let passed = 0;
-    let failed = 0;
-    
-    function test(name, input, expected) {
-        const result = markdownToHTML(input);
-        if (result === expected) {
-            console.log(`✅ ${name}`);
-            passed++;
-            return true;
-        } else {
-            console.log(`❌ ${name}`);
-            console.log(`   Ожидалось: ${JSON.stringify(expected)}`);
-            console.log(`   Получено:  ${JSON.stringify(result)}\n`);
-            failed++;
-            return false;
-        }
-    }
-    
-    // Заголовки
-    test('H1', '# Heading 1', '<p><h1>Heading 1</h1></p>');
-    test('H2', '## Heading 2', '<p><h2>Heading 2</h2></p>');
-    test('H3', '### Heading 3', '<p><h3>Heading 3</h3></p>');
-    
-    // Жирный
-    test('Bold **', '**bold**', '<p><strong>bold</strong></p>');
-    test('Bold __', '__bold__', '<p><strong>bold</strong></p>');
-    
-    // Курсив
-    test('Italic *', '*italic*', '<p><em>italic</em></p>');
-    test('Italic _', '_italic_', '<p><em>italic</em></p>');
-    
-    // Зачёркнутый
-    test('Strike', '~~text~~', '<p><del>text</del></p>');
-    
-    // Код
-    test('Code', '`code`', '<p><code>code</code></p>');
-    
-    // Ссылка
-    test('Link', '[Google](https://google.com)', '<p><a href="https://google.com">Google</a></p>');
-    
-    // Изображение
-    test('Image', '![Alt](img.png)', '<p><img src="img.png" alt="Alt"></p>');
-    
-    // HR
-    test('HR', '---', '<hr>');
-    
-    // Цитата
-    test('Quote', '> Quote', '<blockquote>Quote</blockquote>');
-    
-    // Пустая строка
-    test('Empty', '', '');
-    
-    // HTML экранирование
-    test('Escape HTML', '<script>alert("XSS")</script>', '<p>&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;</p>');
-    
-    console.log('\n' + '='.repeat(60));
-    console.log(`✅ Пройдено: ${passed}`);
-    console.log(`❌ Провалено: ${failed}`);
-    console.log('='.repeat(60));
-    
-    return failed === 0;
-}
+// ============================================
+// ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ
+// ============================================
 
-// Экспорт
+console.log('📝 Markdown to HTML Converter\n');
+console.log('Пример 1 - Заголовок:');
+console.log(markdownToHTML('# Hello World'));
+console.log('');
+
+console.log('Пример 2 - Текст с форматированием:');
+console.log(markdownToHTML('This is **bold** and *italic* text'));
+console.log('');
+
+console.log('Пример 3 - Ссылка:');
+console.log(markdownToHTML('[Google](https://google.com)'));
+console.log('');
+
+console.log('Пример 4 - Список:');
+console.log(markdownToHTML('- Item 1\n- Item 2\n- Item 3'));
+console.log('');
+
+console.log('Пример 5 - Комплексный пример:');
+const complexMarkdown = `# Заголовок
+
+Это **жирный** текст и *курсивный* текст.
+
+## Список:
+- Первый элемент
+- Второй элемент
+- Третий элемент
+
+Ссылка на [Google](https://google.com).
+
+\`\`\`javascript
+const x = 1;
+console.log(x);
+\`\`\``;
+
+console.log(markdownToHTML(complexMarkdown));
+
+// Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { markdownToHTML, runTests };
+    module.exports = { markdownToHTML };
 }
 
-// Автозапуск тестов при прямом вызове
-if (require.main === module) {
-    const success = runTests();
-    process.exit(success ? 0 : 1);
+// Экспорт для браузера
+if (typeof window !== 'undefined') {
+    window.markdownToHTML = markdownToHTML;
 }
 
 

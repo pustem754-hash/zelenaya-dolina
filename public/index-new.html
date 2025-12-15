@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- УК "Зелёная Долина" - Главная страница v6.8.2 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>УК «Зелёная долина» v6.8.2</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Зелёная Долина">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        /* ===== ДИЗАЙН-СИСТЕМА УК ЗЕЛЁНАЯ ДОЛИНА v6.8.2 ===== */
+        
+        :root {
+            /* Фирменные цвета */
+            --primary: #2E7D32;
+            --primary-dark: #1B5E20;
+            --primary-light: #4CAF50;
+            --primary-bg: #E8F5E9;
+            
+            /* Статусы */
+            --success: #2E7D32;
+            --warning: #F57C00;
+            --danger: #D32F2F;
+            --info: #1976D2;
+            
+            /* Нейтральные */
+            --bg: #F5F5F5;
+            --surface: #FFFFFF;
+            --text: #212121;
+            --text-secondary: #666666;
+            --text-muted: #9E9E9E;
+            --border: #E0E0E0;
+            
+            /* Тени */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+            
+            /* Радиусы */
+            --radius: 12px;
+            --radius-lg: 16px;
+            
+            /* Безопасные зоны iOS */
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* ===== ШАПКА ===== */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: calc(20px + var(--safe-top)) 20px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background: white;
+        }
+        
+        .header-text h1 {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .header-text p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+        }
+        
+        .header-version {
+            position: absolute;
+            top: calc(12px + var(--safe-top));
+            right: 16px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* ===== КОНТЕНТ ===== */
+        .main-content {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* ===== КАРТОЧКИ ===== */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title .icon {
+            color: var(--primary);
+        }
+        
+        /* ===== ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ===== */
+        .profile-card {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .profile-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+        
+        .profile-data {
+            flex: 1;
+        }
+        
+        .profile-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        
+        .profile-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .profile-edit-btn {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            color: var(--primary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .profile-edit-btn:hover {
+            background: var(--primary-bg);
+        }
+        
+        /* Форма редактирования профиля */
+        .profile-form {
+            display: none;
+        }
+        
+        .profile-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .form-select,
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: inherit;
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .form-select:focus,
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--primary-bg);
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+        
+        .checkbox-group input {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--primary);
+        }
+        
+        /* ===== БАЛАНС ===== */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .balance-card .card-title {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .balance-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .balance-status.debt {
+            background: #FFCDD2;
+            color: #C62828;
+        }
+        
+        .balance-status.overpay {
+            background: #C8E6C9;
+            color: #2E7D32;
+        }
+        
+        .balance-status.paid {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .balance-info {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .pay-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .pay-btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* ===== БЫСТРЫЕ ДЕЙСТВИЯ ===== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .quick-action {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .quick-action:hover {
+            transform: scale(1.03);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+        
+        .quick-action:active {
+            transform: scale(0.98);
+        }
+        
+        .quick-action-icon {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        
+        .quick-action-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .quick-action-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .quick-action-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        /* ===== ЗАЯВКИ ===== */
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .request-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .request-item:hover {
+            background: var(--primary-bg);
+        }
+        
+        .request-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        
+        .request-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .request-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .request-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .request-status {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .request-status.new {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .request-status.progress {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .request-status.done {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .request-status.rejected {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        
+        .view-all-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-bg);
+            color: var(--primary);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+        
+        .view-all-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* ===== НОВОСТИ ===== */
+        .news-item {
+            display: flex;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        
+        .news-date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            flex-shrink: 0;
+        }
+        
+        .news-date-day {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .news-date-month {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        
+        .news-content {
+            flex: 1;
+        }
+        
+        .news-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .news-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        
+        .news-title.unread {
+            font-weight: 700;
+        }
+        
+        .news-excerpt {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* ===== КОНТАКТЫ ===== */
+        .contacts-card {
+            background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+        }
+        
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        
+        .contact-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .contact-value:hover {
+            text-decoration: underline;
+        }
+        
+        /* ===== НАВИГАЦИЯ ===== */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            padding-bottom: max(10px, var(--safe-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 0 0 3px 3px;
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        
+        /* Кнопки */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: var(--surface);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-bg);
+        }
+        
+        /* Radio группа для шлагбаума */
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .radio-option {
+            flex: 1;
+            padding: 16px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .radio-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+        
+        .radio-option-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .radio-option-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Статус шлагбаума */
+        .barrier-status {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .barrier-status.active {
+            display: block;
+        }
+        
+        .barrier-status-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .barrier-status-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .barrier-timer {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (min-width: 768px) {
+            .main-content {
+                padding: 24px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .main-content {
+                max-width: 800px;
+                padding: 32px;
+            }
+        }
+        
+        /* ===== СЕКЦИИ ===== */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="app-header">
+        <div class="header-version">v6.8.2</div>
+        <div class="header-content">
+            <img src="./icon-96x96.png" alt="Логотип" class="header-logo">
+            <div class="header-text">
+                <h1>УК «Зелёная долина»</h1>
+                <p>Жилищная компания</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Главный контент -->
+    <div class="main-content">
+        
+        <!-- Секция: Главная -->
+        <div id="home" class="section active">
+            
+            <!-- Профиль пользователя -->
+            <div class="card profile-card" id="profileCard">
+                <div class="card-title">
+                    <span class="icon">👤</span>
+                    Ваш профиль
+                </div>
+                
+                <!-- Отображение профиля -->
+                <div class="profile-info" id="profileInfo">
+                    <div class="profile-row">
+                        <div class="profile-icon">🏢</div>
+                        <div class="profile-data">
+                            <div class="profile-label">Жилой комплекс</div>
+                            <div class="profile-value" id="displayComplex">Не выбран</div>
+                        </div>
+                    </div>
+                    <div class="profile-row">
+                        <div class="profile-icon">🏠</div>
+                        <div class="profile-data">
+                            <div class="profile-label">Адрес</div>
+                            <div class="profile-value" id="displayAddress">Не указан</div>
+                        </div>
+                    </div>
+                    <div class="profile-row">
+                        <div class="profile-icon">🚪</div>
+                        <div class="profile-data">
+                            <div class="profile-label">Квартира</div>
+                            <div class="profile-value" id="displayApartment">—</div>
+                        </div>
+                    </div>
+                    <div class="profile-row" id="storageRow" style="display: none;">
+                        <div class="profile-icon">📦</div>
+                        <div class="profile-data">
+                            <div class="profile-label">Кладовая</div>
+                            <div class="profile-value" id="displayStorage">—</div>
+                        </div>
+                    </div>
+                    <button class="profile-edit-btn" onclick="showProfileForm()">
+                        ✏️ Изменить данные
+                    </button>
+                </div>
+                
+                <!-- Форма редактирования -->
+                <div class="profile-form" id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">Жилой комплекс</label>
+                        <select class="form-select" id="complexSelect" onchange="loadHouses()">
+                            <option value="">— Выберите ЖК —</option>
+                            <option value="mayak">🏢 ЖК «Маяк»</option>
+                            <option value="zelenaya">🌳 ЖК «Зелёная Долина»</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="houseGroup" style="display: none;">
+                        <label class="form-label">Дом</label>
+                        <select class="form-select" id="houseSelect" onchange="loadApartmentInfo()">
+                            <option value="">— Выберите дом —</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="apartmentGroup" style="display: none;">
+                        <label class="form-label">Номер квартиры</label>
+                        <input type="number" class="form-input" id="apartmentInput" placeholder="Введите номер" min="1">
+                        <small id="apartmentHint" style="display: block; color: #666; margin-top: 6px; font-size: 13px;"></small>
+                    </div>
+                    
+                    <div class="form-group" id="storageGroup" style="display: none;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="hasStorageCheck" onchange="toggleStorage()">
+                            <span>У меня есть кладовая</span>
+                        </label>
+                        <input type="text" class="form-input" id="storageInput" placeholder="Номер кладовой (ПС-пом.)" style="display: none; margin-top: 12px;">
+                    </div>
+                    
+                    <button class="btn-primary" onclick="saveUserData()" style="margin-top: 8px;">
+                        💾 Сохранить данные
+                    </button>
+                    <button class="btn-secondary" onclick="hideProfileForm()" style="margin-top: 12px;">
+                        Отмена
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Баланс и оплата -->
+            <div class="card balance-card">
+                <div class="card-title">
+                    💰 Баланс лицевого счёта
+                </div>
+                <div class="balance-amount" id="balanceAmount">-11 087.06 ₽</div>
+                <div class="balance-status debt" id="balanceStatus">
+                    ⚠️ Задолженность
+                </div>
+                <div class="balance-info" id="balanceInfo">
+                    Оплатите до 28 числа текущего месяца
+                </div>
+                <button class="pay-btn" onclick="openPayment()">
+                    💳 Оплатить услуги
+                </button>
+            </div>
+            
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+                <div class="quick-action" onclick="switchSection('counters')" id="metersBtn">
+                    <div class="quick-action-icon">💧</div>
+                    <div class="quick-action-title">Показания</div>
+                    <div class="quick-action-subtitle">Счётчики</div>
+                    <div class="quick-action-badge" id="metersBadge" style="display: none;">!</div>
+                </div>
+                
+                <div class="quick-action" onclick="switchSection('requests')" id="requestBtn">
+                    <div class="quick-action-icon">🔧</div>
+                    <div class="quick-action-title">Заявка</div>
+                    <div class="quick-action-subtitle">VSK Desk</div>
+                </div>
+                
+                <div class="quick-action" onclick="switchSection('cameras')" id="camerasBtn">
+                    <div class="quick-action-icon">📹</div>
+                    <div class="quick-action-title">Камеры</div>
+                    <div class="quick-action-subtitle" id="camerasCount">10 камер</div>
+                </div>
+                
+                <div class="quick-action" onclick="openBarrierModal()" id="barrierBtn">
+                    <div class="quick-action-icon">🚧</div>
+                    <div class="quick-action-title">Шлагбаум</div>
+                    <div class="quick-action-subtitle">PAL Gate</div>
+                </div>
+            </div>
+            
+            <!-- Активные заявки -->
+            <div class="card" id="activeRequestsCard">
+                <div class="card-title">
+                    <span class="icon">📝</span>
+                    Активные заявки
+                    <span style="margin-left: auto; background: var(--primary); color: white; padding: 2px 10px; border-radius: 12px; font-size: 13px;" id="requestsCount">0</span>
+                </div>
+                <div class="requests-list" id="requestsList">
+                    <!-- Заявки загрузятся из JS -->
+                </div>
+                <button class="view-all-btn" onclick="switchSection('requests')">
+                    Смотреть все заявки →
+                </button>
+            </div>
+            
+            <!-- Новости -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📢</span>
+                    Новости и объявления
+                </div>
+                <div id="newsList">
+                    <div class="news-item">
+                        <div class="news-date">
+                            <div class="news-date-day">08</div>
+                            <div class="news-date-month">Дек</div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-category">📢 Общая новость</div>
+                            <div class="news-title unread">Плановые работы по обслуживанию лифтов</div>
+                            <div class="news-excerpt">10 декабря с 9:00 до 17:00 будут проводиться технические работы по обслуживанию лифтового оборудования...</div>
+                        </div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">
+                            <div class="news-date-day">05</div>
+                            <div class="news-date-month">Дек</div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-category">⚠️ Важно</div>
+                            <div class="news-title">Передача показаний счётчиков</div>
+                            <div class="news-excerpt">Напоминаем о необходимости передать показания счётчиков с 23 по 25 число месяца...</div>
+                        </div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">
+                            <div class="news-date-day">01</div>
+                            <div class="news-date-month">Дек</div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-category">💡 Полезное</div>
+                            <div class="news-title">Установка приложения на телефон</div>
+                            <div class="news-excerpt">Добавьте приложение на главный экран для быстрого доступа к функциям УК...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Контакты -->
+            <div class="card contacts-card">
+                <div class="card-title">
+                    <span class="icon">📞</span>
+                    Контакты УК
+                </div>
+                <div class="contacts-list">
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Диспетчер (круглосуточно)</div>
+                            <a href="tel:89600720321" class="contact-value">8 960 072 03 21</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Электронная почта</div>
+                            <a href="mailto:uk-zeldol@yandex.ru" class="contact-value">uk-zeldol@yandex.ru</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Адрес офиса</div>
+                            <span class="contact-value" style="color: var(--text);">г. Зеленодольск, ул. Шустова, д. 4А</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🕒</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Часы работы</div>
+                            <span class="contact-value" style="color: var(--text);">Пн-Пт 9:00-18:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Секция: Счётчики -->
+        <div id="counters" class="section">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">💧</span>
+                    Показания счётчиков
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    Перейдите на страницу передачи показаний
+                </p>
+                <button class="btn-primary" onclick="window.location.href='meters.html'">
+                    📊 Передать показания
+                </button>
+            </div>
+        </div>
+        
+        <!-- Секция: Заявки -->
+        <div id="requests" class="section">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🔧</span>
+                    Создать заявку
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    Перейдите на страницу создания заявки
+                </p>
+                <button class="btn-primary" onclick="window.location.href='create-request.html'">
+                    📝 Создать заявку
+                </button>
+            </div>
+        </div>
+        
+        <!-- Секция: Камеры -->
+        <div id="cameras" class="section">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📹</span>
+                    Видеонаблюдение
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    Перейдите на страницу камер
+                </p>
+                <button class="btn-primary" onclick="window.location.href='cameras.html'">
+                    📹 Смотреть камеры
+                </button>
+            </div>
+        </div>
+        
+        <!-- Секция: Платежи -->
+        <div id="payments" class="section">
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">💳</span>
+                    Оплата услуг
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    Перейдите на страницу оплаты
+                </p>
+                <button class="btn-primary" onclick="window.location.href='payments.html'">
+                    💳 Оплатить
+                </button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Навигация -->
+    <nav class="nav-bar">
+        <button class="nav-item active" onclick="switchSection('home')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Главная</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('counters')">
+            <span class="nav-icon">💧</span>
+            <span class="nav-label">Счётчики</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('payments')">
+            <span class="nav-icon">💳</span>
+            <span class="nav-label">Платежи</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('requests')">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">Заявки</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('cameras')">
+            <span class="nav-icon">📹</span>
+            <span class="nav-label">Камеры</span>
+        </button>
+    </nav>
+    
+    <!-- Модальное окно: Шлагбаум -->
+    <div class="modal-overlay" id="barrierModal">
+        <div class="modal">
+            <div class="modal-title">🚧 Открыть шлагбаум</div>
+            
+            <div id="barrierForm">
+                <div class="radio-group">
+                    <div class="radio-option selected" onclick="selectBarrierType('entry')">
+                        <div class="radio-option-icon">🚗➡️</div>
+                        <div class="radio-option-label">Въезд</div>
+                    </div>
+                    <div class="radio-option" onclick="selectBarrierType('exit')">
+                        <div class="radio-option-icon">⬅️🚗</div>
+                        <div class="radio-option-label">Выезд</div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="openBarrier()">
+                    📱 Открыть через SMS
+                </button>
+                <button class="btn-secondary" onclick="closeBarrierModal()" style="margin-top: 12px;">
+                    Отмена
+                </button>
+            </div>
+            
+            <div class="barrier-status" id="barrierStatus">
+                <div class="barrier-status-icon" id="barrierStatusIcon">⏳</div>
+                <div class="barrier-status-text" id="barrierStatusText">Отправка SMS...</div>
+                <div class="barrier-timer" id="barrierTimer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script>
+        // ===== УК ЗЕЛЁНАЯ ДОЛИНА - ГЛАВНАЯ СТРАНИЦА v6.8.2 =====
+        console.log('🏡 УК Зелёная долина v6.8.2 - Инициализация...');
+        
+        // === ДАННЫЕ ЖК ===
+        const complexes = {
+            mayak: [
+                { address: 'ул. Рогачёва, д. 25, корп. 1', apartments: 105, storages: 21, fullAddress: 'ул. Рогачёва, д. 25, корп. 1' },
+                { address: 'ул. Рогачёва, д. 25, корп. 2', apartments: 70, storages: 14, fullAddress: 'ул. Рогачёва, д. 25, корп. 2' }
+            ],
+            zelenaya: [
+                { address: 'мкр. Зелёная Долина, д. 1', apartments: 67, storages: 6, fullAddress: 'мкр. Зелёная Долина, д. 1' },
+                { address: 'мкр. Зелёная Долина, д. 2', apartments: 135, storages: 10, fullAddress: 'мкр. Зелёная Долина, д. 2' },
+                { address: 'мкр. Зелёная Долина, д. 3', apartments: 135, storages: 10, fullAddress: 'мкр. Зелёная Долина, д. 3' },
+                { address: 'мкр. Зелёная Долина, д. 4', apartments: 152, storages: 26, fullAddress: 'мкр. Зелёная Долина, д. 4' }
+            ]
+        };
+        
+        // === ЗАГРУЗКА ПРОФИЛЯ ===
+        function loadUserProfile() {
+            console.log('👤 Загрузка профиля...');
+            const saved = localStorage.getItem('userData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    displayUserProfile(data);
+                    document.getElementById('profileInfo').style.display = 'flex';
+                    document.getElementById('profileForm').classList.remove('active');
+                } catch (e) {
+                    console.error('Ошибка загрузки профиля:', e);
+                    showProfileForm();
+                }
+            } else {
+                showProfileForm();
+            }
+        }
+        
+        function displayUserProfile(data) {
+            document.getElementById('displayComplex').textContent = data.complex || 'Не выбран';
+            document.getElementById('displayAddress').textContent = data.house || 'Не указан';
+            document.getElementById('displayApartment').textContent = data.apartment ? `кв. ${data.apartment}` : '—';
+            
+            const storageRow = document.getElementById('storageRow');
+            if (data.storage) {
+                document.getElementById('displayStorage').textContent = data.storage;
+                storageRow.style.display = 'flex';
+            } else {
+                storageRow.style.display = 'none';
+            }
+        }
+        
+        function showProfileForm() {
+            document.getElementById('profileInfo').style.display = 'none';
+            document.getElementById('profileForm').classList.add('active');
+            
+            // Загрузить сохранённые данные в форму
+            const saved = localStorage.getItem('userData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    document.getElementById('complexSelect').value = data.complexKey || '';
+                    loadHouses();
+                    setTimeout(() => {
+                        document.getElementById('houseSelect').value = data.houseIndex ?? '';
+                        loadApartmentInfo();
+                        document.getElementById('apartmentInput').value = data.apartment || '';
+                        if (data.storage) {
+                            document.getElementById('hasStorageCheck').checked = true;
+                            document.getElementById('storageInput').value = data.storage;
+                            toggleStorage();
+                        }
+                    }, 100);
+                } catch (e) {}
+            }
+        }
+        
+        function hideProfileForm() {
+            const saved = localStorage.getItem('userData');
+            if (saved) {
+                document.getElementById('profileInfo').style.display = 'flex';
+                document.getElementById('profileForm').classList.remove('active');
+            }
+        }
+        
+        function loadHouses() {
+            const complex = document.getElementById('complexSelect').value;
+            const houseSelect = document.getElementById('houseSelect');
+            const houseGroup = document.getElementById('houseGroup');
+            
+            if (!complex) {
+                houseGroup.style.display = 'none';
+                document.getElementById('apartmentGroup').style.display = 'none';
+                document.getElementById('storageGroup').style.display = 'none';
+                return;
+            }
+            
+            houseGroup.style.display = 'block';
+            houseSelect.innerHTML = '<option value="">— Выберите дом —</option>';
+            
+            complexes[complex].forEach((house, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${house.address} (${house.apartments} кв.)`;
+                houseSelect.appendChild(option);
+            });
+            
+            document.getElementById('apartmentGroup').style.display = 'none';
+            document.getElementById('storageGroup').style.display = 'none';
+        }
+        
+        function loadApartmentInfo() {
+            const complex = document.getElementById('complexSelect').value;
+            const houseIndex = document.getElementById('houseSelect').value;
+            
+            if (!complex || houseIndex === '') {
+                document.getElementById('apartmentGroup').style.display = 'none';
+                document.getElementById('storageGroup').style.display = 'none';
+                return;
+            }
+            
+            const house = complexes[complex][houseIndex];
+            document.getElementById('apartmentGroup').style.display = 'block';
+            document.getElementById('storageGroup').style.display = 'block';
+            document.getElementById('apartmentInput').max = house.apartments;
+            document.getElementById('apartmentHint').textContent = `Квартиры от 1 до ${house.apartments}`;
+        }
+        
+        function toggleStorage() {
+            const checked = document.getElementById('hasStorageCheck').checked;
+            document.getElementById('storageInput').style.display = checked ? 'block' : 'none';
+            if (!checked) document.getElementById('storageInput').value = '';
+        }
+        
+        function saveUserData() {
+            const complex = document.getElementById('complexSelect').value;
+            const houseIndex = document.getElementById('houseSelect').value;
+            const apartment = document.getElementById('apartmentInput').value;
+            const hasStorage = document.getElementById('hasStorageCheck').checked;
+            const storage = hasStorage ? document.getElementById('storageInput').value : null;
+            
+            if (!complex) { alert('❌ Выберите жилой комплекс!'); return; }
+            if (houseIndex === '') { alert('❌ Выберите дом!'); return; }
+            if (!apartment) { alert('❌ Введите номер квартиры!'); return; }
+            
+            const house = complexes[complex][houseIndex];
+            if (parseInt(apartment) < 1 || parseInt(apartment) > house.apartments) {
+                alert(`❌ Квартира должна быть от 1 до ${house.apartments}`);
+                return;
+            }
+            
+            const userData = {
+                complex: complex === 'mayak' ? 'ЖК «Маяк»' : 'ЖК «Зелёная Долина»',
+                complexKey: complex,
+                house: house.address,
+                houseIndex: parseInt(houseIndex),
+                apartment: apartment,
+                storage: storage,
+                savedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('userData', JSON.stringify(userData));
+            console.log('✅ Профиль сохранён:', userData);
+            alert('✅ Данные сохранены!');
+            displayUserProfile(userData);
+            document.getElementById('profileInfo').style.display = 'flex';
+            document.getElementById('profileForm').classList.remove('active');
+        }
+        
+        // === ПЕРЕКЛЮЧЕНИЕ СЕКЦИЙ ===
+        function switchSection(sectionId) {
+            console.log('📑 Переключение на:', sectionId);
+            
+            // Скрыть все секции
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            // Показать выбранную
+            const section = document.getElementById(sectionId);
+            if (section) section.classList.add('active');
+            
+            // Обновить навигацию
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            const navItems = document.querySelectorAll('.nav-item');
+            const sectionMap = { home: 0, counters: 1, payments: 2, requests: 3, cameras: 4 };
+            if (sectionMap[sectionId] !== undefined) {
+                navItems[sectionMap[sectionId]]?.classList.add('active');
+            }
+        }
+        
+        // === ОПЛАТА ===
+        function openPayment() {
+            window.location.href = 'payments.html';
+        }
+        
+        // === ШЛАГБАУМ ===
+        let barrierType = 'entry';
+        
+        function openBarrierModal() {
+            document.getElementById('barrierModal').classList.add('active');
+            document.getElementById('barrierForm').style.display = 'block';
+            document.getElementById('barrierStatus').classList.remove('active');
+        }
+        
+        function closeBarrierModal() {
+            document.getElementById('barrierModal').classList.remove('active');
+        }
+        
+        function selectBarrierType(type) {
+            barrierType = type;
+            document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.closest('.radio-option').classList.add('selected');
+        }
+        
+        function openBarrier() {
+            document.getElementById('barrierForm').style.display = 'none';
+            const status = document.getElementById('barrierStatus');
+            status.classList.add('active');
+            
+            document.getElementById('barrierStatusIcon').textContent = '⏳';
+            document.getElementById('barrierStatusText').textContent = 'Отправка SMS...';
+            document.getElementById('barrierTimer').textContent = '';
+            
+            setTimeout(() => {
+                document.getElementById('barrierStatusIcon').textContent = '✅';
+                document.getElementById('barrierStatusText').textContent = 'Шлагбаум открыт!';
+                
+                let seconds = 30;
+                document.getElementById('barrierTimer').textContent = `Закроется через ${seconds} сек.`;
+                
+                const timer = setInterval(() => {
+                    seconds--;
+                    if (seconds > 0) {
+                        document.getElementById('barrierTimer').textContent = `Закроется через ${seconds} сек.`;
+                    } else {
+                        clearInterval(timer);
+                        closeBarrierModal();
+                    }
+                }, 1000);
+            }, 1500);
+        }
+        
+        // Закрытие модального окна по клику на оверлей
+        document.getElementById('barrierModal').addEventListener('click', function(e) {
+            if (e.target === this) closeBarrierModal();
+        });
+        
+        // === ЗАГРУЗКА ЗАЯВОК ===
+        function loadActiveRequests() {
+            const requestsList = document.getElementById('requestsList');
+            const requests = JSON.parse(localStorage.getItem('userRequests') || '[]');
+            
+            // Демо-данные
+            const demoRequests = [
+                { id: 1, category: '🔧', title: 'Протечка в ванной', date: '06.12.2025', status: 'progress' },
+                { id: 2, category: '⚡', title: 'Не работает розетка', date: '07.12.2025', status: 'new' },
+                { id: 3, category: '🧹', title: 'Уборка подъезда', date: '03.12.2025', status: 'done' }
+            ];
+            
+            const displayRequests = requests.length ? requests.slice(0, 3) : demoRequests;
+            document.getElementById('requestsCount').textContent = displayRequests.length;
+            
+            if (!displayRequests.length) {
+                requestsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет активных заявок</p>';
+                return;
+            }
+            
+            const statusLabels = {
+                new: { text: '🆕 Новая', class: 'new' },
+                progress: { text: '⏳ В работе', class: 'progress' },
+                done: { text: '✅ Выполнена', class: 'done' },
+                rejected: { text: '❌ Отклонена', class: 'rejected' }
+            };
+            
+            requestsList.innerHTML = displayRequests.map(req => `
+                <div class="request-item" onclick="window.location.href='create-request.html'">
+                    <div class="request-icon">${req.category}</div>
+                    <div class="request-content">
+                        <div class="request-title">${req.title}</div>
+                        <div class="request-meta">Создана: ${req.date}</div>
+                    </div>
+                    <span class="request-status ${statusLabels[req.status].class}">${statusLabels[req.status].text}</span>
+                </div>
+            `).join('');
+        }
+        
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📱 DOM загружен, инициализация...');
+            
+            // Проверка авторизации
+            if (typeof requireAuth === 'function') {
+                requireAuth();
+            }
+            
+            // Загрузка данных
+            loadUserProfile();
+            loadActiveRequests();
+            
+            // Проверка передачи показаний
+            const lastMeters = localStorage.getItem('lastMetersDate');
+            if (lastMeters) {
+                const days = Math.floor((Date.now() - new Date(lastMeters).getTime()) / (1000 * 60 * 60 * 24));
+                if (days > 25) {
+                    document.getElementById('metersBadge').style.display = 'block';
+                }
+            } else {
+                document.getElementById('metersBadge').style.display = 'block';
+            }
+            
+            console.log('✅ Приложение готово!');
+        });
+    </script>
+</body>
+</html>
+
+
+
+

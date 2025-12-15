@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./css/modern-index.css?v=7.2">
     <link rel="stylesheet" href="./css/buttons.css?v=7.2.4">
     <script src="./js/buttons.js?v=7.2.4" defer></script>
+    <script src="../src/services/StorageService.js"></script>
     <title>УК «Зелёная долина» v7.2.4 ✅</title>
     
     <!-- PWA Meta Tags -->
@@ -1838,7 +1839,7 @@
 
         // FIX INITIAL LOAD FLICKERING: Check auth BEFORE DOM renders
         (function earlyAuthCheck() {
-            const sessionCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+            const sessionCode = storage.get('zd_login_code') || storage.get('userPhone');
             if (!sessionCode) {
                 console.log('❌ No session - redirecting to login');
                 window.location.href = 'login.html';
@@ -2420,7 +2421,7 @@
                         return;
                     }
                     
-                    let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+                    let videos = storage.get('videos', []);
                     
                     if (videos.length >= 2) {
                         alert('Можно загрузить максимум 2 видео. Удалите старое видео.');
@@ -2436,7 +2437,7 @@
                     };
                     
                     videos.push(videoData);
-                    localStorage.setItem('videos', JSON.stringify(videos));
+                    storage.set('videos', videos);
                     
                     renderVideos();
                     
@@ -2461,7 +2462,7 @@
         // Рендеринг видео
         function renderVideos() {
             console.log('🎬 Рендеринг видео галереи');
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const videos = storage.get('videos', []);
             const container = document.getElementById('videosContainer');
             
             if (!container) {
@@ -3115,10 +3116,11 @@
             };
             
             // История (до 50 записей)
-            let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
+            // ✅ StorageService: замена #2/3 (metersHistory)
+            let history = storage.get('metersHistory', []);
             history.unshift(reading);
             if (history.length > 50) history = history.slice(0, 50);
-            localStorage.setItem('metersHistory', JSON.stringify(history));
+            storage.set('metersHistory', history);
             
             // Последние показания
             localStorage.setItem('lastColdWater', coldWater);
@@ -3560,7 +3562,8 @@
             };
             
             // Сохранить заявку
-            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            // ✅ StorageService: замена #3/3 (requests)
+            const requests = storage.get('requests', []);
             const newRequest = {
                 id: Date.now(),
                 category: selectedCategory,
@@ -3577,7 +3580,7 @@
             };
             
             requests.unshift(newRequest); // Добавить в начало
-            localStorage.setItem('requests', JSON.stringify(requests));
+            storage.set('requests', requests);
             
             // Очистить форму
             selectedCategory = null;
@@ -4049,7 +4052,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 savedAt: new Date().toISOString()
             };
             
-            localStorage.setItem('userData', JSON.stringify(userData));
+            storage.set('userData', userData);
             console.log('✅ Данные пользователя сохранены:', userData);
             alert('✅ Данные успешно сохранены!');
             
@@ -4086,10 +4089,10 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             document.getElementById('userFormCard').style.display = 'block';
             
             // Загрузить сохранённые данные в форму
-            const saved = localStorage.getItem('userData');
+            const saved = storage.get('userData');
             if (saved) {
                 try {
-                    const data = JSON.parse(saved);
+                    const data = saved; // StorageService уже распарсил JSON
                     document.getElementById('complexSelect').value = data.complexKey;
                     loadHouses();
                     setTimeout(() => {
@@ -4926,15 +4929,8 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                     return; // Early auth check handled this
                 }
                 
-                const saved = localStorage.getItem('userData');
-                let data = null;
-                if (saved) {
-                    try {
-                        data = JSON.parse(saved);
-                    } catch (e) {
-                        console.error('Ошибка парсинга userData:', e);
-                    }
-                }
+                // ✅ StorageService: замена #1/3 (userData)
+                const data = storage.get('userData', null);
                 
                 if (!data) {
                     const resident = findResidentByPhone(sessionCode); // Передаём код, а не телефон
@@ -4965,7 +4961,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                         savedAt: new Date().toISOString()
                     };
                     
-                    localStorage.setItem('userData', JSON.stringify(data));
+                    storage.set('userData', data);
                     console.log('✅ Данные жителя загружены:', data);
                 }
                 

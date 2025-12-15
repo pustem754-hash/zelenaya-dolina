@@ -38,21 +38,16 @@
             overflow: hidden;
         }
         
-        /* Анимированный фон */
+        /* Статичный декор фона */
         body::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-            animation: backgroundMove 20s linear infinite;
-        }
-        
-        @keyframes backgroundMove {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(50px, 50px) rotate(360deg); }
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
         }
         
         .login-container {
@@ -110,12 +105,7 @@
             border-radius: 24px;
             object-fit: contain;
             box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
-            animation: logoFloat 3s ease-in-out infinite, logoRotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s backwards;
-        }
-        
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            animation: logoRotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s backwards;
         }
         
         @keyframes logoRotate {
@@ -323,29 +313,27 @@ window.logout = logout;
 window.requireAuth = requireAuth;
     </script>
     <script>
+// Проверка параметра logout СРАЗУ, ДО отрисовки
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('logout') === 'true') {
+    logout();
+    console.log('🚪 Выход выполнен');
+    window.history.replaceState({}, '', 'login.html');
+}
+// Проверка авторизации СРАЗУ, ДО отрисовки
+else if (typeof isAuthenticated === 'function' && isAuthenticated()) {
+    console.log('✅ Уже авторизован, редирект...');
+    window.location.replace('index.html');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔐 Инициализация страницы входа v7.2.3 ✅');
-    
-    // Проверка параметра logout
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('logout') === 'true') {
-        logout();
-        console.log('🚪 Выход выполнен, очищен кеш');
-        window.history.replaceState({}, '', 'login.html');
-    }
     
     const form = document.getElementById('loginForm');
     const input = document.getElementById('accessCode');
     
     if (!form || !input) {
         console.error('[Login] Элементы формы не найдены');
-        return;
-    }
-    
-    // Проверка уже авторизованного пользователя (только если НЕ logout)
-    if (!urlParams.get('logout') && typeof isAuthenticated === 'function' && isAuthenticated()) {
-        console.log('✅ Пользователь уже авторизован, перенаправление...');
-        window.location.replace('index.html');
         return;
     }
     

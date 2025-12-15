@@ -7,14 +7,35 @@
 :root {
     /* Primary Colors */
     --md-sys-color-primary: #4CAF50;
+    --md-sys-color-primary-hover: #45a049;
+    --md-sys-color-primary-active: #388E3C;
     --md-sys-color-on-primary: #FFFFFF;
     --md-sys-color-primary-container: #C8E6C9;
     --md-sys-color-on-primary-container: #1B5E20;
     
-    /* Secondary Colors */
-    --md-sys-color-secondary: #2E7D32;
+    /* Secondary Colors (Bright Green для контраста) */
+    --md-sys-color-secondary: #00AA00;
+    --md-sys-color-secondary-hover: #009900;
+    --md-sys-color-secondary-active: #008800;
     --md-sys-color-on-secondary: #FFFFFF;
     --md-sys-color-secondary-container: #A5D6A7;
+    
+    /* Success Colors */
+    --md-sys-color-success: #2E7D32;
+    --md-sys-color-on-success: #FFFFFF;
+    
+    /* Warning Colors */
+    --md-sys-color-warning: #FFA726;
+    --md-sys-color-on-warning: #FFFFFF;
+    
+    /* Danger Colors */
+    --md-sys-color-danger: #EF5350;
+    --md-sys-color-on-danger: #FFFFFF;
+    
+    /* Neutral Colors */
+    --md-sys-color-neutral: #616161;
+    --md-sys-color-neutral-hover: #757575;
+    --md-sys-color-on-neutral: #FFFFFF;
     
     /* Surface Colors */
     --md-sys-color-surface: #FFFFFF;

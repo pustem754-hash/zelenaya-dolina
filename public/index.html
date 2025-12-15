@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/components.css">
     <link rel="stylesheet" href="./css/modern-index.css?v=7.2">
+    <link rel="stylesheet" href="./css/buttons.css?v=7.2.4">
+    <script src="./js/buttons.js?v=7.2.4" defer></script>
     <title>УК «Зелёная долина» v7.2.3 ✅</title>
     
     <!-- PWA Meta Tags -->
@@ -840,7 +842,7 @@
                 <div class="modern-balance-chip zero" id="modernBalanceChip">
                     —
                 </div>
-                <button onclick="logout()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px);">
+                <button onclick="logout()" class="btn btn-text" style="color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; backdrop-filter: blur(10px);">
                     Выйти
                 </button>
             </div>
@@ -993,7 +995,7 @@
                     <input type="number" min="1" id="residentsCountInput" placeholder="Количество человек" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
                 </div>
                 
-                <button class="btn" onclick="saveUserData()" style="margin-top: 15px;">💾 Сохранить мои данные</button>
+                <button class="btn btn-primary" onclick="saveUserData()" style="margin-top: 15px;">💾 Сохранить мои данные</button>
             </div>
             
             <!-- Сохранённые данные пользователя -->
@@ -1008,7 +1010,7 @@
                     <p style="margin-bottom: 8px;"><strong>👥 Прописано:</strong> <span id="userResidents"></span> чел.</p>
                     <p id="userStorageInfo" style="display: none; margin-bottom: 0;"><strong>📦 Кладовая:</strong> <span id="userStorage"></span></p>
                 </div>
-                <button class="btn" onclick="showUserForm()" style="background: #3498db;">✏️ Изменить данные</button>
+                <button class="btn btn-secondary" onclick="showUserForm()">✏️ Изменить данные</button>
             </div>
         </div>
         
@@ -1056,7 +1058,7 @@
     <!-- Платежи -->
     <div id="payments" class="section">
         <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
-            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; margin-right: 15px; transition: all 0.2s;">←</button>
+            <button onclick="showSection('home')" class="btn btn-icon" style="margin-right: 15px; font-size: 28px;">←</button>
             <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px; margin-right: 10px;">
             <h1 style="margin: 0; color: #2c3e50; font-size: 18px;">💳 Платежи</h1>
         </div>
@@ -1351,8 +1353,8 @@
             
             <!-- Кнопки действий -->
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-pay" onclick="alert('Переход на оплату')" style="flex: 1;">💳 Оплатить онлайн</button>
-                <button class="btn btn-download" onclick="generateReceiptPDF()" style="flex: 1;">📥 Скачать PDF</button>
+                <button class="btn btn-primary" onclick="alert('Переход на оплату')" style="flex: 1;">💳 Оплатить онлайн</button>
+                <button class="btn btn-secondary" onclick="generateReceiptPDF()" style="flex: 1;">📥 Скачать PDF</button>
             </div>
         </div>
     </div>
@@ -1360,7 +1362,7 @@
     <!-- Заявки -->
     <div id="requests" class="section">
         <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
-            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; margin-right: 15px; transition: all 0.2s;">←</button>
+            <button onclick="showSection('home')" class="btn btn-icon" style="margin-right: 15px; font-size: 28px;">←</button>
             <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px; margin-right: 10px;">
             <h1 style="margin: 0; color: #2c3e50; font-size: 18px;">📝 Заявки</h1>
         </div>
@@ -1415,8 +1417,8 @@
                 <input type="file" id="photoGalleryInput" accept="image/*" style="display: none;" onchange="handlePhoto(event)">
                 
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <button class="btn btn-camera" onclick="document.getElementById('photoCameraInput').click()" style="flex: 1;">📷 Камера</button>
-                    <button class="btn btn-camera" onclick="document.getElementById('photoGalleryInput').click()" style="flex: 1;">🖼️ Галерея</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('photoCameraInput').click()" style="flex: 1;">📷 Камера</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('photoGalleryInput').click()" style="flex: 1;">🖼️ Галерея</button>
                 </div>
                 <div id="photosContainer" class="photos-gallery" style="margin-top: 15px;"></div>
             </div>
@@ -1478,7 +1480,7 @@
                 <h3 style="margin-top: 30px; color: #27ae60;">🎤 Голосовое сообщение</h3>
                 <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Запишите голосовое сообщение к заявке (до 60 секунд)</p>
                 
-                <button class="btn btn-audio" id="audioBtn" onclick="toggleAudio()">🎤 Начать запись</button>
+                <button class="btn btn-primary" id="audioBtn" onclick="toggleAudio()">🎤 Начать запись</button>
                 
                 <!-- Контейнер фиксированной высоты (НЕ ПРЫГАЕТ!) -->
                 <div style="min-height: 200px; position: relative; margin: 15px 0;">
@@ -1517,7 +1519,7 @@
                     ">
                         <audio id="audioPlayback" controls style="width: 100%; margin-bottom: 15px;"></audio>
                         <div id="audioInfo" style="color: #27ae60; font-weight: 500; margin-bottom: 15px; text-align: center;"></div>
-                        <button class="btn" onclick="deleteCurrentAudio()" style="background: #e74c3c; width: 100%;">
+                        <button class="btn btn-danger" onclick="deleteCurrentAudio()" style="width: 100%;">
                             🗑️ Удалить запись
                         </button>
                     </div>
@@ -1554,7 +1556,7 @@
                         <button id="audioForwardBtn" style="width: 50px; height: 50px; border-radius: 50%; border: none; background: #f0f0f0; font-size: 20px; cursor: pointer;">⏩</button>
                     </div>
                     
-                    <button id="audioCloseBtn" onclick="closeAudioModal()" style="width: 100%; padding: 15px; background: #2E7D32; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer;">Закрыть</button>
+                    <button id="audioCloseBtn" onclick="closeAudioModal()" class="btn btn-primary" style="width: 100%;">Закрыть</button>
                 </div>
             </div>
             
@@ -1609,7 +1611,7 @@
     <!-- Счётчики -->
     <div id="counters" class="section">
         <div style="display: flex; align-items: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px;">
-            <button onclick="showSection('home')" style="background: none; border: none; color: #2ecc71; font-size: 28px; cursor: pointer; padding: 0; margin-right: 15px; transition: all 0.2s;">←</button>
+            <button onclick="showSection('home')" class="btn btn-icon" style="margin-right: 15px; font-size: 28px;">←</button>
             <img src="icon-192x192.png" alt="Логотип" style="width: 40px; height: 40px; margin-right: 10px;">
             <h1 style="margin: 0; color: #2c3e50; font-size: 18px;">📊 Счётчики</h1>
         </div>

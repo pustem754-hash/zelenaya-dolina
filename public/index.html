@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="./css/components.css">
     <link rel="stylesheet" href="./css/modern-index.css?v=7.2">
     <link rel="stylesheet" href="./css/buttons.css?v=7.2.4">
-    <script src="./js/buttons.js?v=7.2.4" defer></script>
+    <!-- StorageService v2.0 - Централизованное управление localStorage -->
     <script src="../src/services/StorageService.js"></script>
+    <script src="./js/buttons.js?v=7.2.4" defer></script>
     <title>УК «Зелёная долина» v7.2.4 ✅</title>
     
     <!-- PWA Meta Tags -->
@@ -1778,31 +1779,30 @@
         const USER_DATA_KEY = 'zd_user_data';
 
         function saveAuth(code) {
-            localStorage.setItem(AUTH_STORAGE_KEY, 'true');
-            localStorage.setItem(AUTH_CODE_KEY, code);
+            storage.set(AUTH_STORAGE_KEY, 'true');
+            storage.set(AUTH_CODE_KEY, code);
             const userData = getMockUserByCode(code);
-            localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+            storage.set(USER_DATA_KEY, userData);
         }
 
         function isAuthenticated() {
-            return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+            return storage.get(AUTH_STORAGE_KEY) === 'true';
         }
 
         function getLoginCode() {
-            return localStorage.getItem(AUTH_CODE_KEY);
+            return storage.get(AUTH_CODE_KEY);
         }
 
         function getUserData() {
-            const data = localStorage.getItem(USER_DATA_KEY);
-            return data ? JSON.parse(data) : null;
+            return storage.get(USER_DATA_KEY, null);
         }
 
         function logout() {
-            localStorage.removeItem(AUTH_STORAGE_KEY);
-            localStorage.removeItem(AUTH_CODE_KEY);
-            localStorage.removeItem(USER_DATA_KEY);
-            localStorage.removeItem('userPhone');
-            localStorage.removeItem('userData');
+            storage.remove(AUTH_STORAGE_KEY);
+            storage.remove(AUTH_CODE_KEY);
+            storage.remove(USER_DATA_KEY);
+            storage.remove('userPhone');
+            storage.remove('userData');
             console.log('🚪 Выход...');
             window.location.href = 'login.html?logout=true';
         }
@@ -2150,7 +2150,7 @@
                     // Сохранение в localStorage
                     const compressed = canvas.toDataURL('image/jpeg', 0.8);
                     const storageKey = type === 'counter' ? 'counterPhotos' : 'requestPhotos';
-                    const photos = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                    const photos = storage.get(storageKey, []);
                     
                     const photoData = {
                         id: Date.now(),
@@ -2159,7 +2159,7 @@
                     };
                     
                     photos.push(photoData);
-                    localStorage.setItem(storageKey, JSON.stringify(photos));
+                    storage.set(storageKey, photos);
                     
                     console.log('✅ Фото сохранено в localStorage:', storageKey, 'ID:', photoData.id);
                     
@@ -2184,7 +2184,7 @@
 
         function renderPhotos() {
             console.log('🖼️ Рендеринг фото галереи');
-            const photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
+            const photos = storage.get('requestPhotos', []);
             const container = document.getElementById('photosContainer');
             
             if (!container) {
@@ -2211,9 +2211,9 @@
         function deletePhoto(id) {
             if (!confirm('Удалить это фото?')) return;
             
-            let photos = JSON.parse(localStorage.getItem('requestPhotos') || '[]');
+            let photos = storage.get('requestPhotos', []);
             photos = photos.filter(p => p.id !== id);
-            localStorage.setItem('requestPhotos', JSON.stringify(photos));
+            storage.set('requestPhotos', photos);
             
             console.log('✅ Фото удалено');
             renderPhotos();
@@ -2221,7 +2221,7 @@
 
         function renderCounterPhotos() {
             console.log('🖼️ Рендеринг фото счётчиков');
-            const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
+            const photos = storage.get('counterPhotos', []);
             const container = document.getElementById('metersPhotoGallery');
             
             if (!container) {
@@ -2254,9 +2254,9 @@
                 return;
             }
             
-            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+            const photos = storage.get('photos', []);
             const filtered = photos.filter(p => p.id !== id);
-            localStorage.setItem('photos', JSON.stringify(filtered));
+            storage.set('photos', filtered);
             console.log('✅ Фото удалено, осталось:', filtered.length);
             renderPhotos();
         }
@@ -2268,9 +2268,9 @@
                 return;
             }
             
-            const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
+            const photos = storage.get('counterPhotos', []);
             const filtered = photos.filter(p => p.id !== id);
-            localStorage.setItem('counterPhotos', JSON.stringify(filtered));
+            storage.set('counterPhotos', filtered);
             console.log('✅ Фото счётчика удалено, осталось:', filtered.length);
             renderCounterPhotos();
         }
@@ -2494,7 +2494,7 @@
         
         function renderCounterVideos() {
             console.log('🎬 Рендеринг видео счётчиков');
-            const videos = JSON.parse(localStorage.getItem('counterVideos') || '[]');
+            const videos = storage.get('counterVideos', []);
             const container = document.getElementById('counterVideosContainer');
             
             if (!container) {
@@ -2555,13 +2555,13 @@
                     const blob = new Blob(videoChunks, { type: 'video/webm' });
                     const videoUrl = URL.createObjectURL(blob);
                     
-                    const videos = JSON.parse(localStorage.getItem('counterVideos') || '[]');
+                    const videos = storage.get('counterVideos', []);
                     videos.push({
                         id: Date.now(),
                         url: videoUrl,
                         date: new Date().toLocaleString('ru-RU')
                     });
-                    localStorage.setItem('counterVideos', JSON.stringify(videos));
+                    storage.set('counterVideos', videos);
                     
                     console.log('✅ Видео счётчика сохранено в localStorage');
                     renderCounterVideos();
@@ -2605,14 +2605,14 @@
                 return;
             }
             
-            const videos = JSON.parse(localStorage.getItem('counterVideos') || '[]');
+            const videos = storage.get('counterVideos', []);
             const videoToDelete = videos.find(v => v.id === id);
             if (videoToDelete && videoToDelete.url) {
                 URL.revokeObjectURL(videoToDelete.url);
             }
             
             const filtered = videos.filter(v => v.id !== id);
-            localStorage.setItem('counterVideos', JSON.stringify(filtered));
+            storage.set('counterVideos', filtered);
             console.log('✅ Видео счётчика удалено, осталось:', filtered.length);
             renderCounterVideos();
         }
@@ -2625,14 +2625,14 @@
                 return;
             }
             
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const videos = storage.get('videos', []);
             const videoToDelete = videos.find(v => v.id === id);
             if (videoToDelete && videoToDelete.url) {
                 URL.revokeObjectURL(videoToDelete.url);
             }
             
             const filtered = videos.filter(v => v.id !== id);
-            localStorage.setItem('videos', JSON.stringify(filtered));
+            storage.set('videos', filtered);
             console.log('✅ Видео удалено, осталось:', filtered.length);
             renderVideos();
         }
@@ -2905,7 +2905,7 @@
         
         function renderAudioList() {
             console.log('🎵 Рендеринг списка аудио');
-            const audioList = JSON.parse(localStorage.getItem('audio') || '[]');
+            const audioList = storage.get('audio', []);
             const container = document.getElementById('audioList');
             
             if (!container) return;
@@ -2936,7 +2936,7 @@
         
         function playAudio(id) {
             console.log('▶️ Воспроизведение аудио ID:', id);
-            const audioList = JSON.parse(localStorage.getItem('audio') || '[]');
+            const audioList = storage.get('audio', []);
             const audio = audioList.find(a => a.id === id);
             
             if (!audio) {
@@ -3032,9 +3032,9 @@
                 return;
             }
             
-            const audioList = JSON.parse(localStorage.getItem('audio') || '[]');
+            const audioList = storage.get('audio', []);
             const filtered = audioList.filter(a => a.id !== id);
-            localStorage.setItem('audio', JSON.stringify(filtered));
+            storage.set('audio', filtered);
             
             console.log('✅ Аудио удалено, осталось:', filtered.length);
             renderAudioList();
@@ -3074,9 +3074,9 @@
             }
             
             const description = document.getElementById('problemDescription')?.value;
-            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            const audio = JSON.parse(localStorage.getItem('audio') || '[]');
+            const photos = storage.get('photos', []);
+            const videos = storage.get('videos', []);
+            const audio = storage.get('audio', []);
             
             const categoryNames = {
                 'repair': 'ремонт',
@@ -3123,11 +3123,11 @@
             storage.set('metersHistory', history);
             
             // Последние показания
-            localStorage.setItem('lastColdWater', coldWater);
-            localStorage.setItem('lastHotWater', hotWater);
-            localStorage.setItem('lastElectricity', electricity);
-            localStorage.setItem('lastGas', gas);
-            localStorage.setItem('meterGas', JSON.stringify({ value: gas, date: new Date().toISOString() }));
+            storage.set('lastColdWater', coldWater);
+            storage.set('lastHotWater', hotWater);
+            storage.set('lastElectricity', electricity);
+            storage.set('lastGas', gas);
+            storage.set('meterGas', { value: gas, date: new Date().toISOString() });
             
             // Очистить поля
             document.getElementById('coldWaterInput').value = '';
@@ -3143,10 +3143,10 @@
         }
         
         function updateLastReadings() {
-            const lastColdWater = localStorage.getItem('lastColdWater');
-            const lastHotWater = localStorage.getItem('lastHotWater');
-            const lastElectricity = localStorage.getItem('lastElectricity');
-            const lastGas = localStorage.getItem('lastGas');
+            const lastColdWater = storage.get('lastColdWater');
+            const lastHotWater = storage.get('lastHotWater');
+            const lastElectricity = storage.get('lastElectricity');
+            const lastGas = storage.get('lastGas');
             
             if (lastColdWater) {
                 const el = document.getElementById('coldWaterLast');
@@ -3189,11 +3189,11 @@
                 gas: parseFloat(gas)
             };
             
-            let history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
+            let history = storage.get('metersHistory', []);
             history.unshift(reading); // Добавить в начало
-            localStorage.setItem('metersHistory', JSON.stringify(history));
-            localStorage.setItem('lastGas', gas ? parseFloat(gas) : 0);
-            localStorage.setItem('meterGas', JSON.stringify({ value: gas ? parseFloat(gas) : 0, date: new Date().toISOString() }));
+            storage.set('metersHistory', history);
+            storage.set('lastGas', gas ? parseFloat(gas) : 0);
+            storage.set('meterGas', { value: gas ? parseFloat(gas) : 0, date: new Date().toISOString() });
             
             alert('✅ Показания успешно отправлены!\n' +
                 'ХВС: ' + coldWater + ' м³\n' +
@@ -3215,7 +3215,7 @@
         }
         
         function loadMetersHistory() {
-            const history = JSON.parse(localStorage.getItem('metersHistory') || '[]');
+            const history = storage.get('metersHistory', []);
             const historyContainer = document.getElementById('metersHistory');
             
             if (!historyContainer) return;
@@ -3262,7 +3262,7 @@
             ].filter(Boolean);
             if (!targets.length) return;
             try {
-                const saved = JSON.parse(localStorage.getItem('meterGas') || '{}');
+                const saved = storage.get('meterGas', {});
                 if (saved && typeof saved.value !== 'undefined') {
                     targets.forEach(el => el.textContent = `${saved.value}`);
                 } else {
@@ -3303,9 +3303,9 @@
                     
                     const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
                     
-                    let photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+                    let photos = storage.get('meterPhotos', []);
                     photos.push(compressedDataUrl);
-                    localStorage.setItem('meterPhotos', JSON.stringify(photos));
+                    storage.set('meterPhotos', photos);
                     
                     loadMeterPhotos();
                 };
@@ -3316,7 +3316,7 @@
         }
         
         function loadMeterPhotos() {
-            const photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+            const photos = storage.get('meterPhotos', []);
             const gallery = document.getElementById('metersPhotoGallery');
             if (!gallery) return;
             
@@ -3349,9 +3349,9 @@
         function deleteMeterPhoto(index) {
             if (!confirm('❌ Удалить это фото счётчика?')) return;
             
-            let photos = JSON.parse(localStorage.getItem('meterPhotos') || '[]');
+            let photos = storage.get('meterPhotos', []);
             photos.splice(index, 1);
-            localStorage.setItem('meterPhotos', JSON.stringify(photos));
+            storage.set('meterPhotos', photos);
             loadMeterPhotos();
         }
         
@@ -3361,7 +3361,7 @@
             const hotWater = document.getElementById('hotWater')?.value;
             const gas = document.getElementById('gas')?.value;
             const electricity = document.getElementById('electricity')?.value;
-            const photos = JSON.parse(localStorage.getItem('counterPhotos') || '[]');
+            const photos = storage.get('counterPhotos', []);
             
             if (!coldWater && !hotWater && !gas && !electricity) {
                 alert('Пожалуйста, введите показания хотя бы одного счётчика');
@@ -3369,7 +3369,7 @@
             }
             
             // Сохранить в историю
-            const history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
+            const history = storage.get('countersHistory', []);
             const currentDate = new Date();
             const month = currentDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
             
@@ -3387,7 +3387,7 @@
             // Оставить только последние 12 месяцев
             const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
             const last12Months = sortedHistory.slice(0, 12);
-            localStorage.setItem('countersHistory', JSON.stringify(last12Months));
+            storage.set('countersHistory', last12Months);
             
             console.log('📊 Показания:', { coldWater, hotWater, gas, electricity, photos: photos.length });
             console.log('✅ Показания сохранены в историю');
@@ -3409,7 +3409,7 @@
         // ===== ИСТОРИЯ ПОКАЗАНИЙ =====
         function renderHistory() {
             console.log('📈 Рендеринг истории показаний');
-            const history = JSON.parse(localStorage.getItem('countersHistory') || '[]');
+            const history = storage.get('countersHistory', []);
             const period = parseInt(document.getElementById('historyPeriod')?.value || '3');
             
             // Отсортировать по дате (новые первые)
@@ -3551,9 +3551,9 @@
             }
             
             const description = document.getElementById('problemDescription')?.value;
-            const photos = JSON.parse(localStorage.getItem('photos') || '[]');
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            const audio = JSON.parse(localStorage.getItem('audio') || '[]');
+            const photos = storage.get('photos', []);
+            const videos = storage.get('videos', []);
+            const audio = storage.get('audio', []);
             
             const categoryNames = {
                 'repair': 'ремонт',
@@ -3585,9 +3585,9 @@
             // Очистить форму
             selectedCategory = null;
             document.getElementById('problemDescription').value = '';
-            localStorage.removeItem('photos');
-            localStorage.removeItem('videos');
-            localStorage.removeItem('audio');
+            storage.remove('photos');
+            storage.remove('videos');
+            storage.remove('audio');
             renderPhotos();
             renderVideos();
             renderAudioList();
@@ -3610,7 +3610,7 @@
         
         function renderRequestsList(filterStatus = 'all') {
             console.log('📋 Рендеринг списка заявок, фильтр:', filterStatus);
-            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const requests = storage.get('requests', []);
             const filteredRequests = filterStatus === 'all' ? requests : requests.filter(r => r.status === filterStatus);
             const container = document.getElementById('requestsList');
             
@@ -3679,7 +3679,7 @@
         
         function showRequestDetails(id) {
             console.log('🔍 Просмотр деталей заявки:', id);
-            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const requests = storage.get('requests', []);
             const request = requests.find(r => r.id === id);
             
             if (!request) {
@@ -4120,7 +4120,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             try {
                 console.log('🔍 Начинаем заполнение полного профиля...');
                 
-                const userCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+                const userCode = storage.get('login_code') || storage.get('userPhone');
                 if (!userCode) {
                     console.error('❌ Код пользователя не найден');
                     return;
@@ -4129,7 +4129,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 
                 let userData = null;
                 try {
-                    const storedData = localStorage.getItem('zd_user_data') || localStorage.getItem('userData');
+                    const storedData = storage.get('user_data') || storage.get('userData');
                     if (storedData) {
                         userData = JSON.parse(storedData);
                         console.log('✅ Данные из localStorage:', userData);
@@ -4204,12 +4204,12 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         
         // === ФУНКЦИЯ ОБНОВЛЕНИЯ СОВРЕМЕННЫХ ЭЛЕМЕНТОВ (Material Design 3) ===
         async function updateModernUI() {
-            const userCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+            const userCode = storage.get('login_code') || storage.get('userPhone');
             if (!userCode) return;
             
             let userData = null;
             try {
-                const storedData = localStorage.getItem('zd_user_data') || localStorage.getItem('userData');
+                const storedData = storage.get('user_data') || storage.get('userData');
                 if (storedData) {
                     userData = JSON.parse(storedData);
                 }
@@ -4281,12 +4281,12 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         
         // === ФУНКЦИЯ ОБНОВЛЕНИЯ СОВРЕМЕННЫХ ЭЛЕМЕНТОВ (Material Design 3) ===
         async function updateModernUI() {
-            const userCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+            const userCode = storage.get('login_code') || storage.get('userPhone');
             if (!userCode) return;
             
             let userData = null;
             try {
-                const storedData = localStorage.getItem('zd_user_data') || localStorage.getItem('userData');
+                const storedData = storage.get('user_data') || storage.get('userData');
                 if (storedData) {
                     userData = JSON.parse(storedData);
                 }
@@ -4361,7 +4361,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
         // Загрузка данных пользователя из localStorage
         function loadUserData() {
             try {
-                const userData = localStorage.getItem('userData');
+                const userData = storage.get('userData');
                 if (!userData) {
                     console.error('❌ Данные пользователя отсутствуют');
                     window.location.href = 'login.html';
@@ -4767,7 +4767,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
             const request = mainScreenData.vskRequests.recent.find(r => r.id === id);
             if (!request) {
                 // Попробовать найти в localStorage
-                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                const requests = storage.get('requests', []);
                 const localRequest = requests.find(r => r.id === id);
                 if (localRequest) {
                     showRequestDetailsLocal(localRequest);
@@ -4923,7 +4923,7 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 await loadResidents(); // Загрузить базу жителей
                 
                 // Получаем код доступа из правильного ключа
-                const sessionCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+                const sessionCode = storage.get('login_code') || storage.get('userPhone');
                 // Auth already checked early - no need to redirect here
                 if (!sessionCode) {
                     return; // Early auth check handled this

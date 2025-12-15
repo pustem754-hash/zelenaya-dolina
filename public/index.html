@@ -1834,6 +1834,17 @@
         window.logout = logout;
         window.requireAuth = requireAuth;
 
+        // FIX INITIAL LOAD FLICKERING: Check auth BEFORE DOM renders
+        (function earlyAuthCheck() {
+            const sessionCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+            if (!sessionCode) {
+                console.log('❌ No session - redirecting to login');
+                window.location.href = 'login.html';
+                // Keep page hidden during redirect
+                document.documentElement.style.visibility = 'hidden';
+            }
+        })();
+
         console.log('🚀 Инициализация приложения УК «Зелёная долина» v7.2.3');
         
         // ========== АУДИО ПЕРЕМЕННЫЕ ==========
@@ -4908,10 +4919,9 @@ ${request.dispatcherPhotos && request.dispatcherPhotos.length > 0 ? `\nФото�
                 
                 // Получаем код доступа из правильного ключа
                 const sessionCode = localStorage.getItem('zd_login_code') || localStorage.getItem('userPhone');
+                // Auth already checked early - no need to redirect here
                 if (!sessionCode) {
-                    console.error('❌ Нет сессии');
-                    window.location.href = 'login.html';
-                    return;
+                    return; // Early auth check handled this
                 }
                 
                 const saved = localStorage.getItem('userData');

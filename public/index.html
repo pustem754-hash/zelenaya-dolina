@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/modern-index.css?v=7.2">
-    <link rel="stylesheet" href="./css/buttons.css?v=7.2.4">
-    <!-- StorageService v2.0 - Централизованное управление localStorage -->
-    <script src="../src/services/StorageService.js"></script>
-    <script src="./js/buttons.js?v=7.2.4" defer></script>
-    <title>УК «Зелёная долина» v7.2.4 ✅</title>
+    <link rel="stylesheet" href="./css/components.css?v=7.2.6.1">
+    <link rel="stylesheet" href="./css/modern-index.css?v=7.2.6.1">
+    <link rel="stylesheet" href="./css/buttons.css?v=7.2.6.1">
+    <script src="./js/buttons.js?v=7.2.6.1" defer></script>
+    <title>УК «Зелёная долина» v7.2.6 ✅ FIXED</title>
+    <meta name="version" content="7.2.6.1">
+    <meta name="build-date" content="2025-12-16T21:30:00Z">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4CAF50">
@@ -1773,7 +1775,72 @@
     </div>
 
     <script>
-        // ========== ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.2 ==========
+        // ==================== STORAGE SERVICE v7.2.6 ====================
+        class StorageService {
+            constructor(prefix = 'zd_') {
+                this.prefix = prefix;
+                this.cache = new Map();
+                this.cacheTimestamps = new Map();
+                this.cacheTTL = 5 * 60 * 1000;
+            }
+            get(key, defaultValue = null) {
+                if (this._isCacheValid(key)) return this.cache.get(key);
+                const prefixedKey = this._getPrefixedKey(key);
+                try {
+                    const item = localStorage.getItem(prefixedKey);
+                    if (item === null || item === undefined) return defaultValue;
+                    let parsed; try { parsed = JSON.parse(item); } catch(e) { parsed = item; }
+                    this._setCache(key, parsed);
+                    return parsed;
+                } catch (error) { console.error(`❌ storage.get('${key}'):`, error); return defaultValue; }
+            }
+            set(key, value) {
+                const prefixedKey = this._getPrefixedKey(key);
+                try {
+                    const serialized = typeof value === 'string' ? value : JSON.stringify(value);
+                    localStorage.setItem(prefixedKey, serialized);
+                    this._setCache(key, value);
+                    return true;
+                } catch (error) { console.error(`❌ storage.set('${key}'):`, error); return false; }
+            }
+            remove(key) {
+                const prefixedKey = this._getPrefixedKey(key);
+                localStorage.removeItem(prefixedKey);
+                this.cache.delete(key);
+                this.cacheTimestamps.delete(key);
+            }
+            clear() {
+                const keys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith(this.prefix)) keys.push(k);
+                }
+                keys.forEach(k => localStorage.removeItem(k));
+                this.cache.clear();
+                this.cacheTimestamps.clear();
+            }
+            _isCacheValid(key) {
+                if (!this.cache.has(key)) return false;
+                const ts = this.cacheTimestamps.get(key);
+                if (Date.now() - ts > this.cacheTTL) {
+                    this.cache.delete(key); this.cacheTimestamps.delete(key);
+                    return false;
+                }
+                return true;
+            }
+            _setCache(key, value) {
+                this.cache.set(key, value);
+                this.cacheTimestamps.set(key, Date.now());
+            }
+            _getPrefixedKey(key) {
+                return key.startsWith(this.prefix) ? key : this.prefix + key;
+            }
+        }
+        const storage = new StorageService('zd_');
+        window.storage = storage;
+        console.log('%c✅ StorageService v7.2.6 ready!', 'color: #4CAF50; font-weight: bold; font-size: 14px');
+
+        // ========== ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.2.6 ==========
         const AUTH_STORAGE_KEY = 'zd_isAuthenticated';
         const AUTH_CODE_KEY = 'zd_login_code';
         const USER_DATA_KEY = 'zd_user_data';
@@ -1829,7 +1896,7 @@
             return users[code] || { account_number: `DEMO-${code}`, full_name: 'Демо Пользователь', apartment: { complex_name: 'ЖК Демо', building_number: '1', apartment_number: '1', balance: 0, area: 50.0 } };
         }
 
-        // Экспорт в window
+        // Экспорт auth функций в window
         window.saveAuth = saveAuth;
         window.isAuthenticated = isAuthenticated;
         window.getLoginCode = getLoginCode;
@@ -1848,7 +1915,7 @@
             }
         })();
 
-        console.log('🚀 Инициализация приложения УК «Зелёная долина» v7.2.4');
+        console.log('%c🚀 Инициализация приложения УК «Зелёная долина» v7.2.6', 'color: #4CAF50; font-weight: bold; font-size: 16px');
         
         // ========== АУДИО ПЕРЕМЕННЫЕ ==========
         let mediaRecorder = null;

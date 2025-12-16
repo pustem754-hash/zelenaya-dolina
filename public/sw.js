@@ -1,10 +1,10 @@
 // Service Worker для УК "Зелёная долина" PWA v7.2.6
 const VERSION = '7.2.6';
-const BUILD_DATE = '2025-12-16';
-const CACHE_NAME = `zelenaya-dolina-v${VERSION}-${BUILD_DATE}`;
+const BUILD_TIME = Date.now(); // Принудительная инвалидация
+const CACHE_NAME = `zelenaya-dolina-v${VERSION}-${BUILD_TIME}`;
 const OFFLINE_URL = '/zelenaya-dolina/index.html';
 
-console.log(`%c🚀 Service Worker v${VERSION} (${BUILD_DATE})`, 'color: #2196F3; font-weight: bold');
+console.log(`%c🚀 Service Worker v${VERSION} (BUILD: ${BUILD_TIME})`, 'color: #2196F3; font-weight: bold; font-size: 16px');
 
 // Критически важные файлы для кэширования (login.html ИСКЛЮЧЁН!)
 const STATIC_CACHE = [

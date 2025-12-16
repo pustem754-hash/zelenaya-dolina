@@ -256,3 +256,5 @@ public/StorageService.js:
 
 **Статус:** ✅ ГОТОВО (ожидается обновление GitHub Pages CDN)
 
+
+

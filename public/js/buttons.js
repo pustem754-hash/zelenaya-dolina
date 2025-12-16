@@ -244,3 +244,5 @@ if (!document.getElementById('ripple-animation-style')) {
     document.head.appendChild(style);
 }
 
+
+

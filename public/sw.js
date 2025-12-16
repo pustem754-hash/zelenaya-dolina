@@ -1,6 +1,10 @@
-// Service Worker для УК "Зелёная долина" PWA
-const CACHE_NAME = 'zelenaya-dolina-v7.2.6-FORCE-CLEAR';
+// Service Worker для УК "Зелёная долина" PWA v7.2.6
+const VERSION = '7.2.6';
+const BUILD_DATE = '2025-12-16';
+const CACHE_NAME = `zelenaya-dolina-v${VERSION}-${BUILD_DATE}`;
 const OFFLINE_URL = '/zelenaya-dolina/index.html';
+
+console.log(`%c🚀 Service Worker v${VERSION} (${BUILD_DATE})`, 'color: #2196F3; font-weight: bold');
 
 // Критически важные файлы для кэширования (login.html ИСКЛЮЧЁН!)
 const STATIC_CACHE = [
@@ -27,19 +31,39 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Активация Service Worker
+// Активация Service Worker с агрессивной очисткой старых кэшей
 self.addEventListener('activate', (event) => {
+  console.log(`%c🧹 SW v${VERSION}: Активация и очистка старых кэшей`, 'color: #FF9800; font-weight: bold');
+  
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      const deletedCaches = [];
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log(`%c🗑️ Удаляю старый кэш: ${cacheName}`, 'color: #F44336');
+            deletedCaches.push(cacheName);
             return caches.delete(cacheName);
           }
         })
-      );
+      ).then(() => {
+        console.log(`%c✅ Удалено кэшей: ${deletedCaches.length}`, 'color: #4CAF50; font-weight: bold');
+        console.log(`%c✅ Текущий кэш: ${CACHE_NAME}`, 'color: #4CAF50; font-weight: bold');
+      });
     }).then(() => {
+      // Принудительно захватываем все вкладки
       return self.clients.claim();
+    }).then(() => {
+      // Отправляем сообщение всем клиентам о новой версии
+      return self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'VERSION_UPDATE',
+            version: VERSION,
+            buildDate: BUILD_DATE
+          });
+        });
+      });
     })
   );
 });

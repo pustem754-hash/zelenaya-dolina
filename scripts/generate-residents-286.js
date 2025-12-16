@@ -722,3 +722,4 @@ console.log('Запуск: node scripts/generate-residents-286.js');
 
 
 
+

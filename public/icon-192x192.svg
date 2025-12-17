@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#4CAF50" rx="24"/>
+  <path d="M96 45 L50 85 v75 h35 v-45 h22 v45 h35 v-75 z" fill="white" stroke="white" stroke-width="2"/>
+  <circle cx="96" cy="30" r="10" fill="white"/>
+  <text x="96" y="180" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle" font-weight="bold">УК ЗД</text>
+</svg>
+
+
+
+
+
+
+
+
+

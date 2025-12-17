@@ -1,0 +1,93 @@
+.media-preview {
+    min-height: 240px;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.media-preview.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-card {
+    background: #fff;
+    border-radius: 20px;
+    width: min(480px, 100%);
+    padding: 24px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.modal-overlay.visible .modal-card {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.bank-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.bank-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 14px;
+    background: #f8f9fa;
+    text-align: center;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.bank-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.bank-card .bank-name {
+    font-weight: 700;
+    margin-top: 6px;
+    color: var(--color-text-main);
+}
+
+.bank-card .bank-icon {
+    font-size: 26px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

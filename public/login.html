@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="48x48" href="./icon-48x48.png?v=7.0">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png?v=7.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-180x180.png?v=7.0">
+    <meta name="theme-color" content="#2E7D32">
+    <link rel="manifest" href="manifest.json?v=7.0">
+    <link rel="stylesheet" href="./css/buttons.css?v=7.2.4">
+    <script src="./js/buttons.js?v=7.2.4" defer></script>
+    <title>Вход - УК «Зелёная долина» v7.2.6 ✅</title>
+    <meta name="version" content="7.2.6">
+    <meta name="build-date" content="2025-12-16T20:00:00Z">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <style>
+        :root {
+            --brand-green: #4CAF50;
+            --brand-green-hover: #45a049;
+            --brand-green-light: #66BB6A;
+            --card-shadow: 0 12px 40px rgba(76, 175, 80, 0.25);
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Статичный декор фона */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s cubic-bezier(0.05, 0.7, 0.1, 1.0);
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 48px 32px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--brand-green) 0%, var(--brand-green-light) 100%);
+        }
+        
+        .logo-container {
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            animation: fadeIn 0.8s ease-out 0.3s backwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo-icon {
+            width: 96px;
+            height: 96px;
+            border-radius: 24px;
+            object-fit: contain;
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+            animation: logoRotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s backwards;
+        }
+        
+        @keyframes logoRotate {
+            from { transform: rotate(-180deg) scale(0); }
+            to { transform: rotate(0) scale(1); }
+        }
+        
+        .company-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            animation: fadeIn 0.8s ease-out 0.6s backwards;
+        }
+        
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 32px;
+            font-weight: 400;
+            animation: fadeIn 0.8s ease-out 0.7s backwards;
+        }
+        
+        #accessCode {
+            width: 100%;
+            padding: 22px;
+            border: 3px solid #e8f5e8;
+            border-radius: 16px;
+            font-size: 24px !important;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8fdf8;
+            animation: fadeIn 0.8s ease-out 0.8s backwards;
+        }
+        
+        #accessCode:focus {
+            outline: none;
+            border-color: var(--brand-green);
+            background: white;
+            box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        #accessCode:not(:placeholder-shown) {
+            background: white;
+            border-color: var(--brand-green-light);
+        }
+        
+        /* Button animations from buttons.css are applied */
+        .btn-block {
+            animation: fadeIn 0.8s ease-out 0.9s backwards;
+        }
+        
+        .version {
+            margin-top: 24px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 36px 24px;
+            }
+            
+            .company-name {
+                font-size: 24px;
+            }
+            
+            #accessCode {
+                font-size: 20px !important;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-container">
+                <img src="icon-192x192.png?v=7.0" alt="УК Зелёная долина" class="logo-icon">
+                <h1 class="company-name">Зелёная долина</h1>
+            </div>
+            
+            <p class="login-subtitle">Введите код доступа<br>(последние 4 цифры л/с)</p>
+            
+            <form id="loginForm">
+                <input type="tel" 
+                       id="accessCode" 
+                       placeholder="••••" 
+                       maxlength="4" 
+                       pattern="[0-9]*" 
+                       inputmode="numeric" 
+                       autocomplete="one-time-code"
+                       required 
+                       autofocus>
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+            
+            <div class="version">Версия 7.2.3 ✅</div>
+        </div>
+    </div>
+    
+    <script>
+// ВСТРОЕННАЯ АВТОРИЗАЦИЯ v7.2.6 ✅
+const AUTH_STORAGE_KEY = 'zd_isAuthenticated';
+const AUTH_CODE_KEY = 'zd_login_code';
+const USER_DATA_KEY = 'zd_user_data';
+
+function saveAuth(code) {
+    localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+    localStorage.setItem(AUTH_CODE_KEY, code);
+    const userData = getMockUserByCode(code);
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+}
+
+function isAuthenticated() {
+    return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+}
+
+function getLoginCode() {
+    return localStorage.getItem(AUTH_CODE_KEY);
+}
+
+function getUserData() {
+    const data = localStorage.getItem(USER_DATA_KEY);
+    return data ? JSON.parse(data) : null;
+}
+
+function logout() {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(AUTH_CODE_KEY);
+    localStorage.removeItem(USER_DATA_KEY);
+    localStorage.removeItem('userPhone');
+    localStorage.removeItem('userData');
+    console.log('✅ Выход выполнен');
+}
+
+function requireAuth() {
+    if (!isAuthenticated()) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
+function getMockUserByCode(code) {
+    const users = {
+        '1977': { account_number: '25-0-1977', full_name: 'Иванов Иван Иванович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '45', balance: -1540.00, area: 65.5 } },
+        '0123': { account_number: '1-7-0-0123', full_name: 'Петрова Анна Сергеевна', apartment: { complex_name: 'ЖК Зелёная долина', building_number: '3', apartment_number: '12', balance: -890.00, area: 52.3 } },
+        '1234': { account_number: '25-0-1234', full_name: 'Сидоров Петр Васильевич', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '78', balance: 0, area: 75.2 } },
+        '2364': { account_number: '25-2-2364', full_name: 'Фахрутдинов Артур Маратович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '4', balance: -2150.00, area: 58.3 } },
+        '2355': { account_number: '25-1-2355', full_name: 'Обрядин Алексей Владимирович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '18', balance: -890.50, area: 45.2 } },
+        '0985': { account_number: '25-0-0985', full_name: 'Першина Ильсияр Рафаиловна', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '1', balance: 0, area: 62.1 } },
+        '9948': { account_number: '25-1-9948', full_name: 'Шакиров Марат Рашидович', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '1', balance: -450.00, area: 70.5 } },
+        '0994': { account_number: '25-0-0994', full_name: 'Шакирова Миляуша Ильгизовна', apartment: { complex_name: 'ЖК Маяк', building_number: '25', apartment_number: '2', balance: -1200.00, area: 55.8 } }
+    };
+    return users[code] || { account_number: `DEMO-${code}`, full_name: 'Демо Пользователь', apartment: { complex_name: 'ЖК Демо', building_number: '1', apartment_number: '1', balance: 0, area: 50.0 } };
+}
+
+window.saveAuth = saveAuth;
+window.isAuthenticated = isAuthenticated;
+window.getLoginCode = getLoginCode;
+window.getUserData = getUserData;
+window.logout = logout;
+window.requireAuth = requireAuth;
+    </script>
+    <script>
+// FIX FLICKERING: Hide body before auth check
+document.documentElement.style.visibility = 'hidden';
+
+// Проверка параметра logout СРАЗУ, ДО отрисовки
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('logout') === 'true') {
+    logout();
+    console.log('🚪 Выход выполнен');
+    window.history.replaceState({}, '', 'login.html');
+    document.documentElement.style.visibility = 'visible'; // Show if logout
+}
+// Проверка авторизации СРАЗУ, ДО отрисовки
+else if (typeof isAuthenticated === 'function' && isAuthenticated()) {
+    console.log('✅ Уже авторизован, редирект...');
+    window.location.replace('index.html');
+    // Keep hidden during redirect
+}
+else {
+    // Not authenticated - show login form
+    document.documentElement.style.visibility = 'visible';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+        console.log('%c🔐 Инициализация страницы входа v7.2.6 ✅', 'color: #4CAF50; font-weight: bold; font-size: 16px');
+    
+    const form = document.getElementById('loginForm');
+    const input = document.getElementById('accessCode');
+    
+    if (!form || !input) {
+        console.error('[Login] Элементы формы не найдены');
+        return;
+    }
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = (input.value || '').trim();
+        
+        console.log('🔍 Попытка входа с кодом:', code);
+        
+        if (!/^\d{4}$/.test(code)) {
+            alert('Введите 4-значный код');
+            input.focus();
+            return;
+        }
+        
+        if (typeof saveAuth !== 'function') {
+            console.error('❌ Функция saveAuth не найдена!');
+            alert('Ошибка загрузки системы авторизации. Обновите страницу.');
+            return;
+        }
+        
+        saveAuth(code);
+        console.log('✅ Авторизация сохранена, перенаправление...');
+        window.location.href = 'index.html';
+    });
+    
+    // Автофокус на поле ввода
+    setTimeout(() => {
+        input.focus();
+    }, 100);
+});
+    </script>
+    <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/zelenaya-dolina/sw.js', {
+      scope: '/zelenaya-dolina/'
+    }).then(registration => {
+      console.log('[Login] ✅ SW зарегистрирован');
+    }).catch(error => {
+      console.error('[Login] ❌ SW ошибка:', error);
+    });
+  });
+}
+    </script>
+</body>
+</html>

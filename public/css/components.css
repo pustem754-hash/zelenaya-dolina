@@ -1,0 +1,347 @@
+/* Кнопки */
+.btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    min-height: 44px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Карточки */
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    border: 1px solid var(--border);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--secondary);
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+/* Формы */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    transition: all var(--transition-base);
+    background: white;
+    min-height: 44px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+}
+
+/* Навигация */
+.nav {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    padding: 0;
+}
+
+.nav-item {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: inline-block;
+    transition: all var(--transition-base);
+    border-bottom: 3px solid transparent;
+    font-weight: 500;
+    min-height: 44px;
+}
+
+.nav-item:hover {
+    color: var(--primary);
+    border-bottom-color: var(--primary-light);
+    background: rgba(46, 125, 50, 0.05);
+}
+
+.nav-item.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    font-weight: 600;
+}
+/* Компоненты v7.0 (восстановлено) */
+
+/*  Кнопки */
+.btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--font-size-md);
+    border: none;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    overflow: hidden;
+    min-height: 48px; /* Mobile friendly */
+}
+
+.btn:active {
+    transform: scale(0.96);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 168, 89, 0.3);
+}
+
+.btn-secondary {
+    background: var(--color-bg-light);
+    color: var(--color-text-main);
+}
+
+.btn-icon {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-bg-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*  Карточки (Glassmorphism) */
+.card {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.03);
+    backdrop-filter: blur(20px);
+}
+
+.card-glass {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+body.theme-dark .card-glass {
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/*  Инпуты (Modern) */
+.form-group {
+    margin-bottom: var(--space-4);
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    background: var(--color-bg-light);
+    font-size: var(--font-size-md);
+    color: var(--color-text-main);
+    transition: all var(--transition-fast);
+}
+
+.form-input:focus {
+    outline: none;
+    background: var(--color-white);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+/*  Tab Bar (Mobile) */
+.tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-white);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    z-index: 100;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.tab-item.active {
+    color: var(--color-primary);
+}
+
+.tab-icon {
+    font-size: 24px;
+}
+
+/* ===== Payment / Bank grid modal ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-5);
+    z-index: 10000;
+}
+
+.modal-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    width: min(480px, 100%);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-md);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.bank-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--space-3);
+}
+
+.bank-card {
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    text-align: center;
+    background: var(--color-bg-light);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.bank-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-primary);
+}
+
+.bank-card .bank-icon {
+    font-size: 28px;
+    margin-bottom: var(--space-2);
+}
+
+.bank-card .bank-name {
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-main);
+}
+
+.modal-actions {
+    margin-top: var(--space-4);
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+/* ===== Media preview stability ===== */
+.media-preview {
+    min-height: 140px;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+/* Mobile-first адаптивность */
+
+@media (max-width: 768px) {
+    .btn {
+        min-height: 44px;
+        padding: var(--spacing-md) var(--spacing-md);
+    }
+
+    .form-control {
+        min-height: 44px;
+        font-size: 16px; /* предотвращает zoom на iOS */
+    }
+
+    .nav-item {
+        width: 100%;
+        text-align: center;
+        padding: var(--spacing-md);
+    }
+
+    .card {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .card:hover {
+        transform: none;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1025px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+

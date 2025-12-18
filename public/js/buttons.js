@@ -1,6 +1,6 @@
-/**
+﻿п»їРїВ»С—Р С—Р’В»РЎвЂ”/**
  * Button Interactions & Ripple Effects
- * УК «Зелёная долина»
+ * Р В Р’В Р В РІвЂљВ¬Р В Р’В Р РЋРІвЂћСћ Р В РІР‚в„ўР вЂ™Р’В«Р В Р’В Р Р†Р вЂљРІР‚СњР В Р’В Р вЂ™Р’ВµР В Р’В Р вЂ™Р’В»Р В Р Р‹Р Р†Р вЂљР’ВР В Р’В Р В РІР‚В¦Р В Р’В Р вЂ™Р’В°Р В Р Р‹Р В Р РЏ Р В Р’В Р СћРІР‚ВР В Р’В Р РЋРІР‚СћР В Р’В Р вЂ™Р’В»Р В Р’В Р РЋРІР‚ВР В Р’В Р В РІР‚В¦Р В Р’В Р вЂ™Р’В°Р В РІР‚в„ўР вЂ™Р’В»
  * v1.0
  */
 
@@ -67,7 +67,7 @@
     /**
      * Success feedback animation
      */
-    function showButtonSuccess(button, message = '✓') {
+    function showButtonSuccess(button, message = 'Р В Р вЂ Р РЋРЎв„ўР Р†Р вЂљРЎС™') {
         const originalText = button.textContent;
         button.textContent = message;
         button.classList.add('btn-success-feedback');
@@ -186,7 +186,7 @@
             return;
         }
 
-        console.log('🎨 Initializing button system...');
+        console.log('Р РЋР вЂљР РЋРЎСџР В РІР‚в„–Р В Р С“ Initializing button system...');
         
         initRippleEffect();
         initButtonGroups();
@@ -195,7 +195,7 @@
         initAccessibility();
         initFABMenu();
         
-        console.log('✅ Button system initialized');
+        console.log('Р В Р вЂ Р РЋРЎв„ўР Р†Р вЂљР’В¦ Button system initialized');
     }
 
     // Export functions for global use
@@ -243,6 +243,12 @@ if (!document.getElementById('ripple-animation-style')) {
     `;
     document.head.appendChild(style);
 }
+
+
+
+
+
+
 
 
 

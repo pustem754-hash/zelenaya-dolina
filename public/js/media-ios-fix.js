@@ -1,4 +1,4 @@
-// iOS-friendly capture helpers (no console.log)
+﻿п»їРїВ»С—Р С—Р’В»РЎвЂ”// iOS-friendly capture helpers (no console.log)
 (function() {
     const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
@@ -85,7 +85,7 @@
                 if (data) return data;
             }
         } catch (err) {
-            // Тихо переходим к следующему методу
+            // Р В Р’В Р РЋРЎвЂєР В Р’В Р РЋРІР‚ВР В Р Р‹Р Р†Р вЂљР’В¦Р В Р’В Р РЋРІР‚Сћ Р В Р’В Р РЋРІР‚вЂќР В Р’В Р вЂ™Р’ВµР В Р Р‹Р В РІР‚С™Р В Р’В Р вЂ™Р’ВµР В Р Р‹Р Р†Р вЂљР’В¦Р В Р’В Р РЋРІР‚СћР В Р’В Р СћРІР‚ВР В Р’В Р РЋРІР‚ВР В Р’В Р РЋР’В Р В Р’В Р РЋРІР‚Сњ Р В Р Р‹Р В РЎвЂњР В Р’В Р вЂ™Р’В»Р В Р’В Р вЂ™Р’ВµР В Р’В Р СћРІР‚ВР В Р Р‹Р РЋРІР‚СљР В Р Р‹Р В РІР‚в„–Р В Р Р‹Р Р†Р вЂљР’В°Р В Р’В Р вЂ™Р’ВµР В Р’В Р РЋР’ВР В Р Р‹Р РЋРІР‚Сљ Р В Р’В Р РЋР’ВР В Р’В Р вЂ™Р’ВµР В Р Р‹Р Р†Р вЂљРЎв„ўР В Р’В Р РЋРІР‚СћР В Р’В Р СћРІР‚ВР В Р Р‹Р РЋРІР‚Сљ
         }
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -108,6 +108,12 @@
 
     window.capturePhotoSafe = capturePhotoSafe;
 })();
+
+
+
+
+
+
 
 
 

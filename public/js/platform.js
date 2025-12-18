@@ -1,4 +1,4 @@
-// Simple platform detection + iOS 100vh fix
+﻿п»їРїВ»С—Р С—Р’В»РЎвЂ”// Simple platform detection + iOS 100vh fix
 const Platform = {
     isIOS: /iPhone|iPad|iPod/i.test(navigator.userAgent),
     isAndroid: /Android/i.test(navigator.userAgent),
@@ -22,6 +22,12 @@ const Platform = {
 };
 
 document.addEventListener('DOMContentLoaded', () => Platform.init());
+
+
+
+
+
+
 
 
 

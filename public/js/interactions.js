@@ -1,4 +1,4 @@
-﻿п»їРїВ»С—Р С—Р’В»РЎвЂ”// Micro interactions: ripple + lightweight toast
+п»їРїВ»С—Р С—Р’В»РЎвЂ”// Micro interactions: ripple + lightweight toast
 (function () {
     function createRipple(event, target) {
         const rect = target.getBoundingClientRect();

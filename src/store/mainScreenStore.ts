@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿п»їРїВ»С—Р С—Р’В»РЎвЂ”import { create } from 'zustand';
 import { MainScreenData } from '../types/api';
 
 interface MainScreenState {
@@ -32,4 +32,9 @@ export const useMainScreenStore = create<MainScreenState>((set) => ({
     }
   },
 }));
+
+
+
+
+
 
